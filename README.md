@@ -31,6 +31,9 @@
 #### JAVA
 * ZoomEye Android SDK  https://github.com/Gh05ter/Hacker
 
+#### GO
+* zoomeye-api https://github.com/nfalse/zoomeye-api
+
 
 ### USE CASE
 * Pocsutie https://github.com/pocsuite
