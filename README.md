@@ -18,6 +18,7 @@
 
 #### C
 * libzeye https://github.com/wrestle/libzeye
+* ZoomEye https://github.com/zidier215/ZoomEye
 
 #### Ruby
 * zoomeye https://github.com/CharellKing/zoomeye
