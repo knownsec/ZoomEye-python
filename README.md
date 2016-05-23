@@ -33,5 +33,5 @@
 
 
 ### USE CASE
-* Pocsutie https://githbu.com/pocsuite
+* Pocsutie https://github.com/pocsuite
 * s0m3poc https://github.com/s0m30ne/s0m3poc
