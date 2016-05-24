@@ -31,6 +31,7 @@
 
 #### JAVA
 * ZoomEye Android SDK  https://github.com/Gh05ter/Hacker
+* ZoomEye Android API  https://github.com/donglua/ZoomEye-API
 
 #### GO
 * zoomeye-api https://github.com/nfalse/zoomeye-api
