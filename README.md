@@ -39,7 +39,7 @@ If you just want to use it, please try ZoomEye API ThirdParty interfaces created
 
 ```
 $ python zoomeye.py
-ZoomEye Username: hap.ddup@gmail.com
+ZoomEye Username: username@zoomeye.org
 ZoomEye Password:
 {u'plan': u'developer', u'resources': {u'host-search': 4993, u'web-search': 4963}}
 (u'recordrating.com', [u'85.214.142.88'])
