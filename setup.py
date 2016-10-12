@@ -13,6 +13,5 @@ setup(name='zoomeye',
 
       install_requires=[
           'requests',
-          'getpass',
       ]
      )
