@@ -5,6 +5,22 @@
 Copyright (c) 2014-2016 ZoomEye Developers (https://www.zoomeye.org)
 """
 
+__author__ = "nixawk"
+__version__ = "1.0.0"
+__license__ = "GPL-2.0"
+__description__ = ("ZoomEye is a search engine for cyberspace "
+                   "that lets the user find specific network components"
+                   "(ip, services, etc.).")
+__classes__ = ["ZoomEye"]
+__funcs__ = [
+    "login",
+    "dork_search",
+    "resources_info",
+    "show_site_ip",
+    "show_ip_port",
+    "zoomeye_api_test"
+]
+
 
 import requests
 import getpass
