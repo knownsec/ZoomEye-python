@@ -1,41 +1,25 @@
-[**ZoomEye**](https://www.zoomeye.org/) is a search engine for cyberspace that lets the user find specific network components(ip, services, etc.). 
+[**ZoomEye**](https://www.zoomeye.org/) is a search engine for cyberspace that lets the user find specific network components(ip, services, etc.).
 
 
 ## **ZoomEye API**
 
 [**ZoomEye API**](https://www.zoomeye.org/api/doc) is a web service that provides convenient access to [**ZoomEye**](https://www.zoomeye.org/) features, data, information over HTTPS. The platform API empowers developers to automate, extend and connected with [**ZoomEye**](https://www.zoomeye.org/). You can use the [**ZoomEye**](https://www.zoomeye.org/) platform API to programmatically create apps, provision some add-ons and perform some automate tasks. Just imagine that what you could do amazing stuff with [**ZoomEye**](https://www.zoomeye.org/).
 
-### **How to use ZoomEye API**
-
-**1. Authenticate**
-
-If a valid ZoomEye credential (username and password), please use the credential for authentication.
+### **How to install ZoomEye SDK**
 
 ```
-curl -XPOST https://api.zoomeye.org/user/login -d
-'{
-    "username": "foo@bar.com",
-    "password": "foobar"
-}'
+$ sudo easy_install zoomeye-SDK
 ```
 
-**2. ZoomEye Dorks**
-
-When everything goes ok, you can try to search [**ZoomEye Dorks**](https://www.zoomeye.org/search/dorks) with [**ZoomEye API Token**]().
+or
 
 ```
-curl -X GET https://api.zoomeye.org/host/search?query="port:21"&page=1&facet=app,os \
--H "Authorization: JWT eyJhbGciOiJIUzI1NiIsInR5..."
+$ sudo pip install git+https://github.com/ZoomEye/SDK.git
 ```
 
-If you want more, please access [ZoomEye API References](https://www.zoomeye.org/api/doc). 
+### **How to use ZoomEye SDK**
 
-
-**3. ZoomEye API ThirdParty Interfaces**
-
-If you just want to use it, please try ZoomEye API ThirdParty interfaces created by ZoomEye users from github / bitbucket / ...
-
-**4. Python Demo**
+locate **zoomeye.py**, and try to execute it as follow:
 
 ```
 $ python zoomeye.py
@@ -79,6 +63,32 @@ Type "help", "copyright", "credits" or "license" for more information.
 (u'scotland.h.baike.com', [u'124.243.228.178'])
 (u'scotland.baike.com', [u'124.243.228.178'])
 ```
+
+### **How to use ZoomEye API**
+
+**1. Authenticate**
+
+If a valid ZoomEye credential (username and password), please use the credential for authentication.
+
+```
+curl -XPOST https://api.zoomeye.org/user/login -d
+'{
+    "username": "foo@bar.com",
+    "password": "foobar"
+}'
+```
+
+**2. ZoomEye Dorks**
+
+When everything goes ok, you can try to search [**ZoomEye Dorks**](https://www.zoomeye.org/search/dorks) with [**ZoomEye API Token**]().
+
+```
+curl -X GET https://api.zoomeye.org/host/search?query="port:21"&page=1&facet=app,os \
+-H "Authorization: JWT eyJhbGciOiJIUzI1NiIsInR5..."
+```
+
+If you want more, please access [ZoomEye API References](https://www.zoomeye.org/api/doc).
+
 
 **Links**
 
