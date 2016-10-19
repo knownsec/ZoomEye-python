@@ -24,6 +24,10 @@ __funcs__ = [
 
 import requests
 import getpass
+import sys
+
+
+raw_input = raw_input if sys.version_info.major <= 2 else input
 
 
 class ZoomEye(object):
