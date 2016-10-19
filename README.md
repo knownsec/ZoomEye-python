@@ -1,9 +1,12 @@
-[**ZoomEye**](https://www.zoomeye.org/) is a search engine for cyberspace that lets the user find specific network components(ip, services, etc.).
-
 
 ## **ZoomEye API**
 
+[![Python 2.x|3.x](https://img.shields.io/badge/python-2.x|3.x-yellow.svg)](https://www.python.org/) [![License](https://img.shields.io/badge/license-GPLv2-red.svg)](https://github.com/ZoomEye/SDK/blob/master/LICENSE) 
+
+[**ZoomEye**](https://www.zoomeye.org/) is a search engine for cyberspace that lets the user find specific network components(ip, services, etc.).
+
 [**ZoomEye API**](https://www.zoomeye.org/api/doc) is a web service that provides convenient access to [**ZoomEye**](https://www.zoomeye.org/) features, data, information over HTTPS. The platform API empowers developers to automate, extend and connected with [**ZoomEye**](https://www.zoomeye.org/). You can use the [**ZoomEye**](https://www.zoomeye.org/) platform API to programmatically create apps, provision some add-ons and perform some automate tasks. Just imagine that what you could do amazing stuff with [**ZoomEye**](https://www.zoomeye.org/).
+
 
 ### **How to install ZoomEye SDK**
 
