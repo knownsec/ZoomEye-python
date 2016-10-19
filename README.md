@@ -37,7 +37,11 @@ ZoomEye Password:
 ...
 ```
 
-**zoomeye.py** can be also a library.
+**zoomeye.py** can be also a library. **Username** and **Password** can be used to authenticate and search data from ZoomEye, or **ZoomEye Token**, called **ZoomEye API_KEY**. ex:
+
+```
+>>> print(zoomeye.ZoomEye(username=username, password=password).login())
+```
 
 ```
 $ python
@@ -83,7 +87,7 @@ curl -XPOST https://api.zoomeye.org/user/login -d
 
 **2. ZoomEye Dorks**
 
-When everything goes ok, you can try to search [**ZoomEye Dorks**](https://www.zoomeye.org/search/dorks) with [**ZoomEye API Token**]().
+When everything goes ok, you can try to search [**ZoomEye Dorks**](https://www.zoomeye.org/search/dorks) with **ZoomEye API Token**.
 
 ```
 curl -X GET https://api.zoomeye.org/host/search?query="port:21"&page=1&facet=app,os \
