@@ -100,4 +100,4 @@ If you want more, please access [ZoomEye API References](https://www.zoomeye.org
 **Links**
 
 https://www.zoomeye.org/  
-https://www.zoomeye.org/api/doc
+https://www.zoomeye.org/api
