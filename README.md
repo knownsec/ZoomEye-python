@@ -17,7 +17,7 @@ $ sudo easy_install zoomeye-SDK
 or
 
 ```
-$ sudo pip install git+https://github.com/ZoomEye/SDK.git
+$ sudo pip install git+https://github.com/knownsec/ZoomEye.git
 ```
 
 ### **How to use ZoomEye SDK**
@@ -87,17 +87,17 @@ curl -XPOST https://api.zoomeye.org/user/login -d
 
 **2. ZoomEye Dorks**
 
-When everything goes ok, you can try to search [**ZoomEye Dorks**](https://www.zoomeye.org/search/dorks) with **ZoomEye API Token**.
+When everything goes ok, you can try to search [**ZoomEye Dorks**](https://www.zoomeye.org/component) with **ZoomEye API Token**.
 
 ```
 curl -X GET https://api.zoomeye.org/host/search?query="port:21"&page=1&facet=app,os \
 -H "Authorization: JWT eyJhbGciOiJIUzI1NiIsInR5..."
 ```
 
-If you want more, please access [ZoomEye API References](https://www.zoomeye.org/api/doc).
+If you want more, please access [ZoomEye API References](https://www.zoomeye.org/doc).
 
 
 **Links**
 
 https://www.zoomeye.org/  
-https://www.zoomeye.org/api/doc
+https://www.zoomeye.org/doc
