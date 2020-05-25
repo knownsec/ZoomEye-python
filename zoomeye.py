@@ -38,6 +38,7 @@ class ZoomEye(object):
         self.token = ''
         self.zoomeye_login_api = "https://api.zoomeye.org/user/login"
         self.zoomeye_dork_api = "https://api.zoomeye.org/{}/search"
+        self.zoomeye_history_api = "https://api.zoomeye.org/both/search?history=true&ip={}"
 
     def login(self):
         """Please access https://www.zoomeye.org/api/doc#login
@@ -89,6 +90,22 @@ class ZoomEye(object):
             # server
             # domains
 
+        return result
+        
+    def history_ip(self, ip):
+        """Query IP History Information .
+
+        param: ip
+        """
+        result = []
+
+        zoomeye_api = self.zoomeye_history_api.format(ip)
+        headers = {'Authorization': 'JWT %s' % self.token}
+        resp = requests.get(zoomeye_api, headers=headers)
+        if resp and resp.status_code == 200 and 'data' in resp.json():
+            matches = resp.json()
+            print(matches.get('count'))
+            result = matches
         return result
 
     def resources_info(self):
