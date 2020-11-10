@@ -6,7 +6,7 @@ Copyright (c) 2014-2016 ZoomEye Developers (https://www.zoomeye.org)
 """
 
 __author__ = "nixawk"
-__version__ = "1.0.0"
+__version__ = "1.0.6"
 __license__ = "GPL-2.0"
 __description__ = ("ZoomEye is a search engine for cyberspace "
                    "that lets the user find specific network components"
@@ -31,11 +31,12 @@ raw_input = raw_input if sys.version_info.major <= 2 else input
 
 
 class ZoomEye(object):
-    def __init__(self, username=None, password=None):
+    def __init__(self, username=None, password=None, api_key=''):
         self.username = username
         self.password = password
 
         self.token = ''
+        self.api_key = api_key
         self.zoomeye_login_api = "https://api.zoomeye.org/user/login"
         self.zoomeye_dork_api = "https://api.zoomeye.org/{}/search"
         self.zoomeye_history_api = "https://api.zoomeye.org/both/search?history=true&ip={}"
@@ -50,7 +51,7 @@ class ZoomEye(object):
             self.token = resp.json().get('access_token')
         return self.token
 
-    def dork_search(self, dork, page=0, resource='web', facet=['ip']):
+    def dork_search(self, dork, page=0, resource='host', facet=['ip']):
         """Search records with ZoomEye dorks.
 
         param: dork
@@ -69,7 +70,9 @@ class ZoomEye(object):
             facet = ','.join(facet)
 
         zoomeye_api = self.zoomeye_dork_api.format(resource)
-        headers = {'Authorization': 'JWT %s' % self.token}
+        headers = {'Authorization': 'JWT %s' % self.token,
+                   'API-KEY': self.api_key,
+                  }
         params = {'query': dork, 'page': page + 1, 'facet': facet}
         resp = requests.get(zoomeye_api, params=params, headers=headers)
         if resp and resp.status_code == 200 and 'matches' in resp.json():
@@ -100,7 +103,9 @@ class ZoomEye(object):
         result = []
 
         zoomeye_api = self.zoomeye_history_api.format(ip)
-        headers = {'Authorization': 'JWT %s' % self.token}
+        headers = {'Authorization': 'JWT %s' % self.token,
+                   'API-KEY': self.api_key,
+                  }
         resp = requests.get(zoomeye_api, headers=headers)
         if resp and resp.status_code == 200 and 'data' in resp.json():
             matches = resp.json()
@@ -116,7 +121,9 @@ class ZoomEye(object):
         """
         data = None
         zoomeye_api = "https://api.zoomeye.org/resources-info"
-        headers = {'Authorization': 'JWT %s' % self.token}
+        headers = {'Authorization': 'JWT %s' % self.token,
+                   'API-KEY': self.api_key,
+                  }
         resp = requests.get(zoomeye_api, headers=headers)
         if resp and resp.status_code == 200 and 'plan' in resp.json():
             data = resp.json()
@@ -138,9 +145,11 @@ def show_ip_port(data):
 
 def zoomeye_api_test():
     zoomeye = ZoomEye()
+    zoomeye.api_key = raw_input('ZoomEye API-KEY(If you don\'t use API-KEY , Press Enter): ')
     zoomeye.username = raw_input('ZoomEye Username: ')
     zoomeye.password = getpass.getpass(prompt='ZoomEye Password: ')
-    zoomeye.login()
+    if zoomeye.username != "" and zoomeye.password != "":
+        zoomeye.login()
     print(zoomeye.resources_info())
 
     data = zoomeye.dork_search('solr')
@@ -152,7 +161,7 @@ def zoomeye_api_test():
     data = zoomeye.dork_search('solr country:cn')
     show_site_ip(data)
 
-    data = zoomeye.dork_search('solr country:cn', resource='host')
+    data = zoomeye.dork_search('solr country:cn', resource='web')
     show_ip_port(data)
 
 
