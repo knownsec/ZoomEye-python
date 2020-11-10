@@ -25,50 +25,77 @@ $ sudo pip install git+https://github.com/knownsec/ZoomEye.git
 locate **zoomeye.py**, and try to execute it as follow:
 
 ```
+# use API-KEY
 $ python zoomeye.py
+ZoomEye API-KEY(If you don't use API-KEY , Press Enter): 3******f-b**9-a***c-3**5-28******fd8
+ZoomEye Username: 
+ZoomEye Password:
+{'plan': 'developer', 'resources': {'search': 9360, 'stats': 100, 'interval': 'month'}}
+ec2-1*7-**-***-116.compute-1.amazonaws.com ['1*7.**.***.116']
+myh****life.com ['**.35.*.5']
+...
+113.**.**.161 1611
+113.**.***.63 1611
+...
+
+or
+
+# use username and password to login
+$ python zoomeye.py
+ZoomEye API-KEY(If you don't use API-KEY , Press Enter): 
 ZoomEye Username: username@zoomeye.org
 ZoomEye Password:
-{u'plan': u'developer', u'resources': {u'host-search': 4993, u'web-search': 4963}}
-(u'recordrating.com', [u'85.214.142.88'])
-(u'receiver.sematext.com', [u'54.227.253.0'])
+{'plan': 'developer', 'resources': {'search': 9280, 'stats': 100, 'interval': 'month'}}
+ec2-1*7-**-***-116.compute-1.amazonaws.com ['1*7.**.***.116']
+myh****life.com ['**.35.*.5']
 ...
-(u'42.159.226.69', 8080)
-(u'42.62.7.177', 8080)
+113.***.*.35 1611
+113.***.**.162 1611
 ...
 ```
 
-**zoomeye.py** can be also a library. **Username** and **Password** can be used to authenticate and search data from ZoomEye, or **ZoomEye Token**, called **ZoomEye API_KEY**. ex:
+**zoomeye.py** can be also a library. You can choose to log in with your account **Username** and **Password** or use **API-KEY** to search. **API-KEY** can be found `https://www.zoomeye.org/profile`. ex:
 
 ```
->>> print(zoomeye.ZoomEye(username=username, password=password).login())
+>>> zm = zoomeye.ZoomEye(username=username, password=password)
+or
+>>> zm = zoomeye.ZoomEye(api_key="3******f-b**9-a***c-3**5-28******fd8")
 ```
 
 ```
-$ python
-Python 2.7.10 (default, Oct 23 2015, 19:19:21)
-[GCC 4.2.1 Compatible Apple LLVM 7.0.0 (clang-700.0.59.5)] on darwin
+$ python3
+Python 3.8.5 (default, Aug 19 2020, 14:11:20)
+[Clang 11.0.3 (clang-1103.0.32.62)] on darwin
 Type "help", "copyright", "credits" or "license" for more information.
 >>> import zoomeye
 >>> dir(zoomeye)
-['ZoomEye', '__builtins__', '__doc__', '__file__', '__name__', '__package__', 'getpass', 'requests', 'show_ip_port', 'show_site_ip', 'zoomeye_api_test']
+['ZoomEye', '__author__', '__builtins__', '__cached__', '__classes__', '__description__', '__doc__', '__file__', '__funcs__', '__license__', '__loader__', '__name__', '__package__', '__spec__', '__version__', 'getpass', 'raw_input', 'requests', 'show_ip_port', 'show_site_ip', 'sys', 'zoomeye_api_test']
+>>> # Use username and password to login
 >>> zm = zoomeye.ZoomEye()
 >>> zm.username = 'username@zoomeye.org'
 >>> zm.password = 'password'
 >>> print(zm.login())
 ....JIUzI1NiIsInR5cCI6IkpXVCJ9.....
->>> zm.search('apache country:cn')
 >>> data = zm.dork_search('apache country:cn')
 >>> zoomeye.show_site_ip(data)
-(u'scottlyl.b2b.hc360.com', [u'123.103.76.181'])
-(u'scottie.net114.com', [u'59.39.7.61'])
-(u'scott.gsegment.com', [u'159.226.88.23'])
-(u'scott888.blog.bokee.net', [u'60.191.119.184'])
-(u'scott.zgbfw.com', [u'61.164.149.91'])
-(u'scotsuka.com', [u'218.89.2.250'])
-(u'scotsman.b2b.hc360.com', [u'123.103.76.181'])
-(u'scoto.poco.cn', [u'14.18.242.214'])
-(u'scotland.h.baike.com', [u'124.243.228.178'])
-(u'scotland.baike.com', [u'124.243.228.178'])
+213.***.***.46.rev.vo***one.pt ['46.***.***.213']
+me*****on.o****e.net.pg ['203.***.***.114']
+soft********63221110.b***c.net ['126.***.***.110']
+soft********26216022.b***c.net ['126.***.***.22']
+soft********5084068.b***c.net ['126.***.***.68']
+soft********11180040.b***c.net ['126.***.***.40']
+
+
+>>> # Use API-KEY
+>>> zm = zoomeye.ZoomEye(api_key="3******f-b**9-a***c-3**5-28******fd8")
+>>> data = zm.dork_search('apache country:cn')
+>>> zoomeye.show_site_ip(data)
+213.***.***.46.rev.vo***one.pt ['46.***.***.213']
+me*****on.o****e.net.pg ['203.***.***.114']
+soft********63221110.b***c.net ['126.***.***.110']
+soft********26216022.b***c.net ['126.***.***.22']
+soft********5084068.b***c.net ['126.***.***.68']
+soft********11180040.b***c.net ['126.***.***.40']
 ```
 
 ### **How to use ZoomEye API**
@@ -96,8 +123,13 @@ curl -X GET https://api.zoomeye.org/host/search?query="port:21"&page=1&facet=app
 
 If you want more, please access [ZoomEye API References](https://www.zoomeye.org/doc).
 
+### **Change Log**
+| version | date | detail | 
+| -- | -- | -- |
+|1.0.6   |10 Nov 2020   |Add API-KEY usage<br>Change default search resource type to "host"|
 
-**Links**
+
+### **Links**
 
 https://www.zoomeye.org/  
 https://www.zoomeye.org/doc
