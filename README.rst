@@ -235,7 +235,7 @@ supported), and the format is ``field=regexp``, for example, we query in
 
 ::
 
-   $ zoomeye search "telnet" -filter banner=telnet
+   $ zooomeye search "telnet" -filter banner=telnet
    ip         banner                        
    222.*.*.*  \xff\xfb\x01\xff\xfb\x03\xff\xfd\x03TELNET session now in ESTABLISHED state\r\n\r\n
 
@@ -440,7 +440,7 @@ data more conveniently and extract the specified data fields as follows:
   in the above data inconsistency, so cli will use the newer statistical
   results.
 
-.. figure:: images/image-20210111111035187.png?lastModify=1610354602
+.. figure:: https://github.com/knownsec/ZoomEye-python/blob/dev/images/image-20210111111035187.png
    :alt: image-20210111111035187
 
    image-20210111111035187
@@ -488,6 +488,6 @@ partner, you can refer to The way to join the group of Starlink Project.
 
 .. |asciicast| image:: https://asciinema.org/a/qyDaJw9qQc7UjffD04HzMApWa.svg
    :target: https://asciinema.org/a/qyDaJw9qQc7UjffD04HzMApWa
-.. |image-20210111141028072| image:: images/image-20210111141028072.png?lastModify=1610354602
-.. |image-20210111141114558| image:: images/image-20210111141114558.png?lastModify=1610354602
+.. |image-20210111141028072| image:: https://github.com/knownsec/ZoomEye-python/blob/dev/images/image-20210111141028072.png
+.. |image-20210111141114558| image:: https://github.com/knownsec/ZoomEye-python/blob/dev/images/image-20210111141114558.png
 .. |image1| image:: https://github.com/knownsec/404StarLink-Project/raw/master/logo.png
