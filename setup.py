@@ -13,7 +13,7 @@ from setuptools import setup
 
 
 DEPENDENCIES = open('requirements.txt', 'r').read().split('\n')
-README = open('docs/README.md', 'r').read()
+README = open('README.rst', 'r').read()
 
 setup(
     name='zoomeye',
@@ -22,7 +22,7 @@ setup(
     long_description=README,
     long_description_content_type='text/x-rst',
     author='404 Team@Knownsec',
-    url='https://github.com/knownsec/zoomeye-python',
+    url='https://github.com/knownsec/ZoomEye-python',
     packages=['zoomeye'],
     entry_points={'console_scripts': ['zoomeye=zoomeye.cli:main']},
     install_requires=DEPENDENCIES,
