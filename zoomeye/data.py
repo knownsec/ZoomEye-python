@@ -208,7 +208,8 @@ class CliZoomEye:
                 self.facet_data = self.zoomeye.facet_data
                 self.total = self.zoomeye.total
                 self.dork_data.extend(dork_data_list)
-                self.auto_cache(self.zoomeye.raw_data, p)
+                if dork_data_list:
+                    self.auto_cache(self.zoomeye.raw_data, p)
         # return dork, facet,total data
         return self.dork_data[:self.num], self.facet_data, self.total
 

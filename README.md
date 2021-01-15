@@ -309,6 +309,8 @@ The following figure shows the full data statistics results of `telnet`. the res
 ![image-20210111141028072](images/image-20210111141028072.png?lastModify=1610354602)  
 ![image-20210111141114558](images/image-20210111141114558.png?lastModify=1610354602)
 
+**4.Why the quota obtained by info is inconsistent with that on the web?**  
+Due to the limitation of the `ZoomEye API`, it is impossible to obtain the quota after the recharged quota. Therefore, **the recharged quota should be subject to the display on the web side**.
 
 ### 0x07 404StarLink Project
 
