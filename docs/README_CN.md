@@ -164,7 +164,7 @@ total: 1
 除此之外，还可以通过 `-filter` 对数据进行筛选，可以对字段按照关键词进行筛选(支持正则表达式)，使用格式为 `field=regexp`，比如我们我们查询在 `banner` 中包含 `telnet` 关键词的数据：
 
 ```
-$ zooomeye search "telnet" -filter banner=telnet
+$ zoomeye search "telnet" -filter banner=telnet
 ip         banner                        
 222.*.*.*  \xff\xfb\x01\xff\xfb\x03\xff\xfd\x03TELNET session now in ESTABLISHED state\r\n\r\n
 
