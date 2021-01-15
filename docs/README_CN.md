@@ -8,11 +8,11 @@
 ### 0x01 安装步骤
 可直接从 `pypi` 进行安装：
 
-	pip3 install zoomeye-python
+	pip3 install zoomeye
 
 也可以通过 `github` 进行安装：
 
-	pip3 install git+https://github.com/knownsec/zoomeye-python.git
+	pip3 install git+https://github.com/knownsec/ZoomEye-python.git
 
 
 ### 0x02 使用cli

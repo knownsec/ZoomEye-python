@@ -7,11 +7,11 @@
 ### 0x01 installation
 It can be installed directly from `pypi`:
 
-	pip3 install zoomeye-python
+	pip3 install zoomeye
 
 or installed from `github`:
 
-	pip3 install git+https://github.com/knownsec/zoomeye-python.git
+	pip3 install git+https://github.com/knownsec/ZoomEye-python.git
 
 
 ### 0x02 how to use cli

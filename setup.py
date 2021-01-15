@@ -16,7 +16,7 @@ DEPENDENCIES = open('requirements.txt', 'r').read().split('\n')
 README = open('docs/README.md', 'r').read()
 
 setup(
-    name='zoomeye-python',
+    name='zoomeye',
     version='2.0.3',
     description='Python library and command-line tool for ZoomEye (https://www.zoomeye.org/doc)',
     long_description=README,
