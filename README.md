@@ -310,7 +310,6 @@ The following figure shows the full data statistics results of `telnet`. the res
 ![image-20210111141114558](images/image-20210111141114558.png?lastModify=1610354602)
 
 
-
 ### 0x07 404StarLink Project
 
 ![](https://github.com/knownsec/404StarLink-Project/raw/master/logo.png)
