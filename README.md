@@ -309,8 +309,9 @@ The following figure shows the full data statistics results of `telnet`. the res
 ![image-20210111141028072](images/image-20210111141028072.png?lastModify=1610354602)  
 ![image-20210111141114558](images/image-20210111141114558.png?lastModify=1610354602)
 
-**4.Why the quota obtained by info is inconsistent with that on the web?**  
-Due to the limitation of the `ZoomEye API`, only the free quota can be displayed, but the recharged quota cannot be obtained. If you want to view all the quotas, please go to <https://www.zoomeye.org/profile/record>
+**4.The quota information obtained by the info command may be inconsistent with the browser side?**  
+The browser side displays the free quota and recharge quota (<https://www.zoomeye.org/profile/record>), but only the free quota information is displayed in `ZoomEye-python`, we will fix it in the subsequent version This question.
+
 ### 0x07 404StarLink Project
 
 ![](https://github.com/knownsec/404StarLink-Project/raw/master/logo.png)

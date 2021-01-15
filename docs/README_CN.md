@@ -310,9 +310,8 @@ soft********11180040.b***c.net ['126.***.***.40']
 ![image-20210111141028072](../images/image-20210111141028072.png?lastModify=1610354602)  
 ![image-20210111141114558](../images/image-20210111141114558.png?lastModify=1610354602)
 
-**4. 为什么 info 获取的配额与 Web 端的不一致？**
-
-由于 `ZoomEye API` 的限制，只能显示获取到免费配额，无法获取到充值的配额，如需查看全部的配额请移步至 <https://www.zoomeye.org/profile/record>
+**4.通过 info 命令获取配额信息可能和浏览器端不一致？**   
+浏览器端显示了免费额度和充值额度(<https://www.zoomeye.org/profile/record>)，而在 `ZoomEye-python` 中仅显示了免费额度的信息，我们将在后续版本修复这一问题。
 
 ### 0x07 404StarLink Project
 
