@@ -163,7 +163,7 @@ total: 1
 in addition, you can also filter the data through `-filter`, you can filter the fields according to keywords (regular expressions are supported), and the format is `field=regexp`, for example, we query in `banner` data containing the `telnet` keyword:
 
 ```
-$ zooomeye search "telnet" -filter banner=telnet
+$ zoomeye search "telnet" -filter banner=telnet
 ip         banner                        
 222.*.*.*  \xff\xfb\x01\xff\xfb\x03\xff\xfd\x03TELNET session now in ESTABLISHED state\r\n\r\n
 
