@@ -1,17 +1,44 @@
-from distutils.core import setup
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-setup(name='zoomeye',
-      version='1.0.6',
-      url="https://www.zoomeye.org/api/doc",
-      description='ZoomEye is a search engine for cyberspace that lets the user find specific network components(ip, services, etc.).',
-      long_description=open('README.md').read(),
-      author='Zoomeye Team',
-      maintainer='Nixawk',
-      author_email='team@zoomeye.org',
-      py_modules=['zoomeye'],
-      license='GPL-2.0',
 
-      install_requires=[
-          'requests',
-      ]
-     )
+"""
+* Filename: setup.py
+* Description:
+* Time: 2020.11.27
+* Author: liuf5
+*/
+"""
+from setuptools import setup
+
+
+DEPENDENCIES = open('requirements.txt', 'r').read().split('\n')
+README = open('docs/README.md', 'r').read()
+
+setup(
+    name='zoomeye',
+    version='2.0.3',
+    description='Python library and command-line tool for ZoomEye (https://www.zoomeye.org/doc)',
+    long_description=README,
+    long_description_content_type='text/x-rst',
+    author='404 Team@Knownsec',
+    url='https://github.com/knownsec/zoomeye-python',
+    packages=['zoomeye'],
+    entry_points={'console_scripts': ['zoomeye=zoomeye.cli:main']},
+    install_requires=DEPENDENCIES,
+    keywords=['security tool', 'zoomeye', 'command tool'],
+    classifiers=[
+        'Development Status :: 5 - Production/Stable',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: MIT License',
+        'Natural Language :: English',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9'
+        'Topic :: Software Development :: Libraries :: Python Modules',
+    ],
+)
