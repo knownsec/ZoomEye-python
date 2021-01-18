@@ -1,6 +1,8 @@
 ZoomEye-python
 --------------
 
+English | `中文文档 <docs/README_CN.md>`_
+
 ``ZoomEye`` is a cyberspace search engine, users can search for
 network devices using a browser https://www.zoomeye.org.
 
@@ -94,7 +96,7 @@ command, as follows:
 
 Search is the core function of ``ZoomEye-python``, which is used through
 the ``search`` command. the ``search`` command needs to specify the
-search keyword (``dork``), let’s perform a simple search below:
+search keyword (``dork``), let's perform a simple search below:
 
 ::
 
@@ -153,7 +155,7 @@ the ``-count`` parameter, as follows:
 ^^^^^^^^^^^^
 
 We can use ``-facet`` and ``-stat`` to perform data statistics, use
-``-facet`` to query the statistics of the dork’s full data (obtained
+``-facet`` to query the statistics of the dork's full data (obtained
 through ``API`` after statistics by ``ZoomEye``), and ``-stat`` You can
 perform statistics on the query result set. The fields supported by the
 two commands include:
