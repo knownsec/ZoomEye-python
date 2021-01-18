@@ -10,7 +10,7 @@ also be integrated into other tools as an ``SDK``. The library allows
 technicians to **search**, **filter**, and **export** ``ZoomEye`` data
 more conveniently.
 
-`中文文档 <https://github.com/knownsec/ZoomEye-python/blob/master/docs/README_CN.md>`_
+`中文文档 <docs/README_CN.md>`_
 
 0x01 installation
 ~~~~~~~~~~~~~~~~~

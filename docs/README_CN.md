@@ -4,7 +4,7 @@
 
 `ZoomEye-python` 是一款基于 `ZoomEye API` 开发的 Python 库，提供了 `ZoomEye` 命令行模式，同时也可以作为 `SDK` 集成到其他工具中。该库可以让技术人员更便捷地**搜索**、**筛选**、**导出** `ZoomEye` 的数据。
 
-[English document](https://github.com/knownsec/ZoomEye-python/blob/master/README.rst)
+[English document](../README.rst)
 
 ### 0x01 安装步骤
 可直接从 `pypi` 进行安装：
