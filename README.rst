@@ -1,7 +1,7 @@
 ZoomEye-python
 --------------
 
-``ZoomEye`` is a network space search engine, users can search for
+``ZoomEye`` is a cyberspace search engine, users can search for
 network devices using a browser https://www.zoomeye.org.
 
 ``ZoomEye-python`` is a Python library developed based on the

@@ -5,8 +5,13 @@
 * Author: liuf5
 */
 """
+from colorama import init
 
 from zoomeye import config, data
+
+# solve the color display error under windows terminal
+init(autoreset=True)
+
 
 facets_filed_table = {
     'app':      'product',
