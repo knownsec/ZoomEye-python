@@ -1,6 +1,6 @@
 ## ZoomEye-python
 
-[English](../README.md) | 中文文档
+[English](../README.rst) | 中文文档
 
 `ZoomEye` 是一款网络空间搜索引擎，用户可以使用浏览器方式 <https://www.zoomeye.org> 搜索网络设备。
 
