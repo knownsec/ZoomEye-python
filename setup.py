@@ -12,8 +12,8 @@
 from setuptools import setup
 
 
-DEPENDENCIES = open('requirements.txt', 'r').read().split('\n')
-README = open('README.rst', 'r').read()
+DEPENDENCIES = open('requirements.txt', 'r', encoding='utf-8').read().split('\n')
+README = open('README.rst', 'r', encoding='utf-8').read()
 
 setup(
     name='zoomeye',
