@@ -277,7 +277,8 @@ for 5 days. when users query the same data set, quotas are not consumed.
 
 0x03 video
 ~~~~~~~~~~
-`ZoomEye-python is demonstrated under Windows, Mac, Linux, FreeBSD <https://weibo.com/tv/show/1034:4597603044884556?from=old_pc_videoshow>`_
+`ZoomEye-python is demonstrated under Windows, Mac, Linux, FreeBSD
+<https://weibo.com/tv/show/1034:4597603044884556?from=old_pc_videoshow>`_
 
 |asciicast|
 
