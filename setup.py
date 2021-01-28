@@ -17,7 +17,7 @@ README = open('README.rst', 'r', encoding='utf-8').read()
 
 setup(
     name='zoomeye',
-    version='2.0.3',
+    version='2.0.3.1',
     description='Python library and command-line tool for ZoomEye (https://www.zoomeye.org/doc)',
     long_description=README,
     long_description_content_type='text/x-rst',

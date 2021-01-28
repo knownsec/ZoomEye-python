@@ -339,8 +339,13 @@ class CliZoomEye:
         """
         # -save default, data format ex:
         # {"total":xxx, "matches":[{...}, {...}, {...}...], "facets":{{...}, {...}...}}
+        
+        # filter special characters in file names
+        name = re.findall(r"[a-zA-Z0-9_\u4e00-\u9fa5]+", self.dork)
+        re_name = '_'.join(name)
+
         if fields == 'all':
-            filename = "{}_{}_{}.json".format(self.dork, self.num, int(time.time()))
+            filename = "{}_{}_{}.json".format(re_name, self.num, int(time.time()))
             data = {
                 'total': self.total,
                 'matches': self.dork_data[:self.num],
@@ -352,7 +357,7 @@ class CliZoomEye:
         # {app:"xxx", "app":"httpd",.....}
         else:
             key, value = self.cli_filter(fields, save=True)
-            filename = "{}_{}_{}.json".format(self.dork, len(value), int(time.time()))
+            filename = "{}_{}_{}.json".format(re_name, len(value), int(time.time()))
             # parser data
             for v in value:
                 dict_save = {}
