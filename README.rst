@@ -1,6 +1,5 @@
 ZoomEye-python
 --------------
-
 English | `中文文档 <docs/README_CN.md>`_
 
 ``ZoomEye`` is a cyberspace search engine, users can search for
@@ -11,6 +10,8 @@ network devices using a browser https://www.zoomeye.org.
 also be integrated into other tools as an ``SDK``. The library allows
 technicians to **search**, **filter**, and **export** ``ZoomEye`` data
 more conveniently.
+
+
 
 0x01 installation
 ~~~~~~~~~~~~~~~~~
@@ -276,6 +277,7 @@ for 5 days. when users query the same data set, quotas are not consumed.
 
 0x03 video
 ~~~~~~~~~~
+`ZoomEye-python is demonstrated under Windows, Mac, Linux, FreeBSD <https://weibo.com/tv/show/1034:4597603044884556?from=old_pc_videoshow>`_
 
 |asciicast|
 
