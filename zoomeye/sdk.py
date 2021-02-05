@@ -102,6 +102,10 @@ class ZoomEye:
         if resp and resp.status_code == 200:
             data = resp.json()
             return data
+        # Request data exceeds the total amount of ZoomEye data,
+        # return all data instead of throwing an exception
+        elif resp.status_code == 403 and 'specified resource' in resp.text:
+            return None
         # if response succeed and status code is not 200 return error format json
         # others error return unknown error
         # mainly users initialized by username and password, access token expires after 12 hours
@@ -138,6 +142,7 @@ class ZoomEye:
         """
 
         result = []
+        self.search_type = resource
         search_api = self.search_api.format(resource)
         if isinstance(facets, (tuple, list)):
             facets = ','.join(facets)
@@ -153,7 +158,6 @@ class ZoomEye:
             self.data_list = matches
             self.facet_data = resp.get("facets")
             self.total = resp.get("total")
-            self.search_type = resource
 
         return result
 
@@ -179,6 +183,7 @@ class ZoomEye:
                         other data are corresponding
         :return: json data
         """
+        self.search_type = resource
         search_api = self.search_api.format(resource)
 
         headers = {
@@ -188,15 +193,14 @@ class ZoomEye:
 
         dork_data = []
         all_data = []
-
         for i in range(page):
             if isinstance(facets, (tuple, list)):
                 facets = ','.join(facets)
 
-            params = {'query': dork, 'page': i, 'facets': facets}
+            params = {'query': dork, 'page': i + 1, 'facets': facets}
             result = self._request(search_api, params=params, headers=headers)
-            self.total = result.get("total")
             if result and "matches" in result:
+                self.total = result.get("total")
                 all_data.append(result)
                 for j in result.get("matches"):
                     # get every piece of data
@@ -204,8 +208,7 @@ class ZoomEye:
                 if facets:
                     # facets field exist, get it.
                     self.facet_data = result.get("facets")
-            else:
-                return result
+
         # dork_data is the processed data and returns a list.
         # nested dictionaries in the list.
         self.data_list = dork_data
@@ -213,7 +216,6 @@ class ZoomEye:
         # since the api is returned by a dictionary,
         # i added it to a list for easy viewing of each piece of data
         self.raw_data = all_data
-        self.search_type = resource
         # return processed data
         return dork_data
 
@@ -240,8 +242,8 @@ class ZoomEye:
         """
         display data based on input fields
         supported fields:
-            host: "app","version","device","ip"","port","hostname","city","city_cn","country","country_cn,"asn","banner"
-            web: "app","headers","keywords","title","ip","site","city","city_cn","country","country_cn"
+            host: "app","version","device","ip"","port","hostname","city","country","asn","banner"
+            web: "app","headers","keywords","title","ip","site","city","country"
         :param keys: str
         :return:
         """

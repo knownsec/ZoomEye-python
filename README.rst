@@ -1,6 +1,5 @@
 ZoomEye-python
 --------------
-
 English | `中文文档 <docs/README_CN.md>`_
 
 ``ZoomEye`` is a cyberspace search engine, users can search for
@@ -11,6 +10,8 @@ network devices using a browser https://www.zoomeye.org.
 also be integrated into other tools as an ``SDK``. The library allows
 technicians to **search**, **filter**, and **export** ``ZoomEye`` data
 more conveniently.
+
+
 
 0x01 installation
 ~~~~~~~~~~~~~~~~~
@@ -266,7 +267,20 @@ the format of line json, as follows:
    the file can be as input, it is parsed and processed again through
    ``cli``, such as ``zoomeye search "xxxxx.json"``.
 
-8.data cache
+8. graphical data
+^^^^^^^^^^^^
+
+The ``-figure`` parameter is a data visualization parameter. This parameter provides two display methods: ``pie (pie chart)`` and ``hist (histogram)``. The data will still be displayed without specifying it. When ``-figure`` is specified , Only graphics will be displayed. The pie chart is as follows:
+
+|image-20210205004653480|
+|image-20210205005016399|
+
+The histogram is as follows:
+
+|image-20210205004806739|
+|image-20210205005117712|
+
+9.data cache
 ^^^^^^^^^^^^
 
 ``ZoomEye-python`` provides a caching in ``cli`` mode, which is located
@@ -276,6 +290,7 @@ for 5 days. when users query the same data set, quotas are not consumed.
 
 0x03 video
 ~~~~~~~~~~
+`ZoomEye-python is demonstrated under Windows, Mac, Linux, FreeBSD <https://weibo.com/tv/show/1034:4597603044884556?from=old_pc_videoshow>`_
 
 |asciicast|
 
@@ -429,7 +444,13 @@ data more conveniently and extract the specified data fields as follows:
   (``~/.config/zoomeye/cache``), and the validity period is 5 days,
   which can greatly save quota.
 
-| **2.Why is there inconsistent data in facet?**
+| **2.How to enter dork with quotes?**
+| When using cli to search, you will encounter dork with quotes, for example: ``"<body style=\"margin:0;padding:0\"> <p align=\"center\"> <iframe src=\ "index.xhtml\""``, when dork contains quotation marks or multiple quotation marks, the outermost layer of dork must be wrapped in quotation marks to indicate a parameter as a whole, otherwise command line parameter parsing will cause problems. Then the correct search method for the following dork should be: ``'"<body style=\"margin:0;padding:0\"> <p align=\"center\"> <iframe src=\"index.xhtml\" "'``.
+
+| |image-20210205131713799|
+| |image-20210205131802799|
+
+| **3.Why is there inconsistent data in facet?**
 | The following figure shows the full data statistics results of
   ``telnet``. the result of the first query is that 20 data query
   requests (including the statistical results) were initiated by cli one
@@ -444,7 +465,7 @@ data more conveniently and extract the specified data fields as follows:
   
 | |image-20210111111035187|
 
-| **3.Why may the total amount of data in ZoomEye-python and the browser
+| **4.Why may the total amount of data in ZoomEye-python and the browser
   search the same dork be different?**
 | ``ZoomEye`` provides two search interfaces: ``/host/search`` and
   ``/web/search``. only ``/host/search`` is used in ``ZoomEye-python``.
@@ -458,7 +479,7 @@ data more conveniently and extract the specified data fields as follows:
 | |image-20210111141028072|
 | |image-20210111141114558|
 
-| **4.The quota information obtained by the info command may be
+| **5.The quota information obtained by the info command may be
   inconsistent with the browser side?**
 | The browser side displays the free quota and recharge quota
   (https://www.zoomeye.org/profile/record), but only the free quota
@@ -490,4 +511,10 @@ partner, you can refer to The way to join the group of Starlink Project.
 .. |image-20210111111035187| image:: https://raw.githubusercontent.com/knownsec/ZoomEye-python/master/images/image-20210111111035187.png
 .. |image-20210111141028072| image:: https://raw.githubusercontent.com/knownsec/ZoomEye-python/master/images/image-20210111141028072.png
 .. |image-20210111141114558| image:: https://raw.githubusercontent.com/knownsec/ZoomEye-python/master/images/image-20210111141114558.png
+.. |image-20210205004653480| image:: https://raw.githubusercontent.com/knownsec/ZoomEye-python/master/images/image-20210205004653480.png
+.. |image-20210205005016399| image:: https://raw.githubusercontent.com/knownsec/ZoomEye-python/master/images/image-20210205005016399.png
+.. |image-20210205004806739| image:: https://raw.githubusercontent.com/knownsec/ZoomEye-python/master/images/image-20210205004806739.png
+.. |image-20210205005117712| image:: https://raw.githubusercontent.com/knownsec/ZoomEye-python/master/images/image-20210205005117712.png
+.. |image-20210205131713799| image:: https://raw.githubusercontent.com/knownsec/ZoomEye-python/master/images/image-20210205131713799.png
+.. |image-20210205131802799| image:: https://raw.githubusercontent.com/knownsec/ZoomEye-python/master/images/image-20210205131802799.png
 .. |image1| image:: https://github.com/knownsec/404StarLink-Project/raw/master/logo.png

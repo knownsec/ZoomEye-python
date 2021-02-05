@@ -108,6 +108,12 @@ def main():
         help="The total number of results in ZoomEye database for a search",
         action="store_true"
     )
+    parser_search.add_argument(
+        "-figure",
+        help="Pie chart or bar chart showing data，can only be used under facet and stat",
+        choices=('pie', 'hist'),
+        default=None
+    )
     parser_search.set_defaults(func=core.search)
 
     # initial account configuration related commands

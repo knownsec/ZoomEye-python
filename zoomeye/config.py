@@ -26,3 +26,15 @@ STRING_MAX_LENGTH = 30
 
 # cache file name
 FILE_NAME = "/{}_{}.json"
+
+
+RADIUS = 7
+
+CHARACTER = "# "
+
+BLANK = "  "
+
+COLOR_TABLE = ["\x1b[90m", "\x1b[91m", "\x1b[92m", "\x1b[93m", "\x1b[94m", "\x1b[95m", "\x1b[96m", "\x1b[97m",
+               "\x1b[91m", "\x1b[92m"]
+
+COLOR_RESET = "\x1b[0m"
