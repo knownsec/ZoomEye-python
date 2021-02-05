@@ -267,8 +267,8 @@ the format of line json, as follows:
    the file can be as input, it is parsed and processed again through
    ``cli``, such as ``zoomeye search "xxxxx.json"``.
 
-8. graphical data
-^^^^^^^^^^^^
+8.graphical data
+^^^^^^^^^^^^^^^^
 
 The ``-figure`` parameter is a data visualization parameter. This parameter provides two display methods: ``pie (pie chart)`` and ``hist (histogram)``. The data will still be displayed without specifying it. When ``-figure`` is specified , Only graphics will be displayed. The pie chart is as follows:
 
