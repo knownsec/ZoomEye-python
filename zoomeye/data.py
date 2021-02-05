@@ -389,11 +389,12 @@ class CliZoomEye:
         self.num = len(self.dork_data)
         return self.dork_data, self.facet_data, self.total
 
-    def statistics(self, keys):
+    def statistics(self, keys, figure):
         """
         perform data aggregation on the currently acquired data instead of
         directly returning the result of the data aggregation of the API.
         :param keys: str, user input filter fields
+        :param figure: str, user input filter fields
         {'app': {'Gunicorn': 2, 'nginx': 14, 'Apache httpd': 9, '[unknown]': 3, 'Tornado httpd': 2}, 'port': {443: 29, 8443: 1}}
         :return: None
         """
@@ -421,4 +422,4 @@ class CliZoomEye:
                     count[fields] = count[fields] + 1
             data[key] = count
         # print result for current data aggregation
-        show.print_stat(keys, data)
+        show.print_stat(keys, data, self.num, figure)

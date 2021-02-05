@@ -7,7 +7,7 @@
 """
 from colorama import init
 
-from zoomeye import config, data
+from zoomeye import config, data, plotlib
 
 # solve the color display error under windows terminal
 init(autoreset=True)
@@ -137,51 +137,105 @@ def print_filter(keys, data):
     printf("total: {}".format(total))
 
 
-def print_facets(facets, facet_data):
+def print_facets(facets, facet_data, total, figure):
     """
     used to print data that users need to count
     :param facets: str, statistical data
     :param facet_data:list, all facets data
+    :param total:int, data total
+    :param figure:int, data total
     {"app": [{"name": 'xx', 'count': xxx}{"name": 'xx', 'count': xxx}{"name": 'xx', 'count': xxx}]}
     :return:
     """
+    if not facet_data:
+        return
     # print facet data
-    if facet_data:
-        for facet in facets.split(","):
-            if facets_filed_table.get(facet.strip()) is None:
-                support_fields = ','.join(list(facets_filed_table.keys()))
-                printf("facet command has unsupport fields [{}], support fields has [{}]".format(facet.strip(), support_fields),
-                       color='red')
-                exit(0)
-            printf("{:<35}{:<20}".format(facet, "count"), color="green")
-            f = facets_filed_table.get(facet)
-            for d in facet_data.get(f):
-                name = d.get("name")
-                if len(str(name)) == 0:
-                    name = "[unknown]"
-                printf("{:<35}{:<20}".format(name, d.get("count")))
-    else:
-        pass
+
+    print('-' * 30)
+    printf("ZoomEye total data:{}".format(total))
+    for facet in facets.split(","):
+        names = []
+        counts = []
+        pie_info = []
+        facet_total = {}
+        facet_count = 0
+        print(' {:-^40}'.format(facet + " Top 10"))
+        if facets_filed_table.get(facet.strip()) is None:
+            support_fields = ','.join(list(facets_filed_table.keys()))
+            printf("facet command has unsupport fields [{}], support fields has [{}]".format(facet.strip(),
+                                                                                             support_fields),
+                   color='red')
+            exit(0)
+        if figure is None:
+            printf(" {:<35}{:<20}".format(facet, "count"), color="green")
+        f = facets_filed_table.get(facet)
+        for t in facet_data.get(f):
+            facet_count += t.get('count')
+        facet_total[facet] = facet_count
+
+        for d in facet_data.get(f):
+            name = d.get("name")
+            if len(str(name)) == 0:
+                name = "[unknown]"
+
+            count = d.get("count")
+            # get histogram data
+            names.append(name)
+            counts.append(count)
+            # get pie chart data
+            # three decimal places
+            pie = (name, round(count / facet_total.get(facet), 3))
+            pie_info.append(pie)
+            if figure is None:
+                printf(" {:<35}{:<20}".format(name, count))
+        # pie chart
+        if figure and figure == 'pie':
+            plotlib.show_pie_chart(pie_info)
+        # histogram
+        if figure and figure == 'hist':
+            plotlib.generate_histogram(counts, names, force_ascii=True)
 
 
-def print_stat(keys, stat_data):
+def print_stat(keys, stat_data, num, figure):
     """
     print current data aggregation
-    :param keys:
+    :param keys: str, field
+    :param figure: str, pie or hist
+    :param num: int, local total data
     :param stat_data: {'app': {'Gunicorn': 2, 'nginx': 14, 'Apache httpd': 9, '[unknown]': 3, 'Tornado httpd': 2}, 'port': {443: 29, 8443: 1}}
     :return:
     """
     if not stat_data:
         return
-
+    print('-' * 30)
+    printf("current total data:{}".format(num), color='green')
     for key in keys.split(','):
+        print('{:-^40}'.format(key + " data"))
         # print title
-        printf("{:<35}{:<20}".format(key, "count"), color="green")
+        if figure is None:
+            printf("{:<35}{:<20}".format(key, "count"), color="green")
 
         # sort by the amount of each data
         item = stat_data.get(key)
         sorted_item = sorted(item.items(), key=lambda x: x[1], reverse=True)
-
         # print result
+        if figure is None:
+            for name, count in sorted_item:
+                printf("{:<35}{:<20}".format(name, count))
+
+        names = []
+        counts = []
+        pie_info = []
         for name, count in sorted_item:
-            printf("{:<35}{:<20}".format(name, count))
+            names.append(name)
+            counts.append(count)
+            # get pie chart data
+            # three decimal places
+            pie = (name, round(count/num, 3))
+            pie_info.append(pie)
+        # pie chart
+        if figure and figure == 'pie':
+            plotlib.show_pie_chart(pie_info)
+        # histogram
+        if figure and figure == 'hist':
+            plotlib.generate_histogram(counts, names, force_ascii=True)

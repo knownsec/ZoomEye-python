@@ -30,15 +30,15 @@ def key_init(key):
         return
     # api key save path
     key_file = zoomeye_dir + "/apikey"
+    # display the remaining resources of the current account
+    user_data = zoom.resources_info()
+    show.printf("Role: {}".format(user_data["plan"]))
+    show.printf("Quota: {}".format(user_data["resources"].get("search")))
     # save api key
     file.write_file(key_file, key)
     show.printf("successfully initialized", color="green")
     # change the permission of the configuration file to read-only
     os.chmod(key_file, 0o600)
-    # display the remaining resources of the current account
-    user_data = zoom.resources_info()
-    show.printf("Role: {}".format(user_data["plan"]))
-    show.printf("Quota: {}".format(user_data["resources"].get("search")))
 
 
 def jwt_init(username, password):
@@ -57,14 +57,15 @@ def jwt_init(username, password):
         return
     jwt_file = zoomeye_dir + "/jwt"
     if access_token:
-        file.write_file(jwt_file, access_token)
-        show.printf("successfully initialized", color="green")
-        # change the permission of the configuration file to read-only
-        os.chmod(jwt_file, 0o600)
         # display the remaining resources of the current account
         user_data = zoom.resources_info()
         show.printf("Role: {}".format(user_data["plan"]))
         show.printf("Quota: {}".format(user_data["resources"].get("search")))
+
+        file.write_file(jwt_file, access_token)
+        show.printf("successfully initialized", color="green")
+        # change the permission of the configuration file to read-only
+        os.chmod(jwt_file, 0o600)
     else:
         show.printf("failed initialized!", color="red")
 
@@ -104,6 +105,7 @@ def search(args):
     stat = args.stat
     save = args.save
     count_total = args.count
+    figure = args.figure
 
     cli_zoom = CliZoomEye(dork, num, facet=facet)
     # load local zoomeye export file
@@ -126,10 +128,10 @@ def search(args):
             return
         # when facets is not None print facets data
         if facet:
-            show.print_facets(facet, facet_data)
+            show.print_facets(facet, facet_data, total, figure)
             return
         if stat:
-            cli_zoom.statistics(stat)
+            cli_zoom.statistics(stat, figure)
             return
         # when facets is None print dork data
         if filters is None and facet is None and stat is None:
