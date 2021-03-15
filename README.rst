@@ -218,6 +218,7 @@ by this command include:
    country  show country details
    asn      show as number details
    banner   show details of characteristic response
+   time     show record data time
    *        when this symbol is included, show all field details
 
 Compared to the omitted display by default, the complete data can be
@@ -280,8 +281,102 @@ The histogram is as follows:
 |image-20210205004806739|
 |image-20210205005117712|
 
-9.data cache
-^^^^^^^^^^^^
+9. IP history
+^^^^^^^^^^^^^
+``ZoomEye-python`` provides the function of querying IP historical device data. Use the command ``history [ip]`` to query the historical data of IP devices. The usage is as follows:
+
+::
+
+    $zoomeye history "157.xx.xx.115"
+    id   time               	 port     service   country     raw
+    1    2021-02-28 04:53:00  9981     http      Bahrain     HTTP/1.0 200 OK\r\nDate: Sat, ...
+    2    2021-02-20 15:46:56  8880     http      Bahrain     HTTP/1.0 200 OK\r\nDate: Fri, ...
+    ...
+    Total: xxx
+
+
+By default, five fields are shown to users:
+
+::
+
+    1. time     recorded time
+    2. service  Open service
+    3. port     port
+    4. country  The city where the country is located
+    5. raw      fingerprint information
+
+
+Use ``zoomeye history -h`` to view the parameters provided by ``history``.
+
+::
+
+    $zoomeye history -h
+
+    usage: zoomeye history [-h] [-filter filed=regexp] [-force] ip
+
+    positional arguments:
+      ip                    search historical device IP
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      -filter filed=regexp  filter data and print raw data detail. field:
+                            [time,port,service,country,raw]
+      -force                ignore the local cache and force the data to be
+                            obtained from the API
+
+The following is a demonstration of ``-filter``:
+
+
+::
+
+    $zoomeye history "157.xx.xx.115" -filter "service,port=80"
+    ---------------History IP---------------
+    157.xx.xx.115
+    ----------------------------------------
+    id        service                  port
+    1         http                     8880
+    2         sometimes-rpc24          32780
+    3         http                     9080
+    4         http                     18080
+    5         http                     7180
+    6         http                     8003
+
+
+The `-filter` parameter supports the filtering of the following five fields:
+
+::
+
+    1.time	scan time
+    2.port	port information
+    3.service	open service
+    4.country	show country
+    5.raw       original fingerprint information
+
+
+A display of the ``id`` field is added during the display. ``id`` is the serial number. For the convenience of viewing, it cannot be used as a filtered field.
+
+..
+
+    Note: At present, only the above five fields are allowed to filter.
+
+10.cleanup function
+^^^^^^^^^^^^^^^^^^^^
+Users search for a large amount of data every day, which causes the storage space occupied by the cache folder to gradually increase; if users use ``ZoomEye-python`` on a public server, it may cause their own ``API KEY`` and ``ACCESS TOKEN`` to leak .
+For this reason, ``ZoomEye-python`` provides the clear command ``zoomeye clear``, which can clear the cached data and user configuration. The usage is as follows:
+
+::
+
+    $zoomeye clear -h
+    usage: zoomeye clear [-h] [-setting] [-cache]
+
+    optional arguments:
+      -h, --help  show this help message and exit
+      -setting    clear user api key and access token
+      -cache      clear local cache file
+
+
+11.data cache
+^^^^^^^^^^^^^
 
 ``ZoomEye-python`` provides a caching in ``cli`` mode, which is located
 under ``~/.config/zoomeye/cache`` to save user quota as much as
@@ -511,12 +606,30 @@ partner, you can refer to The way to join the group of Starlink Project.
 .. |asciicast| image:: https://asciinema.org/a/qyDaJw9qQc7UjffD04HzMApWa.svg
    :target: https://asciinema.org/a/qyDaJw9qQc7UjffD04HzMApWa
 .. |image-20210111111035187| image:: https://raw.githubusercontent.com/knownsec/ZoomEye-python/master/images/image-20210111111035187.png
+    :width: 500px
+
 .. |image-20210111141028072| image:: https://raw.githubusercontent.com/knownsec/ZoomEye-python/master/images/image-20210111141028072.png
+    :width: 500px
+
 .. |image-20210111141114558| image:: https://raw.githubusercontent.com/knownsec/ZoomEye-python/master/images/image-20210111141114558.png
+    :width: 500px
+
 .. |image-20210205004653480| image:: https://raw.githubusercontent.com/knownsec/ZoomEye-python/master/images/image-20210205004653480.png
+    :width: 500px
+
 .. |image-20210205005016399| image:: https://raw.githubusercontent.com/knownsec/ZoomEye-python/master/images/image-20210205005016399.png
+    :width: 500px
+
 .. |image-20210205004806739| image:: https://raw.githubusercontent.com/knownsec/ZoomEye-python/master/images/image-20210205004806739.png
+    :width: 500px
+
 .. |image-20210205005117712| image:: https://raw.githubusercontent.com/knownsec/ZoomEye-python/master/images/image-20210205005117712.png
+    :width: 500px
+
 .. |image-20210205131713799| image:: https://raw.githubusercontent.com/knownsec/ZoomEye-python/master/images/image-20210205131713799.png
+    :width: 500px
+
 .. |image-20210205131802799| image:: https://raw.githubusercontent.com/knownsec/ZoomEye-python/master/images/image-20210205131802799.png
+    :width: 500px
+
 .. |image1| image:: https://github.com/knownsec/404StarLink-Project/raw/master/logo.png

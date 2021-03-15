@@ -37,6 +37,7 @@ def show_pie_chart(stat):
     :param stat: list, all data and label
     """
 
+    print()
     if len(stat) > len(config.COLOR_TABLE):
         raise ("max support 10 items")
 
@@ -63,6 +64,7 @@ def show_pie_chart(stat):
         else:
             print(ch)
         count += 1
+    print()
 
 
 def unicode_output():
@@ -126,6 +128,7 @@ def generate_histogram(values, labels=None, force_ascii=False):
     :param force_ascii: bool, unicode or ascii output
     return :None
     """
+    print()
     # max length and bar width
     matrix = get_matrix(values, 36, 1)
 
@@ -160,8 +163,8 @@ def generate_histogram(values, labels=None, force_ascii=False):
         r = trim_zeros(row)
         data.append("".join(chars[item] for item in r))
         out.append(fmt.format(*data))
-    for item in out:
-        print(' ' + item)
+    result = '\n'.join(out) + '\n'
+    print(result)
 
 
 

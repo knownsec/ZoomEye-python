@@ -5,6 +5,7 @@
 * Author: liuf5
 */
 """
+import datetime
 from colorama import init
 
 from zoomeye import config, data, plotlib
@@ -12,15 +13,14 @@ from zoomeye import config, data, plotlib
 # solve the color display error under windows terminal
 init(autoreset=True)
 
-
 facets_filed_table = {
-    'app':      'product',
-    'device':   'device',
-    'service':  'service',
-    'os':       'os',
-    'port':     'port',
-    'country':  'country',
-    'city':     'city'
+    'app': 'product',
+    'device': 'device',
+    'service': 'service',
+    'os': 'os',
+    'port': 'port',
+    'country': 'country',
+    'city': 'city'
 }
 
 
@@ -67,11 +67,11 @@ def printf(s, color="white"):
     :return:
     """
     colors = {
-        "red":      '\033[31m',         # red
-        "green":    '\033[32m',         # green
-        "yellow":   '\033[33m',         # yellow
-        "blue":     '\033[34m',         # blue
-        "white":    '\033[37m',         # white
+        "red": '\033[31m',  # red
+        "green": '\033[32m',  # green
+        "yellow": '\033[33m',  # yellow
+        "blue": '\033[34m',  # blue
+        "white": '\033[37m',  # white
     }
 
     # default color
@@ -152,7 +152,7 @@ def print_facets(facets, facet_data, total, figure):
     # print facet data
 
     print(' ' + '-' * 40)
-    printf(" ZoomEye total data:{}".format(total), color='green')
+    printf("ZoomEye total data:{}".format(total))
     for facet in facets.split(","):
         names = []
         counts = []
@@ -208,12 +208,12 @@ def print_stat(keys, stat_data, num, figure):
     if not stat_data:
         return
     print(' ' + '-' * 40)
-    printf(" current total data:{}".format(num), color='green')
+    printf("current total data:{}".format(num), color='green')
     for key in keys.split(','):
         print(' {:-^40}'.format(key + " data"))
         # print title
         if figure is None:
-            printf(" {:<35}{:<20}".format(key, "count"), color="green")
+            printf("{:<35}{:<20}".format(key, "count"), color="green")
 
         # sort by the amount of each data
         item = stat_data.get(key)
@@ -221,7 +221,7 @@ def print_stat(keys, stat_data, num, figure):
         # print result
         if figure is None:
             for name, count in sorted_item:
-                printf(" {:<35}{:<20}".format(name, count))
+                printf("{:<35}{:<20}".format(name, count))
 
         names = []
         counts = []
@@ -231,7 +231,7 @@ def print_stat(keys, stat_data, num, figure):
             counts.append(count)
             # get pie chart data
             # three decimal places
-            pie = (name, round(count/num, 3))
+            pie = (name, round(count / num, 3))
             pie_info.append(pie)
         # pie chart
         if figure and figure == 'pie':
@@ -239,3 +239,58 @@ def print_stat(keys, stat_data, num, figure):
         # histogram
         if figure and figure == 'hist':
             plotlib.generate_histogram(counts, names, force_ascii=True)
+
+
+def print_history(hist_data):
+    """
+    print default field
+    :param hist_data list, get data from ZoomEye API
+    """
+    id = 0
+    field_list = list(data.fields_tables_history.keys())
+    for hist_item in hist_data:
+        id += 1
+        res = ' {:<10}'.format(id)
+        history_dict = data.ZoomEyeDict(hist_item)
+        for field in field_list:
+            result = history_dict.find(data.fields_tables_history.get(field))
+            # result is None replace [unknown]
+            if result == '':
+                result = '[unknown]'
+            # format time %Y-%m-%dT%H:%M:%S --> %Y-%m-%d %H:%M:%S
+            if field == 'time':
+                utc_time = datetime.datetime.strptime(result, "%Y-%m-%dT%H:%M:%S")
+                result = str(utc_time + datetime.timedelta(hours=8))
+            # show part of the string and encode the string
+            if field == 'raw':
+                result = omit_str(convert_str(result))
+            res += "{:<25}".format(result)
+        print(res)
+
+
+def print_filter_history(fileds, hist_data):
+    """
+    print user filter history data,
+    :param fileds list,user input field
+    :param hist_data dict, from ZoomEye API get data
+    """
+    id = 0
+    for hist_item in hist_data:
+        # calculate the serial number of the data
+        id += 1
+        res = " {:<10}".format(id)
+        history_dict = data.ZoomEyeDict(hist_item)
+        for field in fileds:
+            result = history_dict.find(data.fields_tables_history.get(field))
+            # result is None replace [unknown]
+            if result == '':
+                result = '[unknown]'
+            # format time %Y-%m-%dT%H:%M:%S ---> %Y-%m-%d %H:%M:%S
+            if field == 'time':
+                utc_time = datetime.datetime.strptime(result, "%Y-%m-%dT%H:%M:%S")
+                result = str(utc_time + datetime.timedelta(hours=8))
+            # encode the string
+            if field == 'raw':
+                result = convert_str(result)
+            res += "{:<25}".format(result)
+        print(res)

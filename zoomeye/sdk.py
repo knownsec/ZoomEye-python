@@ -13,26 +13,28 @@ import getpass
 import requests
 
 fields_tables_host = {
-    "ip": "ip",
-    "app": "portinfo.app",
-    "version": "portinfo.version",
-    "device": "portinfo.device",
-    "port": "portinfo.port",
-    "city": "geoinfo.city.names.en",
-    "country": "geoinfo.country.names.en",
-    "asn": "asn",
-    "banner": "portinfo.banner"
+    "ip":       "ip",
+    "app":      "portinfo.app",
+    "version":  "portinfo.version",
+    "device":   "portinfo.device",
+    "port":     "portinfo.port",
+    "city":     "geoinfo.city.names.en",
+    "country":  "geoinfo.country.names.en",
+    "service":  "portinfo.service",
+    "asn":      "asn",
+    "banner":   "portinfo.banner",
+    "time":     "timestamp"
 }
 
 fields_tables_web = {
-    "ip": "ip",
-    "app": "webapp",
-    "headers": "headers",
+    "ip":       "ip",
+    "app":      "webapp",
+    "headers":  "headers",
     "keywords": "keywords",
-    "title": "title",
-    "site": "site",
-    "city": "geoinfo.city.names.en",
-    "country": "geoinfo.country.names.en",
+    "title":    "title",
+    "site":     "site",
+    "city":     "geoinfo.city.names.en",
+    "country":  "geoinfo.country.names.en",
 }
 
 
@@ -277,7 +279,7 @@ class ZoomEye:
         see: https://www.zoomeye.org/doc#history-data
         param: ip
         """
-        result = []
+        result = {}
 
         zoomeye_api = self.history_api.format(ip)
         headers = {'Authorization': 'JWT %s' % self.access_token,

@@ -13,7 +13,9 @@ import re
 import json
 import os
 import time
+import datetime
 import hashlib
+
 
 from zoomeye import config, file
 from zoomeye.sdk import ZoomEye, fields_tables_host
@@ -21,7 +23,6 @@ from zoomeye.sdk import ZoomEyeDict
 from zoomeye import show
 
 zoomeye_dir = os.path.expanduser(config.ZOOMEYE_CONFIG_PATH)
-
 
 stat_host_table = {
     'app':      'portinfo.app',
@@ -31,6 +32,14 @@ stat_host_table = {
     'port':     'portinfo.port',
     'country':  'geoinfo.country.names.en',
     'city':     'geoinfo.city.names.en'
+}
+
+fields_tables_history = {
+    "time":     "timestamp",
+    "port":     "portinfo.port",
+    "service":  "portinfo.service",
+    "country":  "geoinfo.country.names.en",
+    "raw":      "raw_data",
 }
 
 
@@ -62,6 +71,67 @@ def md5_convert(string):
     m = hashlib.md5()
     m.update(string.encode('utf-8'))
     return m.hexdigest()
+
+
+def regexp(keys, field_table, data_list):
+    result = []
+    for key in keys:
+        result = []
+        for da in data_list:
+            zmdict = ZoomEyeDict(da)
+            input_key, input_value = key.split("=")
+            if field_table.get(input_key.strip()) is None:
+                # check filed effectiveness
+                support_fields = ','.join(list(field_table.keys()))
+                show.printf("filter command has unsupport fields [{}], support fields has [{}]"
+                            .format(input_key, support_fields), color='red')
+                exit(0)
+            # the value obtained here is of type int, and the user's input is of type str,
+            # so it needs to be converted.
+            if input_key == "port":
+                input_value = str(input_value)
+            find_value = zmdict.find(field_table.get(input_key.strip()))
+            # get the value through regular matching
+            try:
+                regexp_result = re.search(str(input_value), str(find_value), re.I)
+            except re.error:
+                show.printf('the regular expression you entered is incorrect, please check!', color='red')
+                exit(0)
+            except Exception as e:
+                show.printf(e, color='red')
+                exit(0)
+            # the matched value is neither None nor empty
+            if regexp_result and regexp_result.group(0) != '':
+                result.append(da)
+        # AND operation
+        data_list = result
+    return result
+
+
+def filter_data(keys, field_table, data):
+    """
+    get the data of the corresponding field
+    :param keys: list, user input field
+    :param data: list, zoomeye api data
+    :return: list, ex: [[1,2,3...],[1,2,3...],[1,2,3...]...]
+    """
+    result = []
+    for d in data:
+        item = []
+        zmdict = ZoomEyeDict(d)
+        for key in keys:
+            if field_table.get(key.strip()) is None:
+                support_fields = ','.join(list(field_table.keys()))
+                show.printf("filter command has unsupport fields [{}], support fields has [{}]"
+                            .format(key, support_fields), color='red')
+                exit(0)
+            res = zmdict.find(field_table.get(key.strip()))
+            if key == "time":
+                utc_time = datetime.datetime.strptime(res, "%Y-%m-%dT%H:%M:%S")
+                res = str(utc_time + datetime.timedelta(hours=8))
+            item.append(res)
+        result.append(item)
+    return result
 
 
 class Cache:
@@ -141,10 +211,11 @@ class CliZoomEye:
     By the way, cli mode supports search for "host", but "web" search is not currently supported
     """
 
-    def __init__(self, dork, num, facet=None):
+    def __init__(self, dork, num, facet=None, force=False):
         self.dork = dork
         self.num = num
         self.facet = facet
+        self.force = force
 
         self.dork_data = []
         self.facet_data = None
@@ -183,11 +254,10 @@ class CliZoomEye:
         """
 
         page = self.handle_page()
-
         for p in range(page):
             cache = Cache(self.dork, page=p)
             # get data from cache file
-            if cache.check():
+            if cache.check() and self.force is False:
                 # return dork, facet, total data
                 dork_data_list, self.facet_data, self.total = cache.load()
                 self.dork_data.extend(dork_data_list)
@@ -213,28 +283,6 @@ class CliZoomEye:
         # return dork, facet,total data
         return self.dork_data[:self.num], self.facet_data, self.total
 
-    def filter_data(self, keys, data):
-        """
-        get the data of the corresponding field
-        :param keys: list, user input field
-        :param data: list, zoomeye api data
-        :return: list, ex: [[1,2,3...],[1,2,3...],[1,2,3...]...]
-        """
-        result = []
-        for d in data:
-            item = []
-            zmdict = ZoomEyeDict(d)
-            for key in keys:
-                if fields_tables_host.get(key.strip()) is None:
-                    support_fields = ','.join(list(fields_tables_host.keys()))
-                    show.printf("filter command has unsupport fields [{}], support fields has [{}]"
-                                .format(key, support_fields), color='red')
-                    exit(0)
-                res = zmdict.find(fields_tables_host.get(key.strip()))
-                item.append(res)
-            result.append(item)
-        return result
-
     def regexp_data(self, keys):
         """
         filter based on fields entered by the user
@@ -247,37 +295,7 @@ class CliZoomEye:
         self.zoomeye.data_list = self.dork_data[:self.num]
 
         data_list = self.zoomeye.data_list
-        for key in keys:
-            result = []
-            for da in data_list:
-                zmdict = ZoomEyeDict(da)
-                input_key, input_value = key.split("=")
-                if fields_tables_host.get(input_key.strip()) is None:
-                    # check filed effectiveness
-                    support_fields = ','.join(list(fields_tables_host.keys()))
-                    show.printf("filter command has unsupport fields [{}], support fields has [{}]"
-                                .format(input_key, support_fields), color='red')
-                    exit(0)
-                # the value obtained here is of type int, and the user's input is of type str,
-                # so it needs to be converted.
-                if input_key == "port":
-                    input_value = str(input_value)
-                find_value = zmdict.find(fields_tables_host.get(input_key.strip()))
-                # get the value through regular matching
-                try:
-                    regexp_result = re.search(str(input_value), str(find_value), re.I)
-                except re.error:
-                    show.printf('the regular expression you entered is incorrect, please check!', color='red')
-                    exit(0)
-                except Exception as e:
-                    show.printf(e, color='red')
-                    exit(0)
-                # the matched value is neither None nor empty
-                if regexp_result and regexp_result.group(0) != '':
-                    result.append(da)
-            # AND operation
-            data_list = result
-        return result
+        return regexp(keys, fields_tables_host, data_list)
 
     def cli_filter(self, keys, save=False):
         """
@@ -324,7 +342,7 @@ class CliZoomEye:
         else:
             equal_data = self.dork_data[:self.num]
         # get result
-        result = self.filter_data(not_equal, equal_data)
+        result = filter_data(not_equal, fields_tables_host, equal_data)
         equal = ','.join(not_equal)
         if save:
             return equal, result
@@ -339,7 +357,7 @@ class CliZoomEye:
         """
         # -save default, data format ex:
         # {"total":xxx, "matches":[{...}, {...}, {...}...], "facets":{{...}, {...}...}}
-        
+
         # filter special characters in file names
         name = re.findall(r"[a-zA-Z0-9_\u4e00-\u9fa5]+", self.dork)
         re_name = '_'.join(name)
@@ -423,3 +441,135 @@ class CliZoomEye:
             data[key] = count
         # print result for current data aggregation
         show.print_stat(keys, data, self.num, figure)
+
+
+class HistoryDevice:
+    """
+    obtain the user's identity information and determine whether to use the IP history search function
+    """
+    def __init__(self, ip, force):
+        self.ip = ip
+        self.force = force
+        self.cache_path = os.path.expanduser(config.ZOOMEYE_CACHE_PATH) + "/" + self.ip
+
+    def cache_data(self, history_data):
+        """
+        save ip history data to local
+        :param history_data: dict, ip history data
+        """
+        try:
+            # write data
+            # if file path not exists
+            file.write_file(self.cache_path, json.dumps(history_data))
+        except FileNotFoundError:
+            # create fold
+            # retry write to local file
+            os.makedirs(os.path.expanduser(config.ZOOMEYE_CACHE_PATH))
+            file.write_file(self.cache_path, json.dumps(history_data))
+        except Exception as e:
+            show.printf("unknown error: {}".format(e))
+            exit(0)
+
+    def get_data_from_cache(self):
+        """
+        get data from local file
+        """
+        # cache file exists
+        if os.path.exists(self.cache_path):
+            # file exists check expired time
+            # expired time five day
+            create_time = os.path.getatime(self.cache_path)
+            if int(time.time()) - int(create_time) > config.EXPIRED_TIME:
+                # over expired time remove file
+                os.remove(self.cache_path)
+                return None
+            # read local file
+            history_data = file.read_file(self.cache_path)
+            return history_data
+        # cache file not exists
+        else:
+            return None
+
+    def get_data(self):
+        """
+        get user level and IP historical data
+        """
+        normal_user = ['user', 'developer']
+        api_key, access_token = file.get_auth_key()
+        zm = ZoomEye(api_key=api_key, access_token=access_token)
+        role = zm.resources_info()
+        # permission restrictions
+        if role["plan"] in normal_user:
+            show.printf("this function is only open to advanced users and VIP users.", color='red')
+            exit(0)
+        # the user chooses to force data from the API
+        if self.force:
+            history_data = zm.history_ip(self.ip)
+        else:
+            # from local cache get data
+            history_data = json.loads(self.get_data_from_cache())
+            # local cache not exists from API get data
+            if history_data is None:
+                history_data = zm.history_ip(self.ip)
+        # cache data
+        self.cache_data(history_data)
+        return history_data
+
+    def show_fields(self):
+        """
+        print some field in terminal
+        """
+        data = self.get_data()
+        if not data:
+            return
+        res = ' {:<10}'.format('id')
+        for item in list(fields_tables_history.keys()):
+            res += "{:<25}".format(item)
+
+        # print title and data
+        show.printf(res, color="green")
+        show.print_history(data.get('data'))
+        print()
+        show.printf("Total:{}".format(data.get("count")))
+
+    def filter_fields(self, fields):
+        """
+        filter historical IP data
+        :param fields: list, user input filter fields
+        """
+        has_equal = []
+        not_equal = []
+
+        data = self.get_data()
+        if not data:
+            return
+        # resolve specific filter items
+        for field_item in fields:
+            field_split = field_item.split('=')
+            if len(field_split) == 2:
+                has_equal.append(field_item)
+                not_equal.append(field_split[0])
+            if len(field_split) == 1:
+                not_equal.append(field_item)
+        # match filters that contain specific data
+        if len(has_equal) != 0:
+            result_data = regexp(has_equal, fields_tables_history, data.get('data'))
+        else:
+            result_data = data.get('data')
+        title = ' {:<10}'.format('id')
+        for item in not_equal:
+            title += '{:<25}'.format(item)
+        # check user input filed is or not support
+        for item in not_equal:
+            if fields_tables_history.get(item.strip()) is None:
+                support_fields = ','.join(list(fields_tables_history.keys()))
+                show.printf(
+                    "filter command has unsupport fields [{}], support fields has [{}]".format(item, support_fields),
+                    color='red')
+                exit(0)
+        # print title and information
+        print(" {:-^40}".format("History IP"))
+        print(" " + self.ip)
+        print(' {:-^40}'.format("-"))
+        show.printf(title, color='green')
+        show.print_filter_history(not_equal, result_data)
