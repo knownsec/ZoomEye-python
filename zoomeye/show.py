@@ -14,13 +14,13 @@ from zoomeye import config, data, plotlib
 init(autoreset=True)
 
 facets_filed_table = {
-    'app': 'product',
-    'device': 'device',
-    'service': 'service',
-    'os': 'os',
-    'port': 'port',
-    'country': 'country',
-    'city': 'city'
+    'app':      'product',
+    'device':   'device',
+    'service':  'service',
+    'os':       'os',
+    'port':     'port',
+    'country':  'country',
+    'city':     'city'
 }
 
 
@@ -67,11 +67,11 @@ def printf(s, color="white"):
     :return:
     """
     colors = {
-        "red": '\033[31m',  # red
-        "green": '\033[32m',  # green
-        "yellow": '\033[33m',  # yellow
-        "blue": '\033[34m',  # blue
-        "white": '\033[37m',  # white
+        "red":      '\033[31m',  # red
+        "green":    '\033[32m',  # green
+        "yellow":   '\033[33m',  # yellow
+        "blue":     '\033[34m',  # blue
+        "white":    '\033[37m',  # white
     }
 
     # default color
@@ -152,7 +152,7 @@ def print_facets(facets, facet_data, total, figure):
     # print facet data
 
     print(' ' + '-' * 40)
-    printf("ZoomEye total data:{}".format(total))
+    printf(" ZoomEye total data:{}".format(total))
     for facet in facets.split(","):
         names = []
         counts = []
@@ -208,12 +208,12 @@ def print_stat(keys, stat_data, num, figure):
     if not stat_data:
         return
     print(' ' + '-' * 40)
-    printf("current total data:{}".format(num), color='green')
+    printf(" current total data:{}".format(num), color='green')
     for key in keys.split(','):
         print(' {:-^40}'.format(key + " data"))
         # print title
         if figure is None:
-            printf("{:<35}{:<20}".format(key, "count"), color="green")
+            printf(" {:<35}{:<20}".format(key, "count"), color="green")
 
         # sort by the amount of each data
         item = stat_data.get(key)
@@ -221,7 +221,7 @@ def print_stat(keys, stat_data, num, figure):
         # print result
         if figure is None:
             for name, count in sorted_item:
-                printf("{:<35}{:<20}".format(name, count))
+                printf(" {:<35}{:<20}".format(name, count))
 
         names = []
         counts = []

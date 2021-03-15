@@ -201,6 +201,7 @@ devices:
    Linux telnetd                      3
    Pocket CMD telnetd                 1
 
+
 6.data filter
 ^^^^^^^^^^^^^
 
@@ -245,6 +246,7 @@ supported), and the format is ``field=regexp``, for example, we query in
 
    total: 1
 
+
 7.data export
 ^^^^^^^^^^^^^
 
@@ -268,6 +270,7 @@ the format of line json, as follows:
    the file can be as input, it is parsed and processed again through
    ``cli``, such as ``zoomeye search "xxxxx.json"``.
 
+
 8.graphical data
 ^^^^^^^^^^^^^^^^
 
@@ -281,8 +284,10 @@ The histogram is as follows:
 |image-20210205004806739|
 |image-20210205005117712|
 
+
 9. IP history
 ^^^^^^^^^^^^^
+
 ``ZoomEye-python`` provides the function of querying IP historical device data. Use the command ``history [ip]`` to query the historical data of IP devices. The usage is as follows:
 
 ::
@@ -361,6 +366,7 @@ A display of the ``id`` field is added during the display. ``id`` is the serial 
 
 10.cleanup function
 ^^^^^^^^^^^^^^^^^^^^
+
 Users search for a large amount of data every day, which causes the storage space occupied by the cache folder to gradually increase; if users use ``ZoomEye-python`` on a public server, it may cause their own ``API KEY`` and ``ACCESS TOKEN`` to leak .
 For this reason, ``ZoomEye-python`` provides the clear command ``zoomeye clear``, which can clear the cached data and user configuration. The usage is as follows:
 
@@ -382,6 +388,7 @@ For this reason, ``ZoomEye-python`` provides the clear command ``zoomeye clear``
 under ``~/.config/zoomeye/cache`` to save user quota as much as
 possible; the data set that the user has queried will be cached locally
 for 5 days. when users query the same data set, quotas are not consumed.
+
 
 0x03 video
 ~~~~~~~~~~
@@ -520,6 +527,7 @@ data more conveniently and extract the specified data fields as follows:
    ``host-search``: app / version / device / ip / port / hostname / city
    / country / asn / banner
 
+
 0x05 contributions
 ~~~~~~~~~~~~~~~~~~
 
@@ -633,3 +641,4 @@ partner, you can refer to The way to join the group of Starlink Project.
     :width: 500px
 
 .. |image1| image:: https://github.com/knownsec/404StarLink-Project/raw/master/logo.png
+
