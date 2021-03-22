@@ -133,13 +133,13 @@ def main():
     parser_init.set_defaults(func=core.init)
 
     # query ip history
-    parser_history = subparsers.add_parser("history", help="query device history")
+    parser_history = subparsers.add_parser("history", help="Query device history")
     parser_history.add_argument("ip", help="search historical device IP", metavar='ip', type=str)
     parser_history.add_argument(
         "-filter",
         help=("""
             filter data and print raw data detail.
-            field: [time,port,service,country,raw]
+            field: [time,port,service,country,raw,*]
         """),
         metavar='filed=regexp',
         type=str,
@@ -154,9 +154,16 @@ def main():
         ),
         action="store_true"
     )
+    parser_history.add_argument(
+        '-num',
+        help='The number of search results that should be returned',
+        type=int,
+        default=None,
+        metavar='value'
+    )
     parser_history.set_defaults(func=core.ip_history)
 
-    parser_clear = subparsers.add_parser("clear", help="manually clear the cache and user information")
+    parser_clear = subparsers.add_parser("clear", help="Manually clear the cache and user information")
     parser_clear.add_argument(
         "-setting",
         help="clear user api key and access token",

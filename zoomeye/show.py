@@ -84,7 +84,6 @@ def print_data(data_list):
     display the dork data searched by the user on the terminal,
     if facet is specified, it will also be displayed
     :param data_list: dork data , list
-    :param facet_data: facet data, list
     :return:
     """
     total = 0
@@ -241,31 +240,36 @@ def print_stat(keys, stat_data, num, figure):
             plotlib.generate_histogram(counts, names, force_ascii=True)
 
 
-def print_history(hist_data):
+def print_host_data(host_data):
     """
-    print default field
-    :param hist_data list, get data from ZoomEye API
+    :param host_data, list,
     """
-    id = 0
-    field_list = list(data.fields_tables_history.keys())
-    for hist_item in hist_data:
-        id += 1
-        res = ' {:<10}'.format(id)
-        history_dict = data.ZoomEyeDict(hist_item)
-        for field in field_list:
-            result = history_dict.find(data.fields_tables_history.get(field))
-            # result is None replace [unknown]
-            if result == '':
-                result = '[unknown]'
-            # format time %Y-%m-%dT%H:%M:%S --> %Y-%m-%d %H:%M:%S
-            if field == 'time':
-                utc_time = datetime.datetime.strptime(result, "%Y-%m-%dT%H:%M:%S")
-                result = str(utc_time + datetime.timedelta(hours=8))
-            # show part of the string and encode the string
-            if field == 'raw':
-                result = omit_str(convert_str(result))
-            res += "{:<25}".format(result)
-        print(res)
+    # parser hostname,country,city... information
+    first_item = host_data[0]
+    all_data, port_count = data.filter_history_data(data.fields_tables_history_host.keys(), host_data)
+    printf(first_item.get('ip'))
+    dict_first_item = data.ZoomEyeDict(first_item)
+    # print title
+    for dict_item in data.tables_history_info.keys():
+        result = dict_first_item.find(data.tables_history_info.get(dict_item))
+        if result == "" or result is None or result == "Unknown":
+            result = "[unknown]"
+        printf("{:<30}{}".format(dict_item.capitalize() + ":", result))
+    printf("{:30}{}".format("Number of open ports:", len(port_count)))
+    printf("{:30}{}".format("Number of historical probes:", len(host_data)))
+    printf('')
+    printf("{:<27}{:<27}{:<27}{:<27}".format("timestamp", "port/service", "app", "raw_data"), color='green')
+    # print detail and process port/service
+    for data_item in all_data:
+        content = ''
+        for item_item in data_item:
+            if data_item.index(item_item) == 1:
+                res = item_item
+                continue
+            if data_item.index(item_item) == 2:
+                item_item = "{}/{}".format(res, item_item)
+            content += "{:<27}".format(item_item)
+        printf(content)
 
 
 def print_filter_history(fileds, hist_data):
@@ -274,23 +278,26 @@ def print_filter_history(fileds, hist_data):
     :param fileds list,user input field
     :param hist_data dict, from ZoomEye API get data
     """
-    id = 0
-    for hist_item in hist_data:
-        # calculate the serial number of the data
-        id += 1
-        res = " {:<10}".format(id)
-        history_dict = data.ZoomEyeDict(hist_item)
-        for field in fileds:
-            result = history_dict.find(data.fields_tables_history.get(field))
-            # result is None replace [unknown]
-            if result == '':
-                result = '[unknown]'
-            # format time %Y-%m-%dT%H:%M:%S ---> %Y-%m-%d %H:%M:%S
-            if field == 'time':
-                utc_time = datetime.datetime.strptime(result, "%Y-%m-%dT%H:%M:%S")
-                result = str(utc_time + datetime.timedelta(hours=8))
-            # encode the string
-            if field == 'raw':
-                result = convert_str(result)
-            res += "{:<25}".format(result)
-        print(res)
+    filter_title = ''
+    first_item = hist_data[0]
+    all_data, port_count = data.filter_history_data(fileds, hist_data)
+    printf(first_item.get('ip'))
+    dict_first_item = data.ZoomEyeDict(first_item)
+    for dict_item in data.tables_history_info.keys():
+        result = dict_first_item.find(data.tables_history_info.get(dict_item))
+        if result == "" or result is None or result == "Unknown":
+            result = "[unknown]"
+        printf("{:<30}{}".format(dict_item.capitalize() + ":", result))
+    printf("{:30}{}".format("Number of open ports:", len(port_count)))
+    printf("{:30}{}".format("Number of historical probes:", len(hist_data)))
+    printf('')
+    # print title
+    for item in fileds:
+        filter_title += "{:<27}".format(item)
+    printf(filter_title, color='green')
+    # print data
+    for data_item in all_data:
+        content = ""
+        for item_item in data_item:
+            content += "{:<27}".format(item_item)
+        printf(content)

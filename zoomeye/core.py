@@ -169,6 +169,7 @@ def ip_history(args):
     ip = args.ip
     filters = args.filter
     force = args.force
+    number = args.num
     # determine whether the input is an IP address by regular
     compile_ip = re.compile('^(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|[1-9])\.(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|\d)\.'
                              '(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|\d)\.(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|\d)$')
@@ -177,7 +178,7 @@ def ip_history(args):
         show.printf("[{}] it is not an IP address, please check!".format(ip), color='red')
         return
 
-    zm = HistoryDevice(ip, force)
+    zm = HistoryDevice(ip, force, number)
     # user input filter field
     if filters:
         filter_list = filters.split(',')

@@ -21,16 +21,18 @@
 
 ```
 $ zoomeye -h
-usage: cli.py [-h] {info,search,init} ...
+usage: zoomeye [-h] {info,search,init,history,clear} ...
 
 positional arguments:
-  {info,search,init}
-    info              Show ZoomEye account info
-    search            Search the ZoomEye database
-    init              Initialize the token for ZoomEye-python
+  {info,search,init,history,clear}
+    info                Show ZoomEye account info
+    search              Search the ZoomEye database
+    init                Initialize the token for ZoomEye-python
+    history             Query device history
+    clear               Manually clear the cache and user information
 
 optional arguments:
-  -h, --help          show this help message and exit
+  -h, --help            show this help message and exit
 ```
 
 #### 1.初始化token
@@ -209,12 +211,18 @@ $ cat telnet_1_1610446755.json
 `ZoomEye-python` 提供了 IP 历史设备数据查询功能，使用命令 `history [ip]` 便能查询 IP 设备历史数据，使用方式如下：
 
 ```
-$zoomeye history "157.xx.xx.115"
- id   time               	 port     service   country     raw                      
- 1    2021-02-28 04:53:00  9981     http      Bahrain     HTTP/1.0 200 OK\r\nDate: Sat, ...
- 2    2021-02-20 15:46:56  8880     http      Bahrain     HTTP/1.0 200 OK\r\nDate: Fri, ...
- ...
- Total: xxx
+$zoomeye history "207.xx.xx.13" -num 1
+207.xx.xx.13
+Hostnames:                    [unknown]
+Country:                      United States
+City:                         Lake Charles
+Organization:                 fulair.com
+Lastupdated:                  2021-02-18T03:44:06
+Number of open ports:         1
+Number of historical probes:  1
+
+timestamp                  port/service               app                        raw_data                   
+2021-02-18 03:44:06        80/http                    Apache httpd               HTTP/1.0 301 Moved Permanently...
 ```
 
 在默认情况下向用户较为重要的六个字段：
@@ -223,7 +231,7 @@ $zoomeye history "157.xx.xx.115"
 1. time		记录的时间
 2. service	开放的服务
 3. port		端口
-4. country	所在的城市
+4. app  	Web 应用
 5. raw		原始的指纹信息 
 ```
 
@@ -240,7 +248,7 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   -filter filed=regexp  filter data and print raw data detail. field:
-                        [time,port,service,country,raw]
+                        [time,port,service,app,raw]
   -force                ignore the local cache and force the data to be
                         obtained from the API
 ```
@@ -248,32 +256,37 @@ optional arguments:
 下面对 `-filter` 进行演示：
 
 ```
-$zoomeye history "157.xx.xx.115" -filter "service,port=80"
- ---------------History IP---------------
- 157.xx.xx.115
- ----------------------------------------
- id        service                  port                     
- 1         http                     8880                     
- 2         sometimes-rpc24          32780                    
- 3         http                     9080                     
- 4         http                     18080                    
- 5         http                     7180                     
- 6         http                     8003                 
+$zoomeye history "207.xx.xx.13" -filter "time=^2019-08,port,service"
+207.xx.xx.13
+Hostnames:                    [unknown]
+Country:                      United States
+City:                         Lake Charles
+Organization:                 fulair.com
+Lastupdated:                  2019-08-16T10:53:46
+Number of open ports:         3
+Number of historical probes:  3
+
+time                       port                       service                    
+2019-08-16 10:53:46        389                        ldap                       
+2019-08-08 23:32:30        22                         ssh                        
+2019-08-03 01:55:59        80                         http 
 ```
 
 `-filter` 参数支持以下五个字段的筛选：
 
 ```
-1.time			扫描时间
-2.port			端口信息
-3.service		开放的服务
-4.country		所在的城市
-5.raw			原始指纹信息
+1.time      扫描时间
+2.port      端口信息
+3.service   开放的服务
+4.app       Web 应用
+5.raw       原始指纹信息
+6.*         在包含该符号时，显示所有字段详情
 ```
 
 在展示时添加了一个 `id` 字段的展示，`id` 为序号，为了方便查看，并不能作为筛选的字段。
 
-> 注意：目前只开放了上述五个字段的筛选。
+> 注意：目前只开放了上述五个字段的筛选。   
+>      使用 `history` 命令时同样会消耗用户配额，在 `history` 命令中返回多少条数据，用户配额就相应扣除多少。例如：IP "8.8.8.8" 共有 944 条历史记录，查询一次扣除 944 的用户配额。
 
 #### 10.清理功能
 用户每天都会搜索大量的数据，这样就导致缓存文件夹所占的存储空间逐渐增大；如果用户在公共服务器上使用 `ZoomEye-python` 可能会导致自己的 `API KEY` 和 `ACCESS TOKEN` 泄漏。
@@ -400,8 +413,8 @@ soft********11180040.b***c.net ['126.***.***.40']
 ### 0x05 contributions
 [r0oike@knownsec 404](https://github.com/r0oike)  
 [0x7F@knownsec 404](https://github.com/0x7Fancy)  
-[fenix@knownsec 404](https://github.com/13ph03nix)  
 [dawu@knownsec 404](https://github.com/d4wu)  
+[fenix@knownsec 404](https://github.com/13ph03nix)
 
 
 ### 0x06 issue

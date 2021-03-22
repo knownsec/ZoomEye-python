@@ -37,16 +37,18 @@ After successfully installing ``ZoomEye-python``, you can use the
 ::
 
    $ zoomeye -h
-   usage: cli.py [-h] {info,search,init} ...
+   usage: zoomeye [-h] {info,search,init,history,clear} ...
 
-   positional arguments:
-     {info,search,init}
-       info              Show ZoomEye account info
-       search            Search the ZoomEye database
-       init              Initialize the token for ZoomEye-python
+    positional arguments:
+      {info,search,init,history,clear}
+        info                Show ZoomEye account info
+        search              Search the ZoomEye database
+        init                Initialize the token for ZoomEye-python
+        history             Query device history
+        clear               Manually clear the cache and user information
 
-   optional arguments:
-     -h, --help          show this help message and exit
+    optional arguments:
+      -h, --help            show this help message and exit
 
 1.initialize token
 ^^^^^^^^^^^^^^^^^^
@@ -132,6 +134,7 @@ will explain and demonstrate below.
    -stat    the distribution of statistical data result sets
    -filter  query the list of a certain area in the data result set, or filter according to the content
    -save    the result set can be exported according to the filter conditions
+   -force   ignore the local cache and force the data to be obtained from the API
 
 4.number of data
 ^^^^^^^^^^^^^^^^
@@ -276,13 +279,19 @@ the format of line json, as follows:
 
 The ``-figure`` parameter is a data visualization parameter. This parameter provides two display methods: ``pie (pie chart)`` and ``hist (histogram)``. The data will still be displayed without specifying it. When ``-figure`` is specified , Only graphics will be displayed. The pie chart is as follows:
 
-|image-20210205004653480|
-|image-20210205005016399|
+.. figure:: https://raw.githubusercontent.com/knownsec/ZoomEye-python/master/images/image-20210205004653480.png
+    :width: 500px
+
+.. figure:: https://raw.githubusercontent.com/knownsec/ZoomEye-python/master/images/image-20210205005016399.png
+    :width: 500px
 
 The histogram is as follows:
 
-|image-20210205004806739|
-|image-20210205005117712|
+.. figure:: https://raw.githubusercontent.com/knownsec/ZoomEye-python/master/images/image-20210205004806739.png
+    :width: 500px
+
+.. figure:: https://raw.githubusercontent.com/knownsec/ZoomEye-python/master/images/image-20210205005117712.png
+    :width: 500px
 
 
 9. IP history
@@ -292,12 +301,19 @@ The histogram is as follows:
 
 ::
 
-    $zoomeye history "157.xx.xx.115"
-    id   time               	 port     service   country     raw
-    1    2021-02-28 04:53:00  9981     http      Bahrain     HTTP/1.0 200 OK\r\nDate: Sat, ...
-    2    2021-02-20 15:46:56  8880     http      Bahrain     HTTP/1.0 200 OK\r\nDate: Fri, ...
-    ...
-    Total: xxx
+    $zoomeye history "207.xx.xx.13" -num 1
+    207.xx.xx.13
+    Hostnames:                    [unknown]
+    Country:                      United States
+    City:                         Lake Charles
+    Organization:                 fulair.com
+    Lastupdated:                  2021-02-18T03:44:06
+    Number of open ports:         1
+    Number of historical probes:  1
+
+    timestamp                  port/service               app                        raw_data
+    2021-02-18 03:44:06        80/http                    Apache httpd               HTTP/1.0 301 Moved Permanently...
+
 
 
 By default, five fields are shown to users:
@@ -307,7 +323,7 @@ By default, five fields are shown to users:
     1. time     recorded time
     2. service  Open service
     3. port     port
-    4. country  The city where the country is located
+    4. app      web application
     5. raw      fingerprint information
 
 
@@ -325,7 +341,7 @@ Use ``zoomeye history -h`` to view the parameters provided by ``history``.
     optional arguments:
       -h, --help            show this help message and exit
       -filter filed=regexp  filter data and print raw data detail. field:
-                            [time,port,service,country,raw]
+                            [time,port,service,app,raw]
       -force                ignore the local cache and force the data to be
                             obtained from the API
 
@@ -334,28 +350,32 @@ The following is a demonstration of ``-filter``:
 
 ::
 
-    $zoomeye history "157.xx.xx.115" -filter "service,port=80"
-    ---------------History IP---------------
-    157.xx.xx.115
-    ----------------------------------------
-    id        service                  port
-    1         http                     8880
-    2         sometimes-rpc24          32780
-    3         http                     9080
-    4         http                     18080
-    5         http                     7180
-    6         http                     8003
+    $zoomeye history "207.xx.xx.13" -filter "time=^2019-08,port,service"
+    207.xx.xx.13
+    Hostnames:                    [unknown]
+    Country:                      United States
+    City:                         Lake Charles
+    Organization:                 fulair.com
+    Lastupdated:                  2019-08-16T10:53:46
+    Number of open ports:         3
+    Number of historical probes:  3
+
+    time                       port                       service
+    2019-08-16 10:53:46        389                        ldap
+    2019-08-08 23:32:30        22                         ssh
+    2019-08-03 01:55:59        80                         http
 
 
 The `-filter` parameter supports the filtering of the following five fields:
 
 ::
 
-    1.time	scan time
-    2.port	port information
-    3.service	open service
-    4.country	show country
+    1.time      scan time
+    2.port      port information
+    3.service   open service
+    4.app       web application
     5.raw       original fingerprint information
+    *           when this symbol is included, show all field details
 
 
 A display of the ``id`` field is added during the display. ``id`` is the serial number. For the convenience of viewing, it cannot be used as a filtered field.
@@ -363,6 +383,8 @@ A display of the ``id`` field is added during the display. ``id`` is the serial 
 ..
 
     Note: At present, only the above five fields are allowed to filter.
+
+    The user quota will also be consumed when using the ``history`` command. The user quota will be deducted for the number of pieces of data returned in the ``history`` command. For example: IP "8.8.8.8" has a total of ``944`` historical records, and the user quota of ``944`` is deducted for one query.
 
 10.cleanup function
 ^^^^^^^^^^^^^^^^^^^^
@@ -552,8 +574,13 @@ data more conveniently and extract the specified data fields as follows:
 | **2.How to enter dork with quotes?**
 | When using cli to search, you will encounter dork with quotes, for example: ``"<body style=\"margin:0;padding:0\"> <p align=\"center\"> <iframe src=\ "index.xhtml\""``, when dork contains quotation marks or multiple quotation marks, the outermost layer of dork must be wrapped in quotation marks to indicate a parameter as a whole, otherwise command line parameter parsing will cause problems. Then the correct search method for the following dork should be: ``'"<body style=\"margin:0;padding:0\"> <p align=\"center\"> <iframe src=\"index.xhtml\" "'``.
 
-| |image-20210205131713799|
-| |image-20210205131802799|
+.. figure:: https://raw.githubusercontent.com/knownsec/ZoomEye-python/master/images/image-20210205131713799.png
+    :width: 500px
+
+
+.. figure:: https://raw.githubusercontent.com/knownsec/ZoomEye-python/master/images/image-20210205131802799.png
+    :width: 500px
+
 
 | **3.Why is there inconsistent data in facet?**
 | The following figure shows the full data statistics results of
@@ -568,7 +595,8 @@ data more conveniently and extract the specified data fields as follows:
   in the above data inconsistency, so cli will use the newer statistical
   results.
   
-| |image-20210111111035187|
+.. figure:: https://raw.githubusercontent.com/knownsec/ZoomEye-python/master/images/image-20210111111035187.png
+    :width: 500px
 
 | **4.Why may the total amount of data in ZoomEye-python and the browser
   search the same dork be different?**
@@ -581,8 +609,11 @@ data more conveniently and extract the specified data fields as follows:
   consume more user quota; therefore, in the command line tool, only the
   ``/host/search`` interface is used for searching.
 
-| |image-20210111141028072|
-| |image-20210111141114558|
+.. figure:: https://raw.githubusercontent.com/knownsec/ZoomEye-python/master/images/image-20210111141028072.png
+    :width: 500px
+
+.. figure:: https://raw.githubusercontent.com/knownsec/ZoomEye-python/master/images/image-20210111141114558.png
+    :width: 500px
 
 | **5.The quota information obtained by the info command may be
   inconsistent with the browser side?**
@@ -594,7 +625,7 @@ data more conveniently and extract the specified data fields as follows:
 0x07 404StarLink Project
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-|image1|
+.. figure:: https://github.com/knownsec/404StarLink-Project/raw/master/logo.png
 
 ``ZoomEye-python`` is a part of 404Team `Starlink
 Project <https://github.com/knownsec/404StarLink-Project>`__. If you
@@ -613,32 +644,23 @@ partner, you can refer to The way to join the group of Starlink Project.
 
 .. |asciicast| image:: https://asciinema.org/a/qyDaJw9qQc7UjffD04HzMApWa.svg
    :target: https://asciinema.org/a/qyDaJw9qQc7UjffD04HzMApWa
-.. |image-20210111111035187| image:: https://raw.githubusercontent.com/knownsec/ZoomEye-python/master/images/image-20210111111035187.png
-    :width: 500px
 
-.. |image-20210111141028072| image:: https://raw.githubusercontent.com/knownsec/ZoomEye-python/master/images/image-20210111141028072.png
-    :width: 500px
 
-.. |image-20210111141114558| image:: https://raw.githubusercontent.com/knownsec/ZoomEye-python/master/images/image-20210111141114558.png
-    :width: 500px
 
-.. |image-20210205004653480| image:: https://raw.githubusercontent.com/knownsec/ZoomEye-python/master/images/image-20210205004653480.png
-    :width: 500px
 
-.. |image-20210205005016399| image:: https://raw.githubusercontent.com/knownsec/ZoomEye-python/master/images/image-20210205005016399.png
-    :width: 500px
 
-.. |image-20210205004806739| image:: https://raw.githubusercontent.com/knownsec/ZoomEye-python/master/images/image-20210205004806739.png
-    :width: 500px
 
-.. |image-20210205005117712| image:: https://raw.githubusercontent.com/knownsec/ZoomEye-python/master/images/image-20210205005117712.png
-    :width: 500px
 
-.. |image-20210205131713799| image:: https://raw.githubusercontent.com/knownsec/ZoomEye-python/master/images/image-20210205131713799.png
-    :width: 500px
 
-.. |image-20210205131802799| image:: https://raw.githubusercontent.com/knownsec/ZoomEye-python/master/images/image-20210205131802799.png
-    :width: 500px
 
-.. |image1| image:: https://github.com/knownsec/404StarLink-Project/raw/master/logo.png
+
+
+
+
+
+
+
+
+
+
 

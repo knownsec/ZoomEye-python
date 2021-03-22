@@ -34,12 +34,20 @@ stat_host_table = {
     'city':     'geoinfo.city.names.en'
 }
 
-fields_tables_history = {
+fields_tables_history_host = {
     "time":     "timestamp",
     "port":     "portinfo.port",
     "service":  "portinfo.service",
-    "country":  "geoinfo.country.names.en",
+    "app":      "portinfo.product",
     "raw":      "raw_data",
+}
+
+tables_history_info = {
+    "Hostnames":       'portinfo.hostname',
+    "Country":         'geoinfo.country.names.en',
+    "City":            'geoinfo.city.names.en',
+    "Organization":    'geoinfo.organization',
+    "LastUpdated":     'timestamp'
 }
 
 
@@ -74,6 +82,9 @@ def md5_convert(string):
 
 
 def regexp(keys, field_table, data_list):
+    """
+    match the corresponding data through regular
+    """
     result = []
     for key in keys:
         result = []
@@ -108,10 +119,11 @@ def regexp(keys, field_table, data_list):
     return result
 
 
-def filter_data(keys, field_table, data):
+def filter_search_data(keys, field_table, data):
     """
     get the data of the corresponding field
     :param keys: list, user input field
+    :param field_table: dict, fileds
     :param data: list, zoomeye api data
     :return: list, ex: [[1,2,3...],[1,2,3...],[1,2,3...]...]
     """
@@ -132,6 +144,40 @@ def filter_data(keys, field_table, data):
             item.append(res)
         result.append(item)
     return result
+
+
+def filter_history_data(fileds, host_data):
+    """
+    filter historical data based on user input
+    :param fileds: list, user input
+    :param host_data: list, exclude web data
+    return: all_data,list matched data
+    return: port_count, set, count open ports non-repeating
+    """
+    all_data = []
+    port_count = set()
+
+    for host_item in host_data:
+        every_item = []
+        host_dict = ZoomEyeDict(host_item)
+        for filed_item in fileds:
+            host_result = host_dict.find(fields_tables_history_host.get(filed_item.strip()))
+            # count ports
+            if filed_item == 'port':
+                port_count.add(host_result)
+            # format timestamp
+            if filed_item == 'time':
+                utc_time = datetime.datetime.strptime(host_result[:19], "%Y-%m-%dT%H:%M:%S")
+                host_result = str(utc_time)
+            # omit raw data, is too long
+            if filed_item == 'raw':
+                host_result = show.omit_str(show.convert_str(host_result))
+            # replace None --> [unknown]
+            if host_result is None:
+                host_result = "[unknown]"
+            every_item.append(host_result)
+        all_data.append(every_item)
+    return all_data, port_count
 
 
 class Cache:
@@ -342,7 +388,7 @@ class CliZoomEye:
         else:
             equal_data = self.dork_data[:self.num]
         # get result
-        result = filter_data(not_equal, fields_tables_host, equal_data)
+        result = filter_search_data(not_equal, fields_tables_host, equal_data)
         equal = ','.join(not_equal)
         if save:
             return equal, result
@@ -447,9 +493,10 @@ class HistoryDevice:
     """
     obtain the user's identity information and determine whether to use the IP history search function
     """
-    def __init__(self, ip, force):
+    def __init__(self, ip, force, num):
         self.ip = ip
         self.force = force
+        self.num = num
         self.cache_path = os.path.expanduser(config.ZOOMEYE_CACHE_PATH) + "/" + self.ip
 
     def cache_data(self, history_data):
@@ -490,6 +537,15 @@ class HistoryDevice:
         else:
             return None
 
+    def drop_web_data(self):
+        host_data = []
+        not_split_data = self.get_data()
+        for item in not_split_data.get('data'):
+            if "component" in item.keys():
+                continue
+            host_data.append(item)
+        return host_data
+
     def get_data(self):
         """
         get user level and IP historical data
@@ -507,10 +563,12 @@ class HistoryDevice:
             history_data = zm.history_ip(self.ip)
         else:
             # from local cache get data
-            history_data = json.loads(self.get_data_from_cache())
+            history_data_str = self.get_data_from_cache()
             # local cache not exists from API get data
-            if history_data is None:
+            if history_data_str is None:
                 history_data = zm.history_ip(self.ip)
+            else:
+                history_data = json.loads(history_data_str)
         # cache data
         self.cache_data(history_data)
         return history_data
@@ -519,18 +577,10 @@ class HistoryDevice:
         """
         print some field in terminal
         """
-        data = self.get_data()
-        if not data:
-            return
-        res = ' {:<10}'.format('id')
-        for item in list(fields_tables_history.keys()):
-            res += "{:<25}".format(item)
-
-        # print title and data
-        show.printf(res, color="green")
-        show.print_history(data.get('data'))
-        print()
-        show.printf("Total:{}".format(data.get("count")))
+        host_data = self.drop_web_data()
+        if self.num is not None and self.num >= len(host_data):
+            self.num = len(host_data)
+        show.print_host_data(host_data[:self.num])
 
     def filter_fields(self, fields):
         """
@@ -540,7 +590,7 @@ class HistoryDevice:
         has_equal = []
         not_equal = []
 
-        data = self.get_data()
+        data = self.drop_web_data()
         if not data:
             return
         # resolve specific filter items
@@ -550,26 +600,22 @@ class HistoryDevice:
                 has_equal.append(field_item)
                 not_equal.append(field_split[0])
             if len(field_split) == 1:
-                not_equal.append(field_item)
+                if field_item == "*":
+                    not_equal = list(fields_tables_history_host.keys())
+                    continue
+                else:
+                    not_equal.append(field_item)
         # match filters that contain specific data
         if len(has_equal) != 0:
-            result_data = regexp(has_equal, fields_tables_history, data.get('data'))
+            result_data = regexp(has_equal, fields_tables_history_host, data[:self.num])
         else:
-            result_data = data.get('data')
-        title = ' {:<10}'.format('id')
-        for item in not_equal:
-            title += '{:<25}'.format(item)
+            result_data = data[:self.num]
         # check user input filed is or not support
         for item in not_equal:
-            if fields_tables_history.get(item.strip()) is None:
-                support_fields = ','.join(list(fields_tables_history.keys()))
+            if fields_tables_history_host.get(item.strip()) is None:
+                support_fields = ','.join(list(fields_tables_history_host.keys()))
                 show.printf(
                     "filter command has unsupport fields [{}], support fields has [{}]".format(item, support_fields),
                     color='red')
                 exit(0)
-        # print title and information
-        print(" {:-^40}".format("History IP"))
-        print(" " + self.ip)
-        print(' {:-^40}'.format("-"))
-        show.printf(title, color='green')
         show.print_filter_history(not_equal, result_data)
