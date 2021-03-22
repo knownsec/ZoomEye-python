@@ -610,6 +610,9 @@ class HistoryDevice:
             result_data = regexp(has_equal, fields_tables_history_host, data[:self.num])
         else:
             result_data = data[:self.num]
+        # no regexp data
+        if len(result_data) == 0:
+            return
         # check user input filed is or not support
         for item in not_equal:
             if fields_tables_history_host.get(item.strip()) is None:
