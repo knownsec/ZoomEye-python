@@ -321,7 +321,7 @@ By default, five fields are shown to users:
 ::
 
     1. time     recorded time
-    2. service  Open service
+    2. service  open service
     3. port     port
     4. app      web application
     5. raw      fingerprint information
