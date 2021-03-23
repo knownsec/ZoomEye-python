@@ -21,16 +21,18 @@
 
 ```
 $ zoomeye -h
-usage: cli.py [-h] {info,search,init} ...
+usage: zoomeye [-h] {info,search,init,history,clear} ...
 
 positional arguments:
-  {info,search,init}
-    info              Show ZoomEye account info
-    search            Search the ZoomEye database
-    init              Initialize the token for ZoomEye-python
+  {info,search,init,history,clear}
+    info                Show ZoomEye account info
+    search              Search the ZoomEye database
+    init                Initialize the token for ZoomEye-python
+    history             Query device history
+    clear               Manually clear the cache and user information
 
 optional arguments:
-  -h, --help          show this help message and exit
+  -h, --help            show this help message and exit
 ```
 
 #### 1.初始化token
@@ -88,6 +90,7 @@ total: 1
 	-stat    统计数据结果集的分布情况
 	-filter  查询数据结果集中某个字段的详情，或根据内容进行筛选
 	-save    可按照筛选条件将结果集进行导出
+	-force	 忽略本地缓存文件，直接从 ZoomEye 获取数据
 
 #### 4.数据数量
 通过 `-num` 参数可以指定我们搜索和显示的数量，指定的数目即消耗的配额数量。而通过 `-count` 参数可以查询该 `dork` 在 ZoomEye 数据库的总量，如下：
@@ -151,6 +154,7 @@ Pocket CMD telnetd                 1
 	country  显示国家详情
 	asn      显示as number详情
 	banner   显示特征响应报文详情
+	time	 显示数据更新时间
 	*        在包含该符号时，显示所有字段详情
 
 相比较默认情况下的省略显示，所以通过 `-filter` 可以查看完整的数据，如下：
@@ -202,7 +206,104 @@ $ cat telnet_1_1610446755.json
 
 > 注意：仅能在 `-facet` 和 `-stat` 数据聚合的情况使用。
 
-#### 9.缓存机制
+#### 9. IP 历史数据查看
+
+`ZoomEye-python` 提供了 IP 历史设备数据查询功能，使用命令 `history [ip]` 便能查询 IP 设备历史数据，使用方式如下：
+
+```
+$zoomeye history "207.xx.xx.13" -num 1
+207.xx.xx.13
+Hostnames:                    [unknown]
+Country:                      United States
+City:                         Lake Charles
+Organization:                 fulair.com
+Lastupdated:                  2021-02-18T03:44:06
+Number of open ports:         1
+Number of historical probes:  1
+
+timestamp                  port/service               app                        raw_data                   
+2021-02-18 03:44:06        80/http                    Apache httpd               HTTP/1.0 301 Moved Permanently...
+```
+
+在默认情况下向用户较为重要的六个字段：
+
+```
+1. time		记录的时间
+2. service	开放的服务
+3. port		端口
+4. app  	Web 应用
+5. raw		原始的指纹信息 
+```
+
+使用 `zoomeye history -h`  可以查看 `history` 提供的参数。
+
+```
+$zoomeye history -h
+
+usage: zoomeye history [-h] [-filter filed=regexp] [-force] ip
+
+positional arguments:
+  ip                    search historical device IP
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -filter filed=regexp  filter data and print raw data detail. field:
+                        [time,port,service,app,raw]
+  -force                ignore the local cache and force the data to be
+                        obtained from the API
+```
+
+下面对 `-filter` 进行演示：
+
+```
+$zoomeye history "207.xx.xx.13" -filter "time=^2019-08,port,service"
+207.xx.xx.13
+Hostnames:                    [unknown]
+Country:                      United States
+City:                         Lake Charles
+Organization:                 fulair.com
+Lastupdated:                  2019-08-16T10:53:46
+Number of open ports:         3
+Number of historical probes:  3
+
+time                       port                       service                    
+2019-08-16 10:53:46        389                        ldap                       
+2019-08-08 23:32:30        22                         ssh                        
+2019-08-03 01:55:59        80                         http 
+```
+
+`-filter` 参数支持以下五个字段的筛选：
+
+```
+1.time      扫描时间
+2.port      端口信息
+3.service   开放的服务
+4.app       Web 应用
+5.raw       原始指纹信息
+6.*         在包含该符号时，显示所有字段详情
+```
+
+在展示时添加了一个 `id` 字段的展示，`id` 为序号，为了方便查看，并不能作为筛选的字段。
+
+> 注意：目前只开放了上述五个字段的筛选。   
+>      使用 `history` 命令时同样会消耗用户配额，在 `history` 命令中返回多少条数据，用户配额就相应扣除多少。例如：IP "8.8.8.8" 共有 944 条历史记录，查询一次扣除 944 的用户配额。
+
+#### 10.清理功能
+用户每天都会搜索大量的数据，这样就导致缓存文件夹所占的存储空间逐渐增大；如果用户在公共服务器上使用 `ZoomEye-python` 可能会导致自己的 `API KEY` 和 `ACCESS TOKEN` 泄漏。
+为此 `ZoomEye-python` 提供了清理命令 `zoomeye clear`，清理命令可以缓存数据和用户配置进行清空。使用方式如下：
+
+```
+$zoomeye clear -h
+usage: zoomeye clear [-h] [-setting] [-cache]
+
+optional arguments:
+  -h, --help  show this help message and exit
+  -setting    clear user api key and access token
+  -cache      clear local cache file
+```
+
+
+#### 11.缓存机制
 
 `ZoomEye-python` 在 `cli` 模式下提供了缓存机制，位于 `~/.config/zoomeye/cache` 下，尽可能的节约用户配额；用户查询过的数据集将在本地缓存 5 天，当用户查询相同的数据集时，不会消耗配额。
 
@@ -312,8 +413,8 @@ soft********11180040.b***c.net ['126.***.***.40']
 ### 0x05 contributions
 [r0oike@knownsec 404](https://github.com/r0oike)  
 [0x7F@knownsec 404](https://github.com/0x7Fancy)  
-[fenix@knownsec 404](https://github.com/13ph03nix)  
 [dawu@knownsec 404](https://github.com/d4wu)  
+[fenix@knownsec 404](https://github.com/13ph03nix)
 
 
 ### 0x06 issue

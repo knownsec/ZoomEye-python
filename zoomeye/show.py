@@ -5,13 +5,13 @@
 * Author: liuf5
 */
 """
+import datetime
 from colorama import init
 
 from zoomeye import config, data, plotlib
 
 # solve the color display error under windows terminal
 init(autoreset=True)
-
 
 facets_filed_table = {
     'app':      'product',
@@ -67,11 +67,11 @@ def printf(s, color="white"):
     :return:
     """
     colors = {
-        "red":      '\033[31m',         # red
-        "green":    '\033[32m',         # green
-        "yellow":   '\033[33m',         # yellow
-        "blue":     '\033[34m',         # blue
-        "white":    '\033[37m',         # white
+        "red":      '\033[31m',  # red
+        "green":    '\033[32m',  # green
+        "yellow":   '\033[33m',  # yellow
+        "blue":     '\033[34m',  # blue
+        "white":    '\033[37m',  # white
     }
 
     # default color
@@ -84,7 +84,6 @@ def print_data(data_list):
     display the dork data searched by the user on the terminal,
     if facet is specified, it will also be displayed
     :param data_list: dork data , list
-    :param facet_data: facet data, list
     :return:
     """
     total = 0
@@ -152,7 +151,7 @@ def print_facets(facets, facet_data, total, figure):
     # print facet data
 
     print(' ' + '-' * 40)
-    printf(" ZoomEye total data:{}".format(total), color='green')
+    printf(" ZoomEye total data:{}".format(total))
     for facet in facets.split(","):
         names = []
         counts = []
@@ -231,7 +230,7 @@ def print_stat(keys, stat_data, num, figure):
             counts.append(count)
             # get pie chart data
             # three decimal places
-            pie = (name, round(count/num, 3))
+            pie = (name, round(count / num, 3))
             pie_info.append(pie)
         # pie chart
         if figure and figure == 'pie':
@@ -239,3 +238,66 @@ def print_stat(keys, stat_data, num, figure):
         # histogram
         if figure and figure == 'hist':
             plotlib.generate_histogram(counts, names, force_ascii=True)
+
+
+def print_host_data(host_data):
+    """
+    :param host_data, list,
+    """
+    # parser hostname,country,city... information
+    first_item = host_data[0]
+    all_data, port_count = data.filter_history_data(data.fields_tables_history_host.keys(), host_data)
+    printf(first_item.get('ip'))
+    dict_first_item = data.ZoomEyeDict(first_item)
+    # print title
+    for dict_item in data.tables_history_info.keys():
+        result = dict_first_item.find(data.tables_history_info.get(dict_item))
+        if result == "" or result is None or result == "Unknown":
+            result = "[unknown]"
+        printf("{:<30}{}".format(dict_item.capitalize() + ":", result))
+    printf("{:30}{}".format("Number of open ports:", len(port_count)))
+    printf("{:30}{}".format("Number of historical probes:", len(host_data)))
+    printf('')
+    printf("{:<27}{:<27}{:<27}{:<27}".format("timestamp", "port/service", "app", "raw_data"), color='green')
+    # print detail and process port/service
+    for data_item in all_data:
+        content = ''
+        for item_item in data_item:
+            if data_item.index(item_item) == 1:
+                res = item_item
+                continue
+            if data_item.index(item_item) == 2:
+                item_item = "{}/{}".format(res, item_item)
+            content += "{:<27}".format(item_item)
+        printf(content)
+
+
+def print_filter_history(fileds, hist_data):
+    """
+    print user filter history data,
+    :param fileds list,user input field
+    :param hist_data dict, from ZoomEye API get data
+    """
+    filter_title = ''
+    first_item = hist_data[0]
+    all_data, port_count = data.filter_history_data(fileds, hist_data)
+    printf(first_item.get('ip'))
+    dict_first_item = data.ZoomEyeDict(first_item)
+    for dict_item in data.tables_history_info.keys():
+        result = dict_first_item.find(data.tables_history_info.get(dict_item))
+        if result == "" or result is None or result == "Unknown":
+            result = "[unknown]"
+        printf("{:<30}{}".format(dict_item.capitalize() + ":", result))
+    printf("{:30}{}".format("Number of open ports:", len(port_count)))
+    printf("{:30}{}".format("Number of historical probes:", len(hist_data)))
+    printf('')
+    # print title
+    for item in fileds:
+        filter_title += "{:<27}".format(item)
+    printf(filter_title, color='green')
+    # print data
+    for data_item in all_data:
+        content = ""
+        for item_item in data_item:
+            content += "{:<27}".format(item_item)
+        printf(content)

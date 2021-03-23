@@ -114,6 +114,15 @@ def main():
         choices=('pie', 'hist'),
         default=None
     )
+    parser_search.add_argument(
+        "-force",
+        help=(
+            """
+            ignore the local cache and force the data to be obtained from the API
+            """
+        ),
+        action="store_true"
+    )
     parser_search.set_defaults(func=core.search)
 
     # initial account configuration related commands
@@ -122,6 +131,50 @@ def main():
     parser_init.add_argument("-username", help="ZoomEye account username", default=None, metavar='[username]')
     parser_init.add_argument("-password", help="ZoomEye account password", default=None, metavar='[password]')
     parser_init.set_defaults(func=core.init)
+
+    # query ip history
+    parser_history = subparsers.add_parser("history", help="Query device history")
+    parser_history.add_argument("ip", help="search historical device IP", metavar='ip', type=str)
+    parser_history.add_argument(
+        "-filter",
+        help=("""
+            filter data and print raw data detail.
+            field: [time,port,service,country,raw,*]
+        """),
+        metavar='filed=regexp',
+        type=str,
+        default=None
+    )
+    parser_history.add_argument(
+        "-force",
+        help=(
+            """
+            ignore the local cache and force the data to be obtained from the API
+            """
+        ),
+        action="store_true"
+    )
+    parser_history.add_argument(
+        '-num',
+        help='The number of search results that should be returned',
+        type=int,
+        default=None,
+        metavar='value'
+    )
+    parser_history.set_defaults(func=core.ip_history)
+
+    parser_clear = subparsers.add_parser("clear", help="Manually clear the cache and user information")
+    parser_clear.add_argument(
+        "-setting",
+        help="clear user api key and access token",
+        action="store_true"
+    )
+    parser_clear.add_argument(
+        "-cache",
+        help="clear local cache file",
+        action="store_true"
+    )
+    parser_clear.set_defaults(func=core.clear_file)
 
     args = parser.parse_args()
 

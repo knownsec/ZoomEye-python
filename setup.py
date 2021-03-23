@@ -17,12 +17,12 @@ README = open('README.rst', 'r', encoding='utf-8').read()
 
 setup(
     name='zoomeye',
-    version='2.0.4.1',
+    version='2.0.4.2',
     description='Python library and command-line tool for ZoomEye (https://www.zoomeye.org/doc)',
     long_description=README,
     long_description_content_type='text/x-rst',
     author='404 Team@Knownsec',
-    url='https://github.com/knownsec/ZoomEye-python',
+    url='https://github.com/knownsec/zoomeye-python',
     packages=['zoomeye'],
     entry_points={'console_scripts': ['zoomeye=zoomeye.cli:main']},
     install_requires=DEPENDENCIES,
@@ -38,7 +38,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
-        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.9'
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
 )

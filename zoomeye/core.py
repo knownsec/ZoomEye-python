@@ -6,10 +6,11 @@
 */
 """
 
+import re
 import os
 from zoomeye import config, file, show
 from zoomeye.sdk import ZoomEye
-from zoomeye.data import CliZoomEye
+from zoomeye.data import CliZoomEye, HistoryDevice
 
 # save zoomeye config folder
 zoomeye_dir = os.path.expanduser(config.ZOOMEYE_CONFIG_PATH)
@@ -106,8 +107,9 @@ def search(args):
     save = args.save
     count_total = args.count
     figure = args.figure
+    force = args.force
 
-    cli_zoom = CliZoomEye(dork, num, facet=facet)
+    cli_zoom = CliZoomEye(dork, num, facet=facet, force=force)
     # load local zoomeye export file
     if os.path.exists(dork):
         dork_data, facet_data, total = cli_zoom.load()
@@ -155,3 +157,59 @@ def info(args):
         # show in the terminal
         show.printf("Role: {}".format(user_data["plan"]))
         show.printf("Quota: {}".format(user_data["resources"].get("search")))
+
+
+def ip_history(args):
+    """
+    query device history
+    please see: https://www.zoomeye.org/doc#history-ip-search
+    :param args:
+    :return:
+    """
+    ip = args.ip
+    filters = args.filter
+    force = args.force
+    number = args.num
+    # determine whether the input is an IP address by regular
+    compile_ip = re.compile('^(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|[1-9])\.(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|\d)\.'
+                             '(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|\d)\.(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|\d)$')
+    # IP format error，exit program
+    if not compile_ip.match(ip):
+        show.printf("[{}] it is not an IP address, please check!".format(ip), color='red')
+        return
+
+    zm = HistoryDevice(ip, force, number)
+    # user input filter field
+    if filters:
+        filter_list = filters.split(',')
+        zm.filter_fields(filter_list)
+        return
+    # no filter field,
+    # print [timestamp,service,port,country,raw_data] fields
+    zm.show_fields()
+
+
+def clear_file(args):
+    """
+    clear user setting and zoomeye cache data
+    """
+    setting = args.setting
+    cache = args.cache
+    target_dir = None
+    # clear user setting
+    if setting:
+        target_dir = zoomeye_dir
+    # clear local cache file
+    if cache:
+        target_dir = os.path.expanduser(config.ZOOMEYE_CACHE_PATH)
+    # user input error
+    if target_dir is None:
+        show.printf("Please run <zoomeye clear -h> for help!", color='red')
+        return
+    # remove all files under the folder
+    file_list = os.listdir(target_dir)
+    for item in file_list:
+        os.remove(os.path.join(target_dir, item))
+    show.printf("clear complete!", color='green')
+
+
