@@ -11,3 +11,4 @@
 
 __name__ = 'zoomeye'
 __package__ = 'zoomeye'
+__version__ = '2.0.4.2'
