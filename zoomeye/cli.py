@@ -17,6 +17,11 @@ module_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(1, module_path)
 
 from zoomeye import core
+from zoomeye import __version__
+
+
+def get_version():
+    return __version__
 
 
 class ZoomEyeParser(argparse.ArgumentParser):
@@ -37,6 +42,8 @@ def main():
     # zoomeye account info
     parser_info = subparsers.add_parser("info", help="Show ZoomEye account info")
     parser_info.set_defaults(func=core.info)
+
+    parser.add_argument('-v', '--version', action='version', version=get_version(), help='Display version')
 
     # query zoomeye data
     parser_search = subparsers.add_parser(

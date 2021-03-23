@@ -280,7 +280,7 @@ def print_filter_history(fileds, hist_data):
     """
     filter_title = ''
     first_item = hist_data[0]
-    all_data, port_count = data.filter_history_data(fileds, hist_data)
+    all_data, port_count = data.filter_history_data(fileds, hist_data, omit=False)
     printf(first_item.get('ip'))
     dict_first_item = data.ZoomEyeDict(first_item)
     for dict_item in data.tables_history_info.keys():

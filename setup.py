@@ -11,13 +11,15 @@
 """
 from setuptools import setup
 
+from zoomeye import __version__
+
 
 DEPENDENCIES = open('requirements.txt', 'r', encoding='utf-8').read().split('\n')
 README = open('README.rst', 'r', encoding='utf-8').read()
 
 setup(
     name='zoomeye',
-    version='2.0.4.2',
+    version=__version__,
     description='Python library and command-line tool for ZoomEye (https://www.zoomeye.org/doc)',
     long_description=README,
     long_description_content_type='text/x-rst',
@@ -38,7 +40,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
-        'Programming Language :: Python :: 3.9'
+        'Programming Language :: Python :: 3.9',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
 )

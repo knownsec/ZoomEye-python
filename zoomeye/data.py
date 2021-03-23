@@ -146,11 +146,12 @@ def filter_search_data(keys, field_table, data):
     return result
 
 
-def filter_history_data(fileds, host_data):
+def filter_history_data(fileds, host_data, omit=True):
     """
     filter historical data based on user input
     :param fileds: list, user input
     :param host_data: list, exclude web data
+    :param omit: bool, omit string flag
     return: all_data,list matched data
     return: port_count, set, count open ports non-repeating
     """
@@ -171,7 +172,10 @@ def filter_history_data(fileds, host_data):
                 host_result = str(utc_time)
             # omit raw data, is too long
             if filed_item == 'raw':
-                host_result = show.omit_str(show.convert_str(host_result))
+                if omit:
+                    host_result = show.omit_str(show.convert_str(host_result))
+                else:
+                    host_result = show.convert_str(host_result)
             # replace None --> [unknown]
             if host_result is None:
                 host_result = "[unknown]"
