@@ -21,7 +21,7 @@ from zoomeye import __version__
 
 
 def get_version():
-    return __version__
+    return "ZoomEye-python version number {}".format(__version__)
 
 
 class ZoomEyeParser(argparse.ArgumentParser):
@@ -42,8 +42,13 @@ def main():
     # zoomeye account info
     parser_info = subparsers.add_parser("info", help="Show ZoomEye account info")
     parser_info.set_defaults(func=core.info)
-
-    parser.add_argument('-v', '--version', action='version', version=get_version(), help='Display version')
+    # show version number
+    parser.add_argument(
+        '-v', '--version',
+        action='version',
+        version=get_version(),
+        help="Show program's version number and exit"
+    )
 
     # query zoomeye data
     parser_search = subparsers.add_parser(
