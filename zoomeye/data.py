@@ -396,7 +396,7 @@ class CliZoomEye:
         equal = ','.join(not_equal)
         if save:
             return equal, result
-        show.print_filter(equal, result[:self.num])
+        show.print_filter(equal, result[:self.num], has_equal)
 
     def save(self, fields):
         """

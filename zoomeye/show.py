@@ -5,7 +5,7 @@
 * Author: liuf5
 */
 """
-import datetime
+import re
 from colorama import init
 
 from zoomeye import config, data, plotlib
@@ -110,11 +110,12 @@ def print_data(data_list):
     printf("total: {}".format(total))
 
 
-def print_filter(keys, data):
+def print_filter(keys, data_list, condition):
     """
     used to display user filtered data on the terminal
     :param keys: user input key, is str
-    :param data: filter data ,is list
+    :param data_list: filter data ,is list
+    :param condition: list,
     :return:
     """
     total = 0
@@ -125,10 +126,19 @@ def print_filter(keys, data):
     printf("{}".format(title), color="green")
 
     # print data
-    for i in data:
+    for i in data_list:
         items = ""
         for j in i:
             j_hex = convert_str(str(j))
+            # match
+            if condition:
+                for item in condition:
+                    k, v = item.split('=')
+                    result_re = re.search(v, j_hex, re.I | re.M)
+                    if result_re:
+                        # match to content highlight
+                        color_content = "\033[31m{}\033[0m".format(result_re.group())
+                        j_hex = j_hex.replace(result_re.group(), color_content)
             items += "{:<30}".format(j_hex)
         total += 1
         printf(items)
