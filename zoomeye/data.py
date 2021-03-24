@@ -342,7 +342,7 @@ class CliZoomEye:
         """
         keys = keys.split(",")
         result = []
-        self.zoomeye.data_list = self.dork_data[:self.num]
+        self.zoomeye.data_list = self.dork_data
 
         data_list = self.zoomeye.data_list
         return regexp(keys, fields_tables_host, data_list)
@@ -390,13 +390,13 @@ class CliZoomEye:
         # the filter condition is app, port
         # ex: ip,port,app
         else:
-            equal_data = self.dork_data[:self.num]
+            equal_data = self.dork_data
         # get result
         result = filter_search_data(not_equal, fields_tables_host, equal_data)
         equal = ','.join(not_equal)
         if save:
             return equal, result
-        show.print_filter(equal, result)
+        show.print_filter(equal, result[:self.num])
 
     def save(self, fields):
         """
@@ -611,9 +611,9 @@ class HistoryDevice:
                     not_equal.append(field_item)
         # match filters that contain specific data
         if len(has_equal) != 0:
-            result_data = regexp(has_equal, fields_tables_history_host, data[:self.num])
+            result_data = regexp(has_equal, fields_tables_history_host, data)
         else:
-            result_data = data[:self.num]
+            result_data = data
         # no regexp data
         if len(result_data) == 0:
             return
@@ -625,4 +625,4 @@ class HistoryDevice:
                     "filter command has unsupport fields [{}], support fields has [{}]".format(item, support_fields),
                     color='red')
                 exit(0)
-        show.print_filter_history(not_equal, result_data)
+        show.print_filter_history(not_equal, result_data[:self.num])

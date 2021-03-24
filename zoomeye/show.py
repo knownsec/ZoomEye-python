@@ -244,6 +244,9 @@ def print_host_data(host_data):
     """
     :param host_data, list,
     """
+    # host data is None
+    if len(host_data) == 0:
+        return
     # parser hostname,country,city... information
     first_item = host_data[0]
     all_data, port_count = data.filter_history_data(data.fields_tables_history_host.keys(), host_data)
@@ -280,9 +283,11 @@ def print_filter_history(fileds, hist_data):
     """
     filter_title = ''
     first_item = hist_data[0]
-    all_data, port_count = data.filter_history_data(fileds, hist_data, omit=False)
+    # filter data
+    all_data, port_count = data.filter_history_data(fileds, hist_data)
     printf(first_item.get('ip'))
     dict_first_item = data.ZoomEyeDict(first_item)
+    # parser filter data title
     for dict_item in data.tables_history_info.keys():
         result = dict_first_item.find(data.tables_history_info.get(dict_item))
         if result == "" or result is None or result == "Unknown":

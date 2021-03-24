@@ -17,11 +17,11 @@ module_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(1, module_path)
 
 from zoomeye import core
-from zoomeye import __version__
+from zoomeye.config import BANNER
 
 
 def get_version():
-    return "ZoomEye-python version number {}".format(__version__)
+    print(BANNER)
 
 
 class ZoomEyeParser(argparse.ArgumentParser):
@@ -36,19 +36,19 @@ def main():
     :return:
     """
 
-    parser = ZoomEyeParser()
+    parser = ZoomEyeParser(prog='zoomeye')
     subparsers = parser.add_subparsers()
+    # show ZoomEye-python version number
+    parser.add_argument(
+        "-v",
+        "--version",
+        action="store_true",
+        help="show program's version number and exit"
+    )
 
     # zoomeye account info
     parser_info = subparsers.add_parser("info", help="Show ZoomEye account info")
     parser_info.set_defaults(func=core.info)
-    # show version number
-    parser.add_argument(
-        '-v', '--version',
-        action='version',
-        version=get_version(),
-        help="Show program's version number and exit"
-    )
 
     # query zoomeye data
     parser_search = subparsers.add_parser(
@@ -88,7 +88,7 @@ def main():
         type=str,
         help=('''
               Output more clearer search results by set filter field,
-              field: [app,version,device,port,city,country,asn,banner,*]
+              field: [app,version,device,port,city,country,asn,banner,time,*]
         ''')
     )
     parser_search.add_argument(
@@ -189,6 +189,10 @@ def main():
     parser_clear.set_defaults(func=core.clear_file)
 
     args = parser.parse_args()
+
+    if args.version:
+        get_version()
+        exit(0)
 
     try:
         args.func(args)
