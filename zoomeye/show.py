@@ -130,13 +130,13 @@ def print_filter(keys, data_list, condition):
         items = ""
         for j in i:
             j_hex = convert_str(str(j))
-            # match
+            # match to content highlight
             if condition:
                 for item in condition:
                     k, v = item.split('=')
                     result_re = re.search(v, j_hex, re.I | re.M)
                     if result_re:
-                        # match to content highlight
+                        # replace to highlight
                         color_content = "\033[31m{}\033[0m".format(result_re.group())
                         j_hex = j_hex.replace(result_re.group(), color_content)
             items += "{:<30}".format(j_hex)
@@ -285,11 +285,12 @@ def print_host_data(host_data):
         printf(content)
 
 
-def print_filter_history(fileds, hist_data):
+def print_filter_history(fileds, hist_data, condition=None):
     """
     print user filter history data,
     :param fileds list,user input field
     :param hist_data dict, from ZoomEye API get data
+    :param condition list, filter condition
     """
     filter_title = ''
     first_item = hist_data[0]
@@ -314,5 +315,14 @@ def print_filter_history(fileds, hist_data):
     for data_item in all_data:
         content = ""
         for item_item in data_item:
+            # match to content highlight
+            if condition:
+                for condition_item in condition:
+                    k, v = condition_item.split('=')
+                    re_result = re.search(str(v), str(item_item), re.I | re.M)
+                    content = "\033[31m{}\033[0m".format(re_result.group())
+                    # replace to highlight
+                    if re_result:
+                        item_item = item_item.replace(re_result.group(), content)
             content += "{:<27}".format(item_item)
         printf(content)

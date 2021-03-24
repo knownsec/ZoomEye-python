@@ -625,4 +625,4 @@ class HistoryDevice:
                     "filter command has unsupport fields [{}], support fields has [{}]".format(item, support_fields),
                     color='red')
                 exit(0)
-        show.print_filter_history(not_equal, result_data[:self.num])
+        show.print_filter_history(not_equal, result_data[:self.num], has_equal)
