@@ -5,7 +5,7 @@
 * Author: liuf5
 */
 """
-import datetime
+import re
 from colorama import init
 
 from zoomeye import config, data, plotlib
@@ -110,11 +110,12 @@ def print_data(data_list):
     printf("total: {}".format(total))
 
 
-def print_filter(keys, data):
+def print_filter(keys, data_list, condition=None):
     """
     used to display user filtered data on the terminal
     :param keys: user input key, is str
-    :param data: filter data ,is list
+    :param data_list: filter data ,is list
+    :param condition: list,
     :return:
     """
     total = 0
@@ -125,10 +126,19 @@ def print_filter(keys, data):
     printf("{}".format(title), color="green")
 
     # print data
-    for i in data:
+    for i in data_list:
         items = ""
         for j in i:
             j_hex = convert_str(str(j))
+            # match to content highlight
+            if condition:
+                for item in condition:
+                    k, v = item.split('=')
+                    result_re = re.search(v, j_hex, re.I | re.M)
+                    if result_re:
+                        # replace to highlight
+                        color_content = "\033[31m{}\033[0m".format(result_re.group())
+                        j_hex = j_hex.replace(result_re.group(), color_content)
             items += "{:<30}".format(j_hex)
         total += 1
         printf(items)
@@ -244,6 +254,9 @@ def print_host_data(host_data):
     """
     :param host_data, list,
     """
+    # host data is None
+    if len(host_data) == 0:
+        return
     # parser hostname,country,city... information
     first_item = host_data[0]
     all_data, port_count = data.filter_history_data(data.fields_tables_history_host.keys(), host_data)
@@ -272,17 +285,20 @@ def print_host_data(host_data):
         printf(content)
 
 
-def print_filter_history(fileds, hist_data):
+def print_filter_history(fileds, hist_data, condition=None):
     """
     print user filter history data,
     :param fileds list,user input field
     :param hist_data dict, from ZoomEye API get data
+    :param condition list, filter condition
     """
     filter_title = ''
     first_item = hist_data[0]
+    # filter data
     all_data, port_count = data.filter_history_data(fileds, hist_data, omit=False)
     printf(first_item.get('ip'))
     dict_first_item = data.ZoomEyeDict(first_item)
+    # parser filter data title
     for dict_item in data.tables_history_info.keys():
         result = dict_first_item.find(data.tables_history_info.get(dict_item))
         if result == "" or result is None or result == "Unknown":
@@ -299,5 +315,14 @@ def print_filter_history(fileds, hist_data):
     for data_item in all_data:
         content = ""
         for item_item in data_item:
+            # match to content highlight
+            if condition:
+                for condition_item in condition:
+                    k, v = condition_item.split('=')
+                    re_result = re.search(str(v), str(item_item), re.I | re.M)
+                    content = "\033[31m{}\033[0m".format(re_result.group())
+                    # replace to highlight
+                    if re_result:
+                        item_item = item_item.replace(re_result.group(), content)
             content += "{:<27}".format(item_item)
         printf(content)
