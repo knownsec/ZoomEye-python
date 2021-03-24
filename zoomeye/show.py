@@ -110,7 +110,7 @@ def print_data(data_list):
     printf("total: {}".format(total))
 
 
-def print_filter(keys, data_list, condition):
+def print_filter(keys, data_list, condition=None):
     """
     used to display user filtered data on the terminal
     :param keys: user input key, is str
@@ -295,7 +295,7 @@ def print_filter_history(fileds, hist_data, condition=None):
     filter_title = ''
     first_item = hist_data[0]
     # filter data
-    all_data, port_count = data.filter_history_data(fileds, hist_data)
+    all_data, port_count = data.filter_history_data(fileds, hist_data, omit=False)
     printf(first_item.get('ip'))
     dict_first_item = data.ZoomEyeDict(first_item)
     # parser filter data title
