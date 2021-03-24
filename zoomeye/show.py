@@ -39,6 +39,8 @@ def convert_str(s):
     for c in s:
         if ord(c) in range(32, 127):
             res.append(c)
+        elif ord(c) in range(19968, 40869):
+            res.append(c)
         elif c in d.keys():
             res.append(d[c])
         else:
@@ -320,9 +322,9 @@ def print_filter_history(fileds, hist_data, condition=None):
                 for condition_item in condition:
                     k, v = condition_item.split('=')
                     re_result = re.search(str(v), str(item_item), re.I | re.M)
-                    content = "\033[31m{}\033[0m".format(re_result.group())
                     # replace to highlight
                     if re_result:
-                        item_item = item_item.replace(re_result.group(), content)
+                        content_item = "\033[31m{}\033[0m".format(re_result.group())
+                        item_item = str(item_item).replace(re_result.group(), content_item)
             content += "{:<27}".format(item_item)
         printf(content)
