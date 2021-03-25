@@ -37,7 +37,7 @@ def convert_str(s):
         '\t': '\\t'
     }
     for c in s:
-        if ord(c) in range(32, 127):
+        if ord(c) > 0xff or ord(c) in range(32, 127):
             res.append(c)
         elif c in d.keys():
             res.append(d[c])
