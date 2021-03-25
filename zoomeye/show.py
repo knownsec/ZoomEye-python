@@ -34,15 +34,15 @@ def convert_str(s):
     d = {
         '\n': '\\n',
         '\r': '\\r',
-        '\t': '\\t',
-        '\b': '\\b',
-        '\a': '\\a',
+        '\t': '\\t'
     }
     for c in s:
-        if c in d.keys():
+        if ord(c) > 0xff or ord(c) in range(32, 127):
+            res.append(c)
+        elif c in d.keys():
             res.append(d[c])
         else:
-            res.append(c)
+            res.append('\\x%.2x' % ord(c))
     return ''.join(res)
 
 
