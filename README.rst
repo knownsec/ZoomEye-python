@@ -130,7 +130,7 @@ will explain and demonstrate below.
 
 ::
 
-   -num     set the number of displays/searches
+   -num     set the number of displays/searches, support 'all'
    -count   query the total amount of this dork in the ZoomEye database
    -facet   query the distribution of the full data of the dork
    -stat    the distribution of statistical data result sets
