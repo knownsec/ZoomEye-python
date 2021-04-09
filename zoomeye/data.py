@@ -63,7 +63,6 @@ facets_table_web = {
     "waf":          "waf",
     "os":           "os",
     "country":      "country",
-    "city":         "city",
 }
 
 fields_tables_history_host = {
@@ -91,10 +90,8 @@ tables_history_info = {
 }
 
 default_table_web = {
-    "ip":       "ip",
     "site":     "site",
     "title":    "title",
-    "app":      "webapp",
     "country":  "geoinfo.country.names.en",
     "banner":   "raw_data",
 }
@@ -120,22 +117,6 @@ def get_host_item(data):
         banner = data.get("portinfo").get("banner")
         service = data.get("portinfo").get("service")
         return ip, country, port, app, banner, service
-    else:
-        show.printf("data cannot be empty", color='red')
-        exit(0)
-
-
-def get_web_item(data):
-    if data:
-        site = data.get('site')
-        ip = data.get('ip')
-        title = data.get('title')
-        app = data.get("webapp")
-        country = data.get("geoinfo").get("country").get("names").get("en")
-        banner = data.get("raw_data")
-        print(ip)
-        print(app)
-        return site, ip, title, app, country, banner
     else:
         show.printf("data cannot be empty", color='red')
         exit(0)
@@ -443,7 +424,7 @@ class CliZoomEye:
         """
         according to web/search or host/search select filter field
         """
-        if save is False:
+        if save is not True:
             self.request_data()
         if self.resource == 'host':
             tables = fields_tables_host

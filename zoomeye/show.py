@@ -105,9 +105,8 @@ def show_host_default_data(data_list, count):
 
 def show_web_default_data(data_list, count):
     # print title
-    printf("{:<27}{:<27}{:<27}{:<27}{:<27}{:<30}".format(
-        "ip", "site", "title", "app", "country", "banner"), color="green")
-
+    printf("{:<27}{:<27}{:<27}{:<30}".format(
+         "site", "title", "country", "banner"), color="green")
     for item in data_list:
         item_dict = ZoomEyeDict(item)
         content = ''
@@ -153,11 +152,11 @@ def print_filter(keys, data_list, condition=None):
                 if isinstance(j[0], str):
                     j = j[0]
                 elif isinstance(j[0], dict):
-                    j = j[0].get('name', 'unknown')
+                    j = j[0].get('name', '[unknown]')
                 else:
                     j = j
             elif isinstance(j, dict):
-                j = j.get('name', 'unknown')
+                j = j.get('name', '[unknown]')
             else:
                 if len(str(j)) == 0:
                     j = '[unknown]'
@@ -382,7 +381,7 @@ def print_information(raw_data):
     printf("")
     # print port/service
     printf("{:<10}{:<15}{:<23}{:<30}".format("port", "service", "app", "banner"), color='green')
-    for data_item in all_data:
+    for data_item in sorted(all_data, key=lambda k: (k[0])):
         printf("{:<10}{:<15}{:<23}{:<30}".format(data_item[0], data_item[1], omit_str(data_item[2], 7), data_item[3]))
 
 

@@ -186,7 +186,6 @@ two commands include:
     waf         statistics by Web firewall(WAF)
     os          statistics by operating system
     country     statistics by country
-    city        statistics by city
 
 use ``-facet`` to count the application types of all ``telnet`` devices:
 
@@ -228,27 +227,35 @@ by this command include:
 
 ::
 
-   # host/search
-   app           show application type details
-   version       show version information details
-   device        show device type details
-   port          show port information details
-   city          show city details
-   country       show country details
-   asn           show as number details
-   banner        show details of characteristic response
-   timestamp     show record data time
-   *             when this symbol is included, show all field details
+    # host/search
+    app           show application type details
+    version       show version information details
+    device        show device type details
+    port          show port information details
+    city          show city details
+    country       show country details
+    asn           show as number details
+    banner        show details of characteristic response
+    timestamp     show record data time
+    *             when this symbol is included, show all field details
 
-   # web/search
-   app         show application type details
-   headers     HTTP header
-   keywords    meta keyword
-   title       HTTP Title information
-   site        site search
-   city        show city details
-   country     show country details
-   *           when this symbol is included, show all field details
+    # web/search
+    app         show application type details
+    headers     HTTP header
+    keywords    meta keyword
+    title       HTTP Title information
+    site        site search
+    city        show city details
+    country     show country details
+    webapp      Web application
+    component   Web container
+    framework   Web framework
+    server      Web server
+    waf         Web firewall(WAF)
+    os          operating system
+    timestamp   updated timestamp
+    *           when this symbol is included, show all field details
+
 
 Compared to the omitted display by default, the complete data can be
 viewed through ``-filter``, as follows:
@@ -475,7 +482,7 @@ The fields supported by the ``filter`` parameter are:
 
     VIP users can query 30 times a day
 
-    After the number of times per day is used up, can continue to use the next day.
+    After the number of times per day is used up, it will be refreshed after 24 hours, that is, counting from the time of the first IP check, and the number of refreshes after 24 hours.
 
 
 11.cleanup function
@@ -692,14 +699,7 @@ data more conveniently and extract the specified data fields as follows:
 
 | **4.Why may the total amount of data in ZoomEye-python and the browser
   search the same dork be different?**
-| ``ZoomEye`` provides two search interfaces: ``/host/search`` and
-  ``/web/search``. only ``/host/search`` is used in ``ZoomEye-python``.
-  in most cases, the data provided by the host interface can cover more
-  than 90% or even 100% of the data, so the accuracy of the data can be
-  guaranteed. when the API makes a request, the user quota will be
-  consumed. if the two interfaces are compatible if it does, it will
-  consume more user quota; therefore, in the command line tool, only the
-  ``/host/search`` interface is used for searching.
+| ``ZoomEye`` provides two search interfaces: ``/host/search`` and ``/web/search``. In ``ZoomEye-python``, only ``/host/search`` is used by default, and ``/web/search`` is not used. Users can choose the search method according to their needs by specifying the ``type`` parameter.
 
 .. figure:: https://raw.githubusercontent.com/knownsec/ZoomEye-python/master/images/image-20210111141028072.png
     :width: 500px

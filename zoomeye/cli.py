@@ -71,12 +71,12 @@ def main():
         "-facet",
         default=None,
         nargs='?',
-        const='app,device,service,os,port,country,city',
+        const='country',
         type=str,
         help=('''
             Perform statistics on ZoomEye database,
             host field: [app,device,service,os,port,country,city]
-            web field: [webapp,component,framework,server,waf,os,country,city]
+            web field: [webapp,component,framework,server,waf,os,country]
         '''),
         metavar='field'
     )
@@ -90,7 +90,7 @@ def main():
         help=('''
               Output more clearer search results by set filter field,
               host field: [app,version,device,port,city,country,asn,banner,timestamp,*]
-              web field: [app, headers, keywords, title, site, city, country, *]
+              web field: [app,headers,keywords,title,site,city,country,webapp,component,framework,server,waf,os,timestamp,*]
         ''')
     )
     parser_search.add_argument(
@@ -103,7 +103,7 @@ def main():
         help=('''
               Perform statistics on search results,
               host field: [app,device,service,os,port,country,city]
-              web field: [webapp,component,framework,server,waf,os,country,city]
+              web field: [webapp,component,framework,server,waf,os,country]
         ''')
     )
     parser_search.add_argument(
@@ -133,7 +133,7 @@ def main():
         "-type",
         help=(
             """
-            select web search or host search
+            Select web search or host search(default host) 
             """
         ),
         choices={'web', 'host'},
@@ -143,7 +143,7 @@ def main():
         "-force",
         help=(
             """
-            ignore the local cache and force the data to be obtained from the API
+            Ignore the local cache and force the data to be obtained from the API
             """
         ),
         action="store_true"

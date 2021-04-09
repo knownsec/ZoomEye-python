@@ -94,7 +94,7 @@ total: 1/58277850
 	-filter  查询数据结果集中某个字段的详情，或根据内容进行筛选
 	-save    可按照筛选条件将结果集进行导出
 	-force	 忽略本地缓存文件，直接从 ZoomEye 获取数据
-    -type    选择是 host/search 或者 web/search
+    -type    指定搜索源，host 或 web
 
 #### 4.数据数量
 通过 `-num` 参数可以指定我们搜索和显示的数量，指定的数目即消耗的配额数量。而通过 `-count` 参数可以查询该 `dork` 在 ZoomEye 数据库的总量，如下：
@@ -126,7 +126,6 @@ $ zoomeye search "telnet" -count
     waf         按照 Web 防火墙(WAF)进行统计
     os          按照操作系统进行统计
     country     按照国家进行统计
-    city        按照城市进行统计
 
 使用 `-facet` 统计全量 `telnet` 设备的应用类型：
 
@@ -181,6 +180,13 @@ Pocket CMD telnetd                 1
     site        site 搜索
     city        显示城市详情
     country     显示国家详情
+    webapp      Web 应用
+    component   Web 容器
+    framework   Web 框架
+    server      Web 服务
+    waf         Web 防火墙(WAF)
+    os          操作系统
+    timestamp   显示数据更新时间
     *           在包含该符号时，显示所有字段详情
 
 
@@ -266,7 +272,7 @@ timestamp                  port/service               app                       
 2. service	开放的服务
 3. port		端口
 4. app  	Web 应用
-5. raw		原始的指纹信息 
+5. banner   原始的指纹信息 
 ```
 
 使用 `zoomeye history -h`  可以查看 `history` 提供的参数。
@@ -376,7 +382,7 @@ ntpd
 > 
 > **VIP 用户每天可以查询 30 次**
 > 
-> 每天的次数使用完之后，**次日可继续使用**。
+> 每天的次数使用完之后，24小时后刷新，即从第一次查 IP 的时间开始计算，24小时后刷新次数。
 
 
 #### 11.清理功能
@@ -528,7 +534,7 @@ soft********11180040.b***c.net ['126.***.***.40']
 ![image-20210111111035187](../images/image-20210111111035187.png?lastModify=1610354602)
 
 **4.为什么 ZoomEye-python 和浏览器搜索同一个 dork 数据总量可能会不一样？**  
-`ZoomEye` 提供了两个搜索接口分别是 :  `/host/search` 和 `/web/search` ，在 `ZoomEye-python` 中只使用了 `/host/search` 。在多数情况下，host 接口所提供的数据可以覆盖 90% 以上甚至 100% 的数据，因此数据的准确性是可以保证的，而在 API 进行请求时，将消耗用户配额，如果要兼容两种接口的话，将会更多的消耗用户配额；因此在命令行工具中，只使用了 `/host/search` 接口进行搜索。
+`ZoomEye` 提供了两个搜索接口分别是 :  `/host/search` 和 `/web/search` ，在 `ZoomEye-python` 中默认只使用了 `/host/search` ，没有使用 `/web/search`。用户可以在根据自己的需要，通过指定 `type` 参数来选择搜索的方式。
 
 ![image-20210111141028072](../images/image-20210111141028072.png?lastModify=1610354602)  
 ![image-20210111141114558](../images/image-20210111141114558.png?lastModify=1610354602)
