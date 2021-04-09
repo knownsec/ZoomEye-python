@@ -32,7 +32,8 @@ def get_api_key(path) -> str:
     if not oct(os.stat(key_file).st_mode).endswith("600"):
         os.chmod(key_file, 0o600)
     # return read file content
-    return read_file(key_file).strip()
+    with open(key_file, 'r') as f:
+        return f.read().strip()
 
 
 def get_jwt_token(path) -> str:
@@ -52,7 +53,8 @@ def get_jwt_token(path) -> str:
     if not oct(os.stat(key_file).st_mode).endswith("600"):
         os.chmod(key_file, 0o600)
     # return read config content
-    return read_file(key_file).strip()
+    with open(key_file, 'r') as f:
+        return f.read().strip()
 
 
 def get_auth_key():
@@ -86,28 +88,6 @@ def get_auth_key():
         exit(0)
 
 
-def write_file(path, data):
-    """
-    write data to file
-    :param path: file path
-    :param data: data to be written to the file
-    :return:
-    """
-    with open(path, "w") as f:
-        f.write(data)
-        f.close()
-
-
-def read_file(path):
-    """
-    read data from local file
-    :param path:
-    :return:
-    """
-    with open(path, "r") as f:
-        return f.read()
-
-
 def check_exist(file):
     # whether the zoomeye configuration folder exists
     if not os.path.isdir(file):
@@ -128,4 +108,3 @@ def add_to_file(path, data):
     """
     with open(path, 'a') as f:
         f.write(data + '\n')
-        f.close()

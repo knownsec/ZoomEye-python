@@ -18,7 +18,7 @@ import hashlib
 
 
 from zoomeye import config, file
-from zoomeye.sdk import ZoomEye, fields_tables_host
+from zoomeye.sdk import ZoomEye, fields_tables_host, fields_tables_web
 from zoomeye.sdk import ZoomEyeDict
 from zoomeye import show
 
@@ -34,29 +34,84 @@ stat_host_table = {
     'city':     'geoinfo.city.names.en'
 }
 
+stat_web_table = {
+    "webapp":       "webapp",
+    "component":    "component",
+    "framework":    "framework",
+    "server":       "server.name",
+    "waf":          "waf",
+    "os":           "system",
+    "country":      "geoinfo.country.names.en",
+    "city":         "geoinfo.city.names.en",
+}
+
+facets_table_host = {
+    'app':      'product',
+    'device':   'device',
+    'service':  'service',
+    'os':       'os',
+    'port':     'port',
+    'country':  'country',
+    'city':     'city'
+}
+
+facets_table_web = {
+    "webapp":       "webapp",
+    "component":    "component",
+    "framework":    "framework",
+    "server":       "server",
+    "waf":          "waf",
+    "os":           "os",
+    "country":      "country",
+    "city":         "city",
+}
+
 fields_tables_history_host = {
-    "time":     "timestamp",
-    "port":     "portinfo.port",
-    "service":  "portinfo.service",
-    "app":      "portinfo.product",
-    "raw":      "raw_data",
+    "timestamp":    "timestamp",
+    "port":         "portinfo.port",
+    "service":      "portinfo.service",
+    "app":          "portinfo.product",
+    "banner":       "raw_data",
+}
+
+fields_ip = {
+    "port":         "portinfo.port",
+    "service":      "portinfo.service",
+    "app":          "portinfo.app",
+    "banner":       "portinfo.banner",
 }
 
 tables_history_info = {
     "Hostnames":       'portinfo.hostname',
+    'Isp':             'geoinfo.isp',
     "Country":         'geoinfo.country.names.en',
     "City":            'geoinfo.city.names.en',
     "Organization":    'geoinfo.organization',
     "LastUpdated":     'timestamp'
 }
 
+default_table_web = {
+    "ip":       "ip",
+    "site":     "site",
+    "title":    "title",
+    "app":      "webapp",
+    "country":  "geoinfo.country.names.en",
+    "banner":   "raw_data",
+}
 
-def get_item(data):
+
+def md5_convert(string):
     """
-    take out the corresponding data from the json file.
-    :param data: dork data ,dict
-    :return:
+    calculate the md5 of a string
+    :param string: input string
+    :return: md5 string
     """
+    m = hashlib.md5()
+    m.update(string.encode('utf-8'))
+    return m.hexdigest()
+
+
+def get_host_item(data):
     if data:
         ip = data.get('ip')
         country = data.get("geoinfo").get("country").get("names").get("en")
@@ -70,15 +125,20 @@ def get_item(data):
         exit(0)
 
 
-def md5_convert(string):
-    """
-    calculate the md5 of a string
-    :param string: input string
-    :return: md5 string
-    """
-    m = hashlib.md5()
-    m.update(string.encode('utf-8'))
-    return m.hexdigest()
+def get_web_item(data):
+    if data:
+        site = data.get('site')
+        ip = data.get('ip')
+        title = data.get('title')
+        app = data.get("webapp")
+        country = data.get("geoinfo").get("country").get("names").get("en")
+        banner = data.get("raw_data")
+        print(ip)
+        print(app)
+        return site, ip, title, app, country, banner
+    else:
+        show.printf("data cannot be empty", color='red')
+        exit(0)
 
 
 def regexp(keys, field_table, data_list):
@@ -138,7 +198,7 @@ def filter_search_data(keys, field_table, data):
                             .format(key, support_fields), color='red')
                 exit(0)
             res = zmdict.find(field_table.get(key.strip()))
-            if key == "time":
+            if key == "timestamp":
                 utc_time = datetime.datetime.strptime(res, "%Y-%m-%dT%H:%M:%S")
                 res = str(utc_time + datetime.timedelta(hours=8))
             item.append(res)
@@ -146,7 +206,7 @@ def filter_search_data(keys, field_table, data):
     return result
 
 
-def filter_history_data(fileds, host_data, omit=True):
+def filter_ip_information(fileds, tables, host_data, omit=True):
     """
     filter historical data based on user input
     :param fileds: list, user input
@@ -162,16 +222,16 @@ def filter_history_data(fileds, host_data, omit=True):
         every_item = []
         host_dict = ZoomEyeDict(host_item)
         for filed_item in fileds:
-            host_result = host_dict.find(fields_tables_history_host.get(filed_item.strip()))
+            host_result = host_dict.find(tables.get(filed_item.strip()))
             # count ports
             if filed_item == 'port':
                 port_count.add(host_result)
             # format timestamp
-            if filed_item == 'time':
+            if filed_item == 'timestamp':
                 utc_time = datetime.datetime.strptime(host_result[:19], "%Y-%m-%dT%H:%M:%S")
                 host_result = str(utc_time)
             # omit raw data, is too long
-            if filed_item == 'raw':
+            if filed_item == 'banner':
                 if omit:
                     host_result = show.omit_str(show.convert_str(host_result))
                 else:
@@ -184,18 +244,45 @@ def filter_history_data(fileds, host_data, omit=True):
     return all_data, port_count
 
 
+def process_filter(fields, data, tables):
+    has_equal = []
+    not_equal = []
+
+    if not data:
+        return
+    # resolve specific filter items
+    for field_item in fields:
+        field_split = field_item.split('=')
+        if len(field_split) == 2:
+            has_equal.append(field_item)
+            # not_equal.append(field_split[0])
+        if len(field_split) == 1:
+            if field_item == "*":
+                not_equal = list(tables.keys())
+                continue
+            else:
+                not_equal.append(field_item)
+    # match filters that contain specific data
+    if len(has_equal) != 0:
+        result_data = regexp(has_equal, tables, data)
+    else:
+        result_data = data
+
+    return result_data, has_equal, not_equal
+
+
 class Cache:
     """
     used to cache the data obtained from the api to the local,
     or directly clip the file from the local.
     """
 
-    def __init__(self, dork, page=0):
+    def __init__(self, dork, resource, page=0):
         self.dork = dork
         self.page = page
-        self.resource = "host"
+        self.resource = resource
         self.cache_folder = os.path.expanduser(config.ZOOMEYE_CACHE_PATH)
-        self.filename = self.cache_folder + config.FILE_NAME.format(md5_convert(dork), page)
+        self.filename = self.cache_folder + config.FILE_NAME.format(md5_convert(dork + self.resource), page)
 
     def check(self):
         """
@@ -226,7 +313,8 @@ class Cache:
             except OSError:
                 raise Exception("init dirs failed {}".format(self.cache_folder))
         # write to local
-        file.write_file(self.filename, data)
+        with open(self.filename, 'w') as f:
+            f.write(data)
 
     def load(self):
         """
@@ -235,7 +323,8 @@ class Cache:
         """
         result_data = []
         facet_data = None
-        read_data = file.read_file(self.filename)
+        with open(self.filename, 'r') as f:
+            read_data = f.read()
         data_json = json.loads(read_data)
         """
         process the data loaded from the cache file, 
@@ -252,22 +341,20 @@ class Cache:
         # return
         return result_data, facet_data, total
 
+    def update(self):
+        pass
+
 
 class CliZoomEye:
-    """
-    the ZoomEye instance in cli mode has added storage compared to
-    the ZoomEye instance of the API, to determine where
-    to get the data, cache or api.
-    By the way, cli mode supports search for "host", but "web" search is not currently supported
-    """
 
-    def __init__(self, dork, num, facet=None, force=False):
+    def __init__(self, dork, num, resource, facet=None, force=False):
         self.dork = dork
         self.num = num
+        self.resource = resource
         self.facet = facet
         self.force = force
 
-        self.dork_data = []
+        self.dork_data = list()
         self.facet_data = None
         self.total = 0
 
@@ -275,85 +362,93 @@ class CliZoomEye:
         self.zoomeye = ZoomEye(api_key=self.api_key, access_token=self.access_token)
 
     def handle_page(self):
-        """
-        convert the number of data into pages and round up.
-        ex: num = 30, page = 2.
-        because the API returns 20 pieces of data each time.
-        :return:
-        """
-        num = int(self.num)
-        if num % 20 == 0:
-            return int(num / 20)
-        return int(num / 20) + 1
+        try:
+            num = int(self.num)
+            if num % 20 == 0:
+                return int(num / 20)
+            return int(num / 20) + 1
+        except ValueError:
+            if self.num == 'all':
+                for i in range(3):
+                    user_confirm = input("The data may exceed your quota. "
+                                         "If the quota is exceeded, all quota data will be returned. "
+                                         "Are you sure you want to get all the data?(y/N)\n")
+                    if user_confirm == 'y':
+                        self.zoomeye.dork_search(
+                            dork=self.dork,
+                            page=1,
+                            resource=self.resource,
+                            facets=self.facet
+                        )
+                        self.num = self.zoomeye.total
+                        cache = Cache(self.dork, page=1, resource=self.resource)
+                        cache.save(self.zoomeye.raw_data)
+                        if self.num % 20 == 0:
+                            return int(self.num / 20)
+                        return int(self.num / 20) + 1
+                    elif user_confirm == "N":
+                        user_num = input("Please enter the required amount of data:")
+                        return int(user_num)
+                    else:
+                        continue
+                show.printf("more than the number of errors!", color='red')
+        except Exception as e:
+            show.printf(e, color='red')
+            exit(0)
 
-    def auto_cache(self, data, page):
-        """
-        cache to local
-        :param page:
-        :param data:
-        :return:
-        """
-        cache = Cache(self.dork, page)
-        cache.save(json.dumps(data))
+    def cache_dork(self, page, data):
+        cache_file = Cache(self.dork, page=page, resource=self.resource)
+        cache_file.save(json.dumps(data))
 
-    def from_cache_or_api(self):
-        """
-        get data from cache or api
-        get data from the api if there is no data in the cache.
-        :return:
-        """
+    def request_data(self):
+        if os.path.exists(self.dork):
+            self.load()
+        else:
+            page_count = self.handle_page()
+            for page in range(page_count):
+                cache_file = Cache(self.dork, self.resource, page)
+                if cache_file.check() and self.force is False:
+                    dork_data_list, self.facet_data, self.total = cache_file.load()
+                    self.dork_data.extend(dork_data_list)
+                else:
+                    if self.resource == 'host':
+                        self.facet = ['app', 'device', 'service', 'os', 'port', 'country', 'city']
+                    if self.resource == 'web':
+                        self.facet = ['webapp', 'component', 'framework', 'frontend',
+                                      'server', 'waf', 'os', 'country', 'city']
+                    try:
+                        dork_data_list = self.zoomeye.dork_search(
+                            dork=self.dork,
+                            page=page + 1,
+                            resource=self.resource,
+                            facets=self.facet
+                        )
+                    except ValueError:
+                        print("the access token expires, please re-run [zoomeye init] command."
+                              "it is recommended to use API KEY for initialization!")
+                        exit(0)
+                    self.facet_data = self.zoomeye.facet_data
+                    self.total = self.zoomeye.total
+                    self.dork_data.extend(dork_data_list)
+                    self.cache_dork(page, self.zoomeye.raw_data)
 
-        page = self.handle_page()
-        for p in range(page):
-            cache = Cache(self.dork, page=p)
-            # get data from cache file
-            if cache.check() and self.force is False:
-                # return dork, facet, total data
-                dork_data_list, self.facet_data, self.total = cache.load()
-                self.dork_data.extend(dork_data_list)
-            else:
-                # no cache, get data from API
-                self.facet = ['app', 'device', 'service', 'os', 'port', 'country', 'city']
-                try:
-                    dork_data_list = self.zoomeye.dork_search(
-                        dork=self.dork,
-                        page=p + 1,
-                        resource="host",
-                        facets=self.facet
-                    )
-                except ValueError:
-                    print("the access token expires, please re-run [zoomeye init] command. "
-                          "it is recommended to use API KEY for initialization!")
-                    exit(0)
-                self.facet_data = self.zoomeye.facet_data
-                self.total = self.zoomeye.total
-                self.dork_data.extend(dork_data_list)
-                if dork_data_list:
-                    self.auto_cache(self.zoomeye.raw_data, p)
-        # return dork, facet,total data
-        return self.dork_data[:self.num], self.facet_data, self.total
+    def default_show(self):
+        self.request_data()
+        if self.resource == 'host':
+            show.show_host_default_data(self.dork_data, self.total)
+        if self.resource == 'web':
+            show.show_web_default_data(self.dork_data, self.total)
 
-    def regexp_data(self, keys):
+    def filter_data(self, keys, save=False):
         """
-        filter based on fields entered by the user
-        AND operation on multiple fields
-        :param keys: str , user input filter filed
-        :return: list, ex:[{...}, {...}, {...}...]
+        according to web/search or host/search select filter field
         """
-        keys = keys.split(",")
-        result = []
-        self.zoomeye.data_list = self.dork_data
-
-        data_list = self.zoomeye.data_list
-        return regexp(keys, fields_tables_host, data_list)
-
-    def cli_filter(self, keys, save=False):
-        """
-        this function is used to filter the results.
-        :param save:
-        :param keys: str, filter condition. ex: 'ip, port, app=xxx'
-        :return: None
-        """
+        if save is False:
+            self.request_data()
+        if self.resource == 'host':
+            tables = fields_tables_host
+        if self.resource == 'web':
+            tables = fields_tables_web
         has_equal = []
         not_equal = []
         # set the ip field to be displayed by default and in the first place
@@ -372,65 +467,72 @@ class CliZoomEye:
             # field with equal sign
             if len(res) == 2:
                 has_equal.append(key)
-                not_equal.append(res[0])
+                # not_equal.append(res[0])
             # No field with equal sign
             if len(res) == 1:
                 # handle the case where the wildcard character * is included in the filed
                 # that is, query all fields
                 if key == "*":
-                    not_equal = list(fields_tables_host.keys())
+                    not_equal = list(tables.keys())
                     continue
                 else:
                     not_equal.append(key)
         # the filter condition is port, banner, app=**
         # ex:port,banner,app=MySQL
         if len(has_equal) != 0:
-            equal = ','.join(has_equal)
-            equal_data = self.regexp_data(equal)
+            equal_data = regexp(has_equal, tables, self.dork_data)
         # the filter condition is app, port
         # ex: ip,port,app
         else:
             equal_data = self.dork_data
         # get result
-        result = filter_search_data(not_equal, fields_tables_host, equal_data)
+        result = filter_search_data(not_equal, tables, equal_data)
         equal = ','.join(not_equal)
         if save:
             return equal, result
         show.print_filter(equal, result[:self.num], has_equal)
 
+    def facets_data(self, facet, figure):
+        """
+        according to web/search or host/search select facet field
+        """
+        self.request_data()
+        if self.resource == 'host':
+            tables = facets_table_host
+        if self.resource == 'web':
+            tables = facets_table_web
+        show.print_facets(facet, self.facet_data, self.total, figure, tables)
+
     def save(self, fields):
         """
-        save the data to a local json file,
-        you cannot specify the save path, but you can specify the save data
-        :param fields: str, filter fields, ex: app=xxxx
-        :return:
+        save api response raw data
         """
-        # -save default, data format ex:
-        # {"total":xxx, "matches":[{...}, {...}, {...}...], "facets":{{...}, {...}...}}
-
-        # filter special characters in file names
+        self.request_data()
         name = re.findall(r"[a-zA-Z0-9_\u4e00-\u9fa5]+", self.dork)
         re_name = '_'.join(name)
 
         if fields == 'all':
-            filename = "{}_{}_{}.json".format(re_name, self.num, int(time.time()))
+            filename = "{}_{}_{}_{}.json".format(re_name, self.num, self.resource, int(time.time()))
             data = {
                 'total': self.total,
-                'matches': self.dork_data[:self.num],
+                'matches': self.dork_data,
                 'facets': self.facet_data
             }
-            file.write_file(filename, json.dumps(data))
+            with open(filename, 'w') as f:
+                f.write(json.dumps(data))
             show.printf("save file to {}/{} successful!".format(os.getcwd(), filename), color='green')
         # -save xx=xxxx, save the filtered data. data format ex:
         # {app:"xxx", "app":"httpd",.....}
         else:
-            key, value = self.cli_filter(fields, save=True)
+            key, value = self.filter_data(fields, save=True)
             filename = "{}_{}_{}.json".format(re_name, len(value), int(time.time()))
             # parser data
             for v in value:
                 dict_save = {}
                 for index in range(len(key.split(','))):
                     dict_key = key.split(',')[index]
+                    if isinstance(v[index], dict):
+                        v[index] = v[index].get('name', 'unknown')
                     dict_value = v[index]
                     dict_save[dict_key] = dict_value
                 # write to local file
@@ -439,33 +541,29 @@ class CliZoomEye:
 
     def load(self):
         """
-        load a local file
-        it must be a json file and the data format is the format exported by zoomeye.
-        format is {"total":123123, "matches":[{...}, {...}, {...}...], "facets":{{...}, {...}...}}
-        :param path:
-        :return:
+        load local json file,must be save file
         """
-        data = file.read_file(self.dork)
-        json_data = json.loads(data)
+        with open(self.dork, 'r') as f:
+            data = f.read()
+        try:
+            json_data = json.loads(data)
+        except json.decoder.JSONDecodeError:
+            show.printf('json format error', color='red')
+            exit(0)
         self.total = json_data.get("total", 0)
         self.dork_data = json_data.get("matches", "")
         self.facet_data = json_data.get("facets", "")
-
-        if self.total == 0 and self.dork_data == "" and self.facet_data:
-            print("file format error!")
-            exit(0)
         self.num = len(self.dork_data)
-        return self.dork_data, self.facet_data, self.total
 
     def statistics(self, keys, figure):
         """
-        perform data aggregation on the currently acquired data instead of
-        directly returning the result of the data aggregation of the API.
-        :param keys: str, user input filter fields
-        :param figure: str, user input filter fields
-        {'app': {'Gunicorn': 2, 'nginx': 14, 'Apache httpd': 9, '[unknown]': 3, 'Tornado httpd': 2}, 'port': {443: 29, 8443: 1}}
-        :return: None
+        local data statistics
         """
+        self.request_data()
+        if self.resource == 'web':
+            tables = stat_web_table
+        if self.resource == 'host':
+            tables = stat_host_table
         data = {}
         key_list = keys.split(',')
         # cycle key
@@ -473,15 +571,15 @@ class CliZoomEye:
             count = {}
             for item in self.dork_data[:self.num]:
                 zmdict = ZoomEyeDict(item)
-                if stat_host_table.get(key.strip()) is None:
+                if tables.get(key.strip()) is None:
                     # check filed effectiveness
-                    support_fields = ','.join(list(stat_host_table.keys()))
+                    support_fields = ','.join(list(tables.keys()))
                     show.printf("filter command has unsupport fields [{}], support fields has [{}]"
                                 .format(key, support_fields), color='red')
                     exit(0)
-                fields = zmdict.find(stat_host_table.get(key.strip()))
+                fields = zmdict.find(tables.get(key.strip()))
                 # the value of the result field returned by the API may be empty
-                if fields == '':
+                if fields == '' or isinstance(fields, list):
                     fields = '[unknown]'
                 r = count.get(fields)
                 if not r:
@@ -491,6 +589,13 @@ class CliZoomEye:
             data[key] = count
         # print result for current data aggregation
         show.print_stat(keys, data, self.num, figure)
+
+    def count(self):
+        """
+        show dock count number
+        """
+        self.request_data()
+        show.printf(self.total)
 
 
 class HistoryDevice:
@@ -511,12 +616,14 @@ class HistoryDevice:
         try:
             # write data
             # if file path not exists
-            file.write_file(self.cache_path, json.dumps(history_data))
+            with open(self.cache_path, 'w') as f:
+                f.write(json.dumps(history_data))
         except FileNotFoundError:
             # create fold
             # retry write to local file
             os.makedirs(os.path.expanduser(config.ZOOMEYE_CACHE_PATH))
-            file.write_file(self.cache_path, json.dumps(history_data))
+            with open(self.cache_path, 'w') as f:
+                f.write(json.dumps(history_data))
         except Exception as e:
             show.printf("unknown error: {}".format(e))
             exit(0)
@@ -535,7 +642,8 @@ class HistoryDevice:
                 os.remove(self.cache_path)
                 return None
             # read local file
-            history_data = file.read_file(self.cache_path)
+            with open(self.cache_path, 'r') as f:
+                history_data = f.read()
             return history_data
         # cache file not exists
         else:
@@ -591,29 +699,8 @@ class HistoryDevice:
         filter historical IP data
         :param fields: list, user input filter fields
         """
-        has_equal = []
-        not_equal = []
-
         data = self.drop_web_data()
-        if not data:
-            return
-        # resolve specific filter items
-        for field_item in fields:
-            field_split = field_item.split('=')
-            if len(field_split) == 2:
-                has_equal.append(field_item)
-                not_equal.append(field_split[0])
-            if len(field_split) == 1:
-                if field_item == "*":
-                    not_equal = list(fields_tables_history_host.keys())
-                    continue
-                else:
-                    not_equal.append(field_item)
-        # match filters that contain specific data
-        if len(has_equal) != 0:
-            result_data = regexp(has_equal, fields_tables_history_host, data)
-        else:
-            result_data = data
+        result_data, has_equal, not_equal = process_filter(fields, data, fields_tables_history_host)
         # no regexp data
         if len(result_data) == 0:
             return
@@ -626,3 +713,50 @@ class HistoryDevice:
                     color='red')
                 exit(0)
         show.print_filter_history(not_equal, result_data[:self.num], has_equal)
+
+
+class IPInformation:
+    """
+    query IP information
+    """
+    def __init__(self, dork):
+        self.dork = "ip:{}".format(dork)
+
+    def request_data(self):
+        """
+        get api data
+        """
+        api_key, access_token = file.get_auth_key()
+        zm = ZoomEye(api_key=api_key, access_token=access_token)
+        data = zm.dork_search(self.dork)
+        return data
+
+    def show_information(self):
+        """
+        show default fields: port,service,app,banner
+        """
+        info_data = self.request_data()
+        show.print_information(info_data)
+
+    def filter_information(self, filters):
+        """
+        filter IP information, filter like key or key,key=value
+        """
+        info_data = self.request_data()
+        result_data, has_equal, not_equal = process_filter(filters, info_data, fields_ip)
+        if len(result_data) == 0:
+            return
+        for item in not_equal:
+            if fields_ip.get(item.strip()) is None:
+                support_fields = ','.join(list(fields_ip.keys()))
+                show.printf(
+                    "filter command has unsupport fields [{}], support fields has [{}]".format(item, support_fields),
+                    color='red')
+                exit(0)
+        show.print_info_filter(not_equal, result_data, has_equal)
+
+
+
+
+
+

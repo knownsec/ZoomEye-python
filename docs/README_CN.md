@@ -21,18 +21,21 @@
 
 ```
 $ zoomeye -h
-usage: zoomeye [-h] {info,search,init,history,clear} ...
+usage: zoomeye [-h] [-v] {info,search,init,ip,history,clear} ...
 
 positional arguments:
-  {info,search,init,history,clear}
+  {info,search,init,ip,history,clear}
     info                Show ZoomEye account info
     search              Search the ZoomEye database
     init                Initialize the token for ZoomEye-python
+    ip                  Query IP information
     history             Query device history
     clear               Manually clear the cache and user information
 
 optional arguments:
   -h, --help            show this help message and exit
+  -v, --version         show program's version number and exit
+
 ```
 
 #### 1.初始化token
@@ -71,7 +74,7 @@ $ zoomeye search "telnet" -num 1
 ip:port       service  country  app                 banner                        
 222.*.*.*:23  telnet   Japan    Pocket CMD telnetd  \xff\xfb\x01\xff\xfb\x03\xff\x...
 
-total: 1
+total: 1/58277850
 ```
 
 使用 `search` 命令和使用浏览器在 `ZoomEye` 进行搜索一样简单，在默认情况下我们显示了较为重要的 5 个字段，用户可以使用这些数据了解目标信息：
@@ -91,6 +94,7 @@ total: 1
 	-filter  查询数据结果集中某个字段的详情，或根据内容进行筛选
 	-save    可按照筛选条件将结果集进行导出
 	-force	 忽略本地缓存文件，直接从 ZoomEye 获取数据
+    -type    选择是 host/search 或者 web/search
 
 #### 4.数据数量
 通过 `-num` 参数可以指定我们搜索和显示的数量，指定的数目即消耗的配额数量。而通过 `-count` 参数可以查询该 `dork` 在 ZoomEye 数据库的总量，如下：
@@ -104,7 +108,8 @@ $ zoomeye search "telnet" -count
 
 #### 5.数据聚合
 我们可以通过 `-facet` 和 `-stat` 进行数据的聚合统计，使用 `-facet` 可以查询该 dork 全量数据的聚合情况(由 `ZoomEye` 聚合统计后通过 `API` 获取)，而 `-stat` 可以对查询到的结果集进行聚合统计。两个命令支持的聚合字段包括：
-
+    
+    # host search 
 	app      按应用类型进行统计
 	device   按设备类型进行统计
 	service  按照服务类型进行统计
@@ -112,6 +117,16 @@ $ zoomeye search "telnet" -count
 	port     按照端口进行统计
 	country  按照国家进行统计
 	city     按照城市进行统计
+
+    # web search
+    webapp      按照 Web 应用进行统计
+    component   按照 Web 容器进行统计
+    framework   按照 Web 框架进行统计
+    server      按照 Web 服务器进行统计
+    waf         按照 Web 防火墙(WAF)进行统计
+    os          按照操作系统进行统计
+    country     按照国家进行统计
+    city        按照城市进行统计
 
 使用 `-facet` 统计全量 `telnet` 设备的应用类型：
 
@@ -146,16 +161,28 @@ Pocket CMD telnetd                 1
 
 使用 `-filter` 参数可以查询数据结果集中某个字段的详情，或根据内容进行筛选，该命令支持的字段包括：
 
-	app      显示应用类型详情
-	version  显示版本信息详情
-	device   显示设备类型详情
-	port     显示端口信息详情
-	city     显示城市详情
-	country  显示国家详情
-	asn      显示as number详情
-	banner   显示特征响应报文详情
-	time	 显示数据更新时间
-	*        在包含该符号时，显示所有字段详情
+    # host/search
+	app          显示应用类型详情
+	version      显示版本信息详情
+	device       显示设备类型详情
+	port         显示端口信息详情
+	city         显示城市详情
+	country      显示国家详情
+	asn          显示as number详情
+	banner       显示特征响应报文详情
+	timestamp    显示数据更新时间
+	*            在包含该符号时，显示所有字段详情
+
+    # web/search
+    app         显示应用类型详情
+    headers     HTTP 头
+    keywords    meta 属性关键词
+    title       HTTP Title 标题信息
+    site        site 搜索
+    city        显示城市详情
+    country     显示国家详情
+    *           在包含该符号时，显示所有字段详情
+
 
 相比较默认情况下的省略显示，所以通过 `-filter` 可以查看完整的数据，如下：
 
@@ -167,15 +194,22 @@ ip         banner
 total: 1
 ```
 
-除此之外，还可以通过 `-filter` 对数据进行筛选，可以对字段按照关键词进行筛选(支持正则表达式)，使用格式为 `field=regexp`，比如我们我们查询在 `banner` 中包含 `telnet` 关键词的数据：
-
+使用 `-filter` 进行筛选时，语法为：`key1,key2,key3=value`，其中 `key3=value` 为筛选条件，而展示的内容为 `key1,key2` 例：
 ```
-$ zoomeye search "telnet" -filter banner=telnet
-ip         banner                        
-222.*.*.*  \xff\xfb\x01\xff\xfb\x03\xff\xfd\x03TELNET session now in ESTABLISHED state\r\n\r\n
+$ zoomeye search telnet -num 1 -filter port,app,banner=Telnet
+
+ip                        port                          app                           
+240e:*:*:*::3             23                            LANDesk remote management     
 
 total: 1
 ```
+
+在上面的示例中：`banner=Telnet` 为筛选的条件，而 `port,app` 为展示的内容。如果需要展示 `banner`，筛选语句则是这样
+
+```
+$ zoomeye search telnet -num 1 -filter port,app,banner,banner=Telnet
+```
+
 
 #### 7.数据导出
 `-save` 参数可以对数据进行导出，该参数的语法和 `-filter` 一样，并将结果按行 json 的格式保存到文件中，如下：
@@ -286,9 +320,66 @@ time                       port                       service
 在展示时添加了一个 `id` 字段的展示，`id` 为序号，为了方便查看，并不能作为筛选的字段。
 
 > 注意：目前只开放了上述五个字段的筛选。   
->      使用 `history` 命令时同样会消耗用户配额，在 `history` 命令中返回多少条数据，用户配额就相应扣除多少。例如：IP "8.8.8.8" 共有 944 条历史记录，查询一次扣除 944 的用户配额。
+> 使用 `history` 命令时同样会消耗用户配额，在 `history` 命令中返回多少条数据，用户配额就相应扣除多少。例如：IP "8.8.8.8" 共有 944 条历史记录，查询一次扣除 944 的用户配额。
 
-#### 10.清理功能
+
+#### 10.查询 IP 信息
+可以通过 `zoomeye ip` 命令查询指定 IP 的信息，例如：
+```
+$ zoomeye ip 185.*.*.57
+185.*.*.57
+Hostnames:                    [unknown]
+Isp:                          [unknown]
+Country:                      Saudi Arabia
+City:                         [unknown]
+Organization:                 [unknown]
+Lastupdated:                  2021-03-02T11:14:33
+Number of open ports:         4{2002, 9002, 123, 25}
+
+port      service        app                    banner                        
+9002      telnet                                \xff\xfb\x01\xff\xfb\x0...    
+123       ntp            ntpd                   \x16\x82\x00\x01\x05\x0...    
+2002      telnet         Pocket CMD telnetd     \xff\xfb\x01\xff\xfb\x0...    
+25        smtp           Cisco IOS NetWor...    220 10.1.10.2 Cisco Net...   
+```
+
+`zoomeye ip` 命令同样支持筛选参数 `-filter`, 语法和 `zoomeye search` 的筛选语法一致。例如：
+```
+$ zoomeye ip "185.*.*.57" -filter "app,app=ntpd"
+Hostnames:                    [unknown]
+Isp:                          [unknown]
+Country:                      Saudi Arabia
+City:                         [unknown]
+Organization:                 [unknown]
+Lastupdated:                  2021-02-17T02:15:06
+Number of open ports:         0
+Number of historical probes:  1
+
+app                        
+ntpd              
+```
+
+`filter` 参数支持的字段有:
+
+```
+    port        端口信息
+    service     运行服务
+    app         应用
+    banner      指纹信息
+```
+
+> 注意：此功能根据不同用户等级，对每个用户每天查询次数做了一定的限制。
+>
+> **注册用户和开发者每天能够查询 10 次**
+> 
+> **高级用户每天可查询 20 次**
+> 
+> **VIP 用户每天可以查询 30 次**
+> 
+> 每天的次数使用完之后，**次日可继续使用**。
+
+
+#### 11.清理功能
 用户每天都会搜索大量的数据，这样就导致缓存文件夹所占的存储空间逐渐增大；如果用户在公共服务器上使用 `ZoomEye-python` 可能会导致自己的 `API KEY` 和 `ACCESS TOKEN` 泄漏。
 为此 `ZoomEye-python` 提供了清理命令 `zoomeye clear`，清理命令可以缓存数据和用户配置进行清空。使用方式如下：
 
@@ -303,7 +394,7 @@ optional arguments:
 ```
 
 
-#### 11.缓存机制
+#### 12.缓存机制
 
 `ZoomEye-python` 在 `cli` 模式下提供了缓存机制，位于 `~/.config/zoomeye/cache` 下，尽可能的节约用户配额；用户查询过的数据集将在本地缓存 5 天，当用户查询相同的数据集时，不会消耗配额。
 

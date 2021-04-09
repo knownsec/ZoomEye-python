@@ -6,22 +6,13 @@
 */
 """
 import re
+import operator
 from colorama import init
-
 from zoomeye import config, data, plotlib
+from zoomeye.sdk import ZoomEyeDict
 
 # solve the color display error under windows terminal
 init(autoreset=True)
-
-facets_filed_table = {
-    'app':      'product',
-    'device':   'device',
-    'service':  'service',
-    'os':       'os',
-    'port':     'port',
-    'country':  'country',
-    'city':     'city'
-}
 
 
 def convert_str(s):
@@ -79,11 +70,13 @@ def printf(s, color="white"):
     print('{}{}{}'.format(colors.get(color, "WHITE"), s, default))
 
 
-def print_data(data_list):
+def show_host_default_data(data_list, count):
     """
     display the dork data searched by the user on the terminal,
-    if facet is specified, it will also be displayed
+    if facet is specified, it will also be displayed.
+    :param resource: search type web or host, str
     :param data_list: dork data , list
+    :param count: API data count , int
     :return:
     """
     total = 0
@@ -93,7 +86,7 @@ def print_data(data_list):
 
     # process data
     for d in data_list:
-        ip, country, port, app, banner, service = data.get_item(d)
+        ip, country, port, app, banner, service = data.get_host_item(d)
         # content length too long, truncated
         app_name = omit_str(app, 5)
 
@@ -107,7 +100,34 @@ def print_data(data_list):
             banner_content)
         )
     print()
-    printf("total: {}".format(total))
+    printf("total: {}/{}".format(total, count))
+
+
+def show_web_default_data(data_list, count):
+    # print title
+    printf("{:<27}{:<27}{:<27}{:<27}{:<27}{:<30}".format(
+        "ip", "site", "title", "app", "country", "banner"), color="green")
+
+    for item in data_list:
+        item_dict = ZoomEyeDict(item)
+        content = ''
+        for item_key in data.default_table_web.keys():
+            dict_result = item_dict.find(data.default_table_web.get(item_key))
+            if isinstance(dict_result, list):
+                for result_item in dict_result:
+                    if isinstance(result_item, dict):
+                        text = result_item.get("name")
+                    elif isinstance(result_item, str):
+                        text = result_item
+                    else:
+                        text = 'unknown'
+            else:
+                text = dict_result
+            if text is None:
+                text = 'unknown'
+            text = convert_str(omit_str(text))
+            content += "{:<27}".format(text)
+        print(content)
 
 
 def print_filter(keys, data_list, condition=None):
@@ -129,6 +149,18 @@ def print_filter(keys, data_list, condition=None):
     for i in data_list:
         items = ""
         for j in i:
+            if len(str(j)) != 0 and isinstance(j, list):
+                if isinstance(j[0], str):
+                    j = j[0]
+                elif isinstance(j[0], dict):
+                    j = j[0].get('name', 'unknown')
+                else:
+                    j = j
+            elif isinstance(j, dict):
+                j = j.get('name', 'unknown')
+            else:
+                if len(str(j)) == 0:
+                    j = '[unknown]'
             j_hex = convert_str(str(j))
             # match to content highlight
             if condition:
@@ -146,7 +178,7 @@ def print_filter(keys, data_list, condition=None):
     printf("total: {}".format(total))
 
 
-def print_facets(facets, facet_data, total, figure):
+def print_facets(facets, facet_data, total, figure, table):
     """
     used to print data that users need to count
     :param facets: str, statistical data
@@ -168,16 +200,17 @@ def print_facets(facets, facet_data, total, figure):
         pie_info = []
         facet_total = {}
         facet_count = 0
-        print(' {:-^40}'.format(facet + " Top 10"))
-        if facets_filed_table.get(facet.strip()) is None:
-            support_fields = ','.join(list(facets_filed_table.keys()))
+
+        if table.get(facet.strip()) is None:
+            support_fields = ','.join(list(table.keys()))
             printf("facet command has unsupport fields [{}], support fields has [{}]".format(facet.strip(),
                                                                                              support_fields),
                    color='red')
             exit(0)
+        print(' {:-^40}'.format(facet + " Top 10"))
         if figure is None:
             printf(" {:<35}{:<20}".format(facet, "count"), color="green")
-        f = facets_filed_table.get(facet)
+        f = table.get(facet)
         for t in facet_data.get(f):
             facet_count += t.get('count')
         facet_total[facet] = facet_count
@@ -259,7 +292,9 @@ def print_host_data(host_data):
         return
     # parser hostname,country,city... information
     first_item = host_data[0]
-    all_data, port_count = data.filter_history_data(data.fields_tables_history_host.keys(), host_data)
+    all_data, port_count = data.filter_ip_information(data.fields_tables_history_host.keys(),
+                                                      data.fields_tables_history_host,
+                                                      host_data, omit=True)
     printf(first_item.get('ip'))
     dict_first_item = data.ZoomEyeDict(first_item)
     # print title
@@ -268,10 +303,10 @@ def print_host_data(host_data):
         if result == "" or result is None or result == "Unknown":
             result = "[unknown]"
         printf("{:<30}{}".format(dict_item.capitalize() + ":", result))
-    printf("{:30}{}".format("Number of open ports:", len(port_count)))
+    printf("{:30}{}{}".format("Number of open ports:", len(port_count), port_count))
     printf("{:30}{}".format("Number of historical probes:", len(host_data)))
     printf('')
-    printf("{:<27}{:<27}{:<27}{:<27}".format("timestamp", "port/service", "app", "raw_data"), color='green')
+    printf("{:<27}{:<27}{:<27}{:<27}".format("timestamp", "port/service", "app", "banner"), color='green')
     # print detail and process port/service
     for data_item in all_data:
         content = ''
@@ -295,7 +330,8 @@ def print_filter_history(fileds, hist_data, condition=None):
     filter_title = ''
     first_item = hist_data[0]
     # filter data
-    all_data, port_count = data.filter_history_data(fileds, hist_data, omit=False)
+    all_data, port_count = data.filter_ip_information(fileds, data.fields_tables_history_host,
+                                                      hist_data, omit=False)
     printf(first_item.get('ip'))
     dict_first_item = data.ZoomEyeDict(first_item)
     # parser filter data title
@@ -326,3 +362,65 @@ def print_filter_history(fileds, hist_data, condition=None):
                         item_item = str(item_item).replace(re_result.group(), content_item)
             content += "{:<27}".format(item_item)
         printf(content)
+
+
+def print_information(raw_data):
+    if len(raw_data) == 0:
+        return
+    # parser hostname,country,city... information
+    first_item = raw_data[0]
+    all_data, port_count = data.filter_ip_information(data.fields_ip.keys(), data.fields_ip, raw_data, omit=True)
+    printf(first_item.get('ip'))
+    dict_first_item = data.ZoomEyeDict(first_item)
+    # print title
+    for dict_item in data.tables_history_info.keys():
+        result = dict_first_item.find(data.tables_history_info.get(dict_item))
+        if result == "" or result is None or result == "Unknown":
+            result = "[unknown]"
+        printf("{:<30}{}".format(dict_item.capitalize() + ":", result))
+    printf("{:30}{}{}".format("Number of open ports:", len(port_count), port_count))
+    printf("")
+    # print port/service
+    printf("{:<10}{:<15}{:<23}{:<30}".format("port", "service", "app", "banner"), color='green')
+    for data_item in all_data:
+        printf("{:<10}{:<15}{:<23}{:<30}".format(data_item[0], data_item[1], omit_str(data_item[2], 7), data_item[3]))
+
+
+def print_info_filter(filters, raw_data, condition=None):
+    filter_title = ''
+    first_item = raw_data[0]
+    # filter data
+    all_data, port_count = data.filter_ip_information(filters, data.fields_ip,
+                                                      raw_data, omit=False)
+    printf(first_item.get('ip'))
+    dict_first_item = data.ZoomEyeDict(first_item)
+    # parser filter data title
+    for dict_item in data.tables_history_info.keys():
+        result = dict_first_item.find(data.tables_history_info.get(dict_item))
+        if result == "" or result is None or result == "Unknown":
+            result = "[unknown]"
+        printf("{:<30}{}".format(dict_item.capitalize() + ":", result))
+    printf("{:30}{}{}".format("Number of open ports:", len(port_count), port_count))
+    printf('')
+    # print title
+    for item in filters:
+        filter_title += "{:<27}".format(item)
+    printf(filter_title, color='green')
+    # print data
+    for data_item in all_data:
+        content = ""
+        for item_item in data_item:
+            # match to content highlight
+            if condition:
+                for condition_item in condition:
+                    k, v = condition_item.split('=')
+                    re_result = re.search(str(v), str(item_item), re.I | re.M)
+                    # replace to highlight
+                    if re_result:
+                        content_item = "\033[31m{}\033[0m".format(re_result.group())
+                        item_item = str(item_item).replace(re_result.group(), content_item)
+            content += "{:<27}".format(item_item)
+        printf(content)
+
+
+

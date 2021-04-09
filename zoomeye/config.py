@@ -22,7 +22,7 @@ ZOOMEYE_CACHE_PATH = "~/.config/zoomeye/cache"
 EXPIRED_TIME = 60 * 60 * 24 * 5
 
 # print data max length
-STRING_MAX_LENGTH = 30
+STRING_MAX_LENGTH = 23
 
 # cache file name
 FILE_NAME = "/{}_{}.json"

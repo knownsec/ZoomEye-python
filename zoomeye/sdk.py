@@ -59,6 +59,11 @@ class ZoomEyeDict:
                     value = input_data.get(k)
                 else:
                     value = None
+                if isinstance(value, list):
+                    if len(value) != 0:
+                        value = value[0]
+                    else:
+                        value = 'unknown'
                 input_data = value
             return value
         else:
