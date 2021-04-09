@@ -107,7 +107,9 @@ def show_web_default_data(data_list, count):
     # print title
     printf("{:<27}{:<27}{:<27}{:<30}".format(
          "site", "title", "country", "banner"), color="green")
+    num = 0
     for item in data_list:
+        num += 1
         item_dict = ZoomEyeDict(item)
         content = ''
         for item_key in data.default_table_web.keys():
@@ -126,7 +128,9 @@ def show_web_default_data(data_list, count):
                 text = 'unknown'
             text = convert_str(omit_str(text))
             content += "{:<27}".format(text)
-        print(content)
+        printf(content)
+    printf('')
+    printf("total:{}/{}".format(num, count))
 
 
 def print_filter(keys, data_list, condition=None):
