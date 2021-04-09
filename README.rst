@@ -37,18 +37,20 @@ After successfully installing ``ZoomEye-python``, you can use the
 ::
 
    $ zoomeye -h
-   usage: zoomeye [-h] {info,search,init,history,clear} ...
-
+   usage: zoomeye [-h] [-v] {info,search,init,ip,history,clear} ...
     positional arguments:
-      {info,search,init,history,clear}
+      {info,search,init,ip,history,clear}
         info                Show ZoomEye account info
         search              Search the ZoomEye database
         init                Initialize the token for ZoomEye-python
+        ip                  Query IP information
         history             Query device history
         clear               Manually clear the cache and user information
 
     optional arguments:
       -h, --help            show this help message and exit
+      -v, --version         show program's version number and exit
+
 
 1.initialize token
 ^^^^^^^^^^^^^^^^^^
@@ -128,13 +130,14 @@ will explain and demonstrate below.
 
 ::
 
-   -num     set the number of displays/searches
+   -num     set the number of displays/searches, support 'all'
    -count   query the total amount of this dork in the ZoomEye database
    -facet   query the distribution of the full data of the dork
    -stat    the distribution of statistical data result sets
    -filter  query the list of a certain area in the data result set, or filter according to the content
    -save    the result set can be exported according to the filter conditions
    -force   ignore the local cache and force the data to be obtained from the API
+   -type    select web or host search
 
 4.number of data
 ^^^^^^^^^^^^^^^^
@@ -166,13 +169,23 @@ two commands include:
 
 ::
 
-   app      statistics by application type
-   device   statistics by device type
-   service  statistics by service type
-   os       statistics by operating system type
-   port     statistics by port
-   country  statistics by country
-   city     statistics by city
+    # host searhc
+    app      statistics by application type
+    device   statistics by device type
+    service  statistics by service type
+    os       statistics by operating system type
+    port     statistics by port
+    country  statistics by country
+    city     statistics by city
+
+    # web search
+    webapp      statistics by Web application
+    component   statistics by Web container
+    framework   statistics by Web framework
+    server      statistics by Web server
+    waf         statistics by Web firewall(WAF)
+    os          statistics by operating system
+    country     statistics by country
 
 use ``-facet`` to count the application types of all ``telnet`` devices:
 
@@ -214,16 +227,35 @@ by this command include:
 
 ::
 
-   app      show application type details
-   version  show version information details
-   device   show device type details
-   port     show port information details
-   city     show city details
-   country  show country details
-   asn      show as number details
-   banner   show details of characteristic response
-   time     show record data time
-   *        when this symbol is included, show all field details
+    # host/search
+    app           show application type details
+    version       show version information details
+    device        show device type details
+    port          show port information details
+    city          show city details
+    country       show country details
+    asn           show as number details
+    banner        show details of characteristic response
+    timestamp     show record data time
+    *             when this symbol is included, show all field details
+
+    # web/search
+    app         show application type details
+    headers     HTTP header
+    keywords    meta keyword
+    title       HTTP Title information
+    site        site search
+    city        show city details
+    country     show country details
+    webapp      Web application
+    component   Web container
+    framework   Web framework
+    server      Web server
+    waf         Web firewall(WAF)
+    os          operating system
+    timestamp   updated timestamp
+    *           when this symbol is included, show all field details
+
 
 Compared to the omitted display by default, the complete data can be
 viewed through ``-filter``, as follows:
@@ -236,18 +268,21 @@ viewed through ``-filter``, as follows:
 
    total: 1
 
-in addition, you can also filter the data through ``-filter``, you can
-filter the fields according to keywords (regular expressions are
-supported), and the format is ``field=regexp``, for example, we query in
-``banner`` data containing the ``telnet`` keyword:
+When using ``-filter`` to filter, the syntax is: ``key1,key2,key3=value``, where ``key3=value`` is the filter condition, and the displayed content is ``key1,key2`` Example:
 
 ::
 
-   $ zoomeye search "telnet" -filter banner=telnet
-   ip         banner                        
-   222.*.*.*  \xff\xfb\x01\xff\xfb\x03\xff\xfd\x03TELNET session now in ESTABLISHED state\r\n\r\n
+   $ zoomeye search telnet -num 1 -filter port,app,banner=Telnet
 
-   total: 1
+    ip                        port                          app
+    240e:*:*:*::3             23                            LANDesk remote management
+
+In the above example: ``banner=Telnet`` is the filter condition, and ``port,app`` is the displayed content. If you need to display ``banner``, the filter statement is like this
+
+::
+
+    $ zoomeye search telnet -num 1 -filter port,app,banner,banner=Telnet
+
 
 
 7.data export
@@ -321,7 +356,7 @@ By default, five fields are shown to users:
 ::
 
     1. time     recorded time
-    2. service  open service
+    2. service  Open service
     3. port     port
     4. app      web application
     5. raw      fingerprint information
@@ -374,7 +409,7 @@ The `-filter` parameter supports the filtering of the following five fields:
     2.port      port information
     3.service   open service
     4.app       web application
-    5.raw       original fingerprint information
+    5.banner    original fingerprint information
     *           when this symbol is included, show all field details
 
 
@@ -386,7 +421,71 @@ A display of the ``id`` field is added during the display. ``id`` is the serial 
 
     The user quota will also be consumed when using the ``history`` command. The user quota will be deducted for the number of pieces of data returned in the ``history`` command. For example: IP "8.8.8.8" has a total of ``944`` historical records, and the user quota of ``944`` is deducted for one query.
 
-10.cleanup function
+10. search IP information
+^^^^^^^^^^^^^^^^^^^^^^^^^
+You can query the information of the specified IP through the ``zoomeye ip`` command, for example:
+
+::
+
+    $ zoomeye ip 185.*.*.57
+    185.*.*.57
+    Hostnames:                    [unknown]
+    Isp:                          [unknown]
+    Country:                      Saudi Arabia
+    City:                         [unknown]
+    Organization:                 [unknown]
+    Lastupdated:                  2021-03-02T11:14:33
+    Number of open ports:         4{2002, 9002, 123, 25}
+
+    port      service        app                    banner
+    9002      telnet                                \xff\xfb\x01\xff\xfb\x0...
+    123       ntp            ntpd                   \x16\x82\x00\x01\x05\x0...
+    2002      telnet         Pocket CMD telnetd     \xff\xfb\x01\xff\xfb\x0...
+    25        smtp           Cisco IOS NetWor...    220 10.1.10.2 Cisco Net...
+
+
+The ``zoomeye ip`` command also supports the filter parameter ``-filter``, and the syntax is the same as that of ``zoomeye search``. E.g:
+
+::
+
+    $ zoomeye ip "185.*.*.57" -filter "app,app=ntpd"
+    Hostnames:                    [unknown]
+    Isp:                          [unknown]
+    Country:                      Saudi Arabia
+    City:                         [unknown]
+    Organization:                 [unknown]
+    Lastupdated:                  2021-02-17T02:15:06
+    Number of open ports:         0
+    Number of historical probes:  1
+
+    app
+    ntpd
+
+The fields supported by the ``filter`` parameter are:
+
+::
+
+     1.port       port information
+     2.service    open service
+     3.app        web application
+     4.banner     original fingerprint information
+
+
+
+..
+
+    Note: This function limits the number of queries per user per day based on different user levels.
+
+    Registered users and developers can query 10 times a day
+
+    Advanced users can query 20 times a day
+
+    VIP users can query 30 times a day
+
+    After the number of times per day is used up, it will be refreshed after 24 hours, that is, counting from the time of the first IP check, and the number of refreshes after 24 hours.
+
+
+11.cleanup function
 ^^^^^^^^^^^^^^^^^^^^
 
 Users search for a large amount of data every day, which causes the storage space occupied by the cache folder to gradually increase; if users use ``ZoomEye-python`` on a public server, it may cause their own ``API KEY`` and ``ACCESS TOKEN`` to leak .
@@ -600,14 +699,7 @@ data more conveniently and extract the specified data fields as follows:
 
 | **4.Why may the total amount of data in ZoomEye-python and the browser
   search the same dork be different?**
-| ``ZoomEye`` provides two search interfaces: ``/host/search`` and
-  ``/web/search``. only ``/host/search`` is used in ``ZoomEye-python``.
-  in most cases, the data provided by the host interface can cover more
-  than 90% or even 100% of the data, so the accuracy of the data can be
-  guaranteed. when the API makes a request, the user quota will be
-  consumed. if the two interfaces are compatible if it does, it will
-  consume more user quota; therefore, in the command line tool, only the
-  ``/host/search`` interface is used for searching.
+| ``ZoomEye`` provides two search interfaces: ``/host/search`` and ``/web/search``. In ``ZoomEye-python``, only ``/host/search`` is used by default, and ``/web/search`` is not used. Users can choose the search method according to their needs by specifying the ``type`` parameter.
 
 .. figure:: https://raw.githubusercontent.com/knownsec/ZoomEye-python/master/images/image-20210111141028072.png
     :width: 500px

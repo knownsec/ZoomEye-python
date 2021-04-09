@@ -64,18 +64,19 @@ def main():
         "-num",
         default=20,
         help="The number of search results that should be returned",
-        type=int,
+        type=str,
         metavar='value'
     )
     parser_search.add_argument(
         "-facet",
         default=None,
         nargs='?',
-        const='app,device,service,os,port,country,city',
+        const='country',
         type=str,
         help=('''
             Perform statistics on ZoomEye database,
-            field: [app,device,service,os,port,country,city]
+            host field: [app,device,service,os,port,country,city]
+            web field: [webapp,component,framework,server,waf,os,country]
         '''),
         metavar='field'
     )
@@ -88,7 +89,8 @@ def main():
         type=str,
         help=('''
               Output more clearer search results by set filter field,
-              field: [app,version,device,port,city,country,asn,banner,time,*]
+              host field: [app,version,device,port,city,country,asn,banner,timestamp,*]
+              web field: [app,headers,keywords,title,site,city,country,webapp,component,framework,server,waf,os,timestamp,*]
         ''')
     )
     parser_search.add_argument(
@@ -100,7 +102,8 @@ def main():
         type=str,
         help=('''
               Perform statistics on search results,
-              field: [app,device,service,os,port,country,city]
+              host field: [app,device,service,os,port,country,city]
+              web field: [webapp,component,framework,server,waf,os,country]
         ''')
     )
     parser_search.add_argument(
@@ -127,10 +130,20 @@ def main():
         default=None
     )
     parser_search.add_argument(
+        "-type",
+        help=(
+            """
+            Select web search or host search(default host) 
+            """
+        ),
+        choices={'web', 'host'},
+        default="host"
+    )
+    parser_search.add_argument(
         "-force",
         help=(
             """
-            ignore the local cache and force the data to be obtained from the API
+            Ignore the local cache and force the data to be obtained from the API
             """
         ),
         action="store_true"
@@ -144,6 +157,15 @@ def main():
     parser_init.add_argument("-password", help="ZoomEye account password", default=None, metavar='[password]')
     parser_init.set_defaults(func=core.init)
 
+    parser_ip_info = subparsers.add_parser("ip", help="Query IP information")
+    parser_ip_info.add_argument("ip", help="search device IP", metavar='ip', type=str)
+    parser_ip_info.add_argument(
+        "-filter",
+        help="output more clearer search results by set filter field,field:[port,service,app,banner]",
+        default=None,
+        metavar="key=value")
+    parser_ip_info.set_defaults(func=core.information_ip)
+
     # query ip history
     parser_history = subparsers.add_parser("history", help="Query device history")
     parser_history.add_argument("ip", help="search historical device IP", metavar='ip', type=str)
@@ -151,11 +173,13 @@ def main():
         "-filter",
         help=("""
             filter data and print raw data detail.
-            field: [time,port,service,country,raw,*]
+            field: [timestamp,port,service,country,banner,*]
         """),
         metavar='filed=regexp',
         type=str,
-        default=None
+        default=None,
+        const="app",
+        nargs='?'
     )
     parser_history.add_argument(
         "-force",
@@ -194,10 +218,10 @@ def main():
         get_version()
         exit(0)
 
-    try:
-        args.func(args)
-    except AttributeError:
-        parser.print_help()
+    # try:
+    args.func(args)
+    # except AttributeError:
+    #     parser.print_help()
 
 
 if __name__ == '__main__':

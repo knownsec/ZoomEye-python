@@ -27,14 +27,21 @@ fields_tables_host = {
 }
 
 fields_tables_web = {
-    "ip":       "ip",
-    "app":      "webapp",
-    "headers":  "headers",
-    "keywords": "keywords",
-    "title":    "title",
-    "site":     "site",
-    "city":     "geoinfo.city.names.en",
-    "country":  "geoinfo.country.names.en",
+    "ip":           "ip",
+    "app":          "webapp",
+    "headers":      "headers",
+    "keywords":     "keywords",
+    "title":        "title",
+    "site":         "site",
+    "city":         "geoinfo.city.names.en",
+    "country":      "geoinfo.country.names.en",
+    "webapp":       "webapp",
+    "component":    "component",
+    "framework":    "framework",
+    "server":       "server",
+    "waf":          "waf",
+    "os":           "os",
+    "timestamp":    "timestamp"
 }
 
 
@@ -59,6 +66,11 @@ class ZoomEyeDict:
                     value = input_data.get(k)
                 else:
                     value = None
+                if isinstance(value, list):
+                    if len(value) != 0:
+                        value = value[0]
+                    else:
+                        value = '[unknown]'
                 input_data = value
             return value
         else:

@@ -10,7 +10,7 @@ import re
 import os
 from zoomeye import config, file, show
 from zoomeye.sdk import ZoomEye
-from zoomeye.data import CliZoomEye, HistoryDevice
+from zoomeye.data import CliZoomEye, HistoryDevice, IPInformation
 
 # save zoomeye config folder
 zoomeye_dir = os.path.expanduser(config.ZOOMEYE_CONFIG_PATH)
@@ -36,7 +36,8 @@ def key_init(key):
     show.printf("Role: {}".format(user_data["plan"]))
     show.printf("Quota: {}".format(user_data["resources"].get("search")))
     # save api key
-    file.write_file(key_file, key)
+    with open(key_file, 'w') as f:
+        f.write(key)
     show.printf("successfully initialized", color="green")
     # change the permission of the configuration file to read-only
     os.chmod(key_file, 0o600)
@@ -62,8 +63,8 @@ def jwt_init(username, password):
         user_data = zoom.resources_info()
         show.printf("Role: {}".format(user_data["plan"]))
         show.printf("Quota: {}".format(user_data["resources"].get("search")))
-
-        file.write_file(jwt_file, access_token)
+        with open(jwt_file, 'w') as f:
+            f.write(access_token)
         show.printf("successfully initialized", color="green")
         # change the permission of the configuration file to read-only
         os.chmod(jwt_file, 0o600)
@@ -94,11 +95,6 @@ def init(args):
 
 
 def search(args):
-    """
-    search for dork functions, support filtering and view detailed data
-    :param args:
-    :return:
-    """
     dork = args.dork
     num = args.num
     facet = args.facet
@@ -108,39 +104,28 @@ def search(args):
     count_total = args.count
     figure = args.figure
     force = args.force
+    resource = args.type
 
-    cli_zoom = CliZoomEye(dork, num, facet=facet, force=force)
-    # load local zoomeye export file
-    if os.path.exists(dork):
-        dork_data, facet_data, total = cli_zoom.load()
-    # get data by cache file or api
-    else:
-        dork_data, facet_data, total = cli_zoom.from_cache_or_api()
-    # print data total
+    cli_zoom = CliZoomEye(dork, num, resource=resource, facet=facet, force=force)
+    if filters:
+        cli_zoom.filter_data(filters, save)
+        return
+    if facet:
+        cli_zoom.facets_data(facet, figure)
+        return
     if count_total:
-        show.printf(total)
-    else:
-        # user saves data to local folder
-        if save:
-            cli_zoom.save(save)
-            return
-        # print filter
-        if filters:
-            cli_zoom.cli_filter(filters)
-            return
-        # when facets is not None print facets data
-        if facet:
-            show.print_facets(facet, facet_data, total, figure)
-            return
-        if stat:
-            cli_zoom.statistics(stat, figure)
-            return
-        # when facets is None print dork data
-        if filters is None and facet is None and stat is None:
-            show.print_data(dork_data)
-            return
-        # others
-        show.printf("please run <zoomeye dork -h> for help.")
+        cli_zoom.count()
+        return
+    if stat:
+        cli_zoom.statistics(stat, figure)
+        return
+    if save:
+        cli_zoom.save(save)
+        return
+    if filters is None and facet is None and stat is None:
+        cli_zoom.default_show()
+        return
+    show.printf("please run <zoomeye search -h> for help.")
 
 
 def info(args):
@@ -211,5 +196,25 @@ def clear_file(args):
     for item in file_list:
         os.remove(os.path.join(target_dir, item))
     show.printf("clear complete!", color='green')
+
+
+def information_ip(args):
+    ip = args.ip
+    filters = args.filter
+    # determine whether the input is an IP address by regular
+    compile_ip = re.compile('^(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|[1-9])\.(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|\d)\.'
+                            '(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|\d)\.(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|\d)$')
+    # IP format error，exit program
+    if not compile_ip.match(ip):
+        show.printf("[{}] it is not an IP address, please check!".format(ip), color='red')
+        return
+
+    infor = IPInformation(ip)
+    if filters:
+        filter_list = filters.split(',')
+        infor.filter_information(filter_list)
+        return
+
+    infor.show_information()
 
 
