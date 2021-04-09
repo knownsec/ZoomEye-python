@@ -363,7 +363,7 @@ class CliZoomEye:
                         )
                         self.num = self.zoomeye.total
                         cache = Cache(self.dork, page=1, resource=self.resource)
-                        cache.save(self.zoomeye.raw_data)
+                        cache.save(json.dumps(self.zoomeye.raw_data))
                         if self.num % 20 == 0:
                             return int(self.num / 20)
                         return int(self.num / 20) + 1
