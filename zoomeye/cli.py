@@ -63,7 +63,7 @@ def main():
     parser_search.add_argument(
         "-num",
         default=20,
-        help="The number of search results that should be returned",
+        help="The number of search results that should be returned, support 'all'",
         type=str,
         metavar='value'
     )
