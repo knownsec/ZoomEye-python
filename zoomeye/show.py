@@ -385,7 +385,7 @@ def print_information(raw_data):
     printf("")
     # print port/service
     printf("{:<10}{:<15}{:<23}{:<30}".format("port", "service", "app", "banner"), color='green')
-    for data_item in sorted(all_data, key=lambda k: (k[0])):
+    for data_item in sorted(all_data, key=lambda k: int(k[0])):
         printf("{:<10}{:<15}{:<23}{:<30}".format(data_item[0], data_item[1], omit_str(data_item[2], 7), data_item[3]))
 
 
