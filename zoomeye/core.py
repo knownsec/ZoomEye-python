@@ -96,7 +96,7 @@ def init(args):
 
 def search(args):
     dork = args.dork
-    num = args.num
+    num = int(args.num)
     facet = args.facet
     filters = args.filter
     stat = args.stat
