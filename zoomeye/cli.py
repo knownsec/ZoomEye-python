@@ -218,10 +218,10 @@ def main():
         get_version()
         exit(0)
 
-    # try:
-    args.func(args)
-    # except AttributeError:
-    #     parser.print_help()
+    try:
+        args.func(args)
+    except AttributeError:
+        parser.print_help()
 
 
 if __name__ == '__main__':
