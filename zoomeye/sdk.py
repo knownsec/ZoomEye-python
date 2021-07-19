@@ -13,35 +13,36 @@ import getpass
 import requests
 
 fields_tables_host = {
-    "ip":       "ip",
-    "app":      "portinfo.app",
-    "version":  "portinfo.version",
-    "device":   "portinfo.device",
-    "port":     "portinfo.port",
-    "city":     "geoinfo.city.names.en",
-    "country":  "geoinfo.country.names.en",
-    "service":  "portinfo.service",
-    "asn":      "asn",
-    "banner":   "portinfo.banner",
-    "time":     "timestamp"
+    "ip": "ip",
+    "app": "portinfo.app",
+    "version": "portinfo.version",
+    "device": "portinfo.device",
+    "port": "portinfo.port",
+    "city": "geoinfo.city.names.en",
+    "country": "geoinfo.country.names.en",
+    "service": "portinfo.service",
+    "asn": "asn",
+    "banner": "portinfo.banner",
+    "time": "timestamp",
+    "ssl": "ssl"
 }
 
 fields_tables_web = {
-    "ip":           "ip",
-    "app":          "webapp",
-    "headers":      "headers",
-    "keywords":     "keywords",
-    "title":        "title",
-    "site":         "site",
-    "city":         "geoinfo.city.names.en",
-    "country":      "geoinfo.country.names.en",
-    "webapp":       "webapp",
-    "component":    "component",
-    "framework":    "framework",
-    "server":       "server",
-    "waf":          "waf",
-    "os":           "os",
-    "timestamp":    "timestamp"
+    "ip": "ip",
+    "app": "webapp",
+    "headers": "headers",
+    "keywords": "keywords",
+    "title": "title",
+    "site": "site",
+    "city": "geoinfo.city.names.en",
+    "country": "geoinfo.country.names.en",
+    "webapp": "webapp",
+    "component": "component",
+    "framework": "framework",
+    "server": "server",
+    "waf": "waf",
+    "os": "os",
+    "timestamp": "timestamp"
 }
 
 
