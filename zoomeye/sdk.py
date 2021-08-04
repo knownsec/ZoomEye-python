@@ -109,16 +109,13 @@ class ZoomEye:
         """
         # if method is "GET" use requests.get
         if method == "GET":
-            print('likx', 'sdk.get', params)
             resp = requests.get(url, data=params, headers=headers)
         # request method is "POST"
         else:
-            print('likx', 'sdk.Post', params)
             resp = requests.post(url, params, headers)
         # if response succeed and status code is 200 return json data
         if resp and resp.status_code == 200:
             data = resp.json()
-            print('likx', "***", data)
             return data
         # Request data exceeds the total amount of ZoomEye data,
         # return all data instead of throwing an exception
