@@ -219,7 +219,6 @@ def information_ip(args):
 
 
 def associated_domain_query(args):
-
     q = args.q
     resource = args.type
     page = args.page

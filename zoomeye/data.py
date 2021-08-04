@@ -756,6 +756,6 @@ class DomainSearch:
         """show domain search data"""
 
         info_data, total = self.zm.domain_search(self.q, self.source, self.page)
-        show.show_domain_info(info_data, total)
+        show.show_domain_info(info_data, total, self.page)
         # return None
 

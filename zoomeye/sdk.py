@@ -303,7 +303,7 @@ class ZoomEye:
             result = resp
         return result
 
-    def domain_search(self, q, source, page) -> list:
+    def domain_search(self, q, source=0, page=1) -> list:
         """
         Search records with ZoomEye dorks.
         Args:

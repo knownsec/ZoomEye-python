@@ -213,9 +213,9 @@ def main():
     parser_clear.set_defaults(func=core.clear_file)
 
     parser_domain = subparsers.add_parser("domain", help="search associated domain or sub domain")
-    parser_domain.add_argument("q", type=str, help="search key word", default=None)
+    parser_domain.add_argument("q", type=str, help="search key word(eg:baidu.com)", default=None)
     parser_domain.add_argument("type", type=int, help="0: search associated domain;1: search sub domain",
-                               choices=(0, 1), default=1)
+                               choices=(0, 1), default=0)
     parser_domain.add_argument("-page", type=int, help="view the page of the query result", default=1)
     parser_domain.set_defaults(func=core.associated_domain_query)
 
