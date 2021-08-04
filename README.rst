@@ -511,6 +511,84 @@ possible; the data set that the user has queried will be cached locally
 for 5 days. when users query the same data set, quotas are not consumed.
 
 
+13.domain name query
+^^^^^^^^^^^^^^^^^^^^
+
+``ZoomEye-python`` provides the domain name query function (including associated domain name query and subdomain name query). To query a domain name, run the domain [domain name] [query type] command as follows:
+
+
+::
+
+    $ python cli.py domain baidu.com 0
+    name                                                   timestamp      ip
+    zszelle.baidu30a72.bf.3dtops.com                       2021-06-27     204.11.56.48
+    zpvpcxa.baidu.3dtops.com                               2021-06-27     204.11.56.48
+    zsrob.baidu.3dtops.com                                 2021-06-27     204.11.56.48
+    zw8uch.7928.iwo7y0.baidu82.com                         2021-06-27     59.188.232.88
+    zydsrdxd.baidu.3dtops.com                              2021-06-27     204.11.56.48
+    zycoccz.baidu.3dtops.com                               2021-06-27     204.11.56.48
+    ...
+
+    total: 30/79882
+
+
+
+By default, the user is presented with three more important fields:
+
+
+::
+
+    1. name             域名全称
+    2. timestamp        建立时间戳
+    3. ip               ip地址
+
+
+
+Use ``zoomeye domain -h`` to view parameters provided by the ``domain``.
+
+
+::
+
+    $ python cli.py domain -h
+    usage: zoomeye domain [-h] [-page PAGE] q {0,1}
+
+    positional arguments:
+      q           search key word(eg:baidu.com)
+      {0,1}       0: search associated domain;1: search sub domain
+
+    optional arguments:
+      -h, --help  show this help message and exit
+      -page PAGE  view the page of the query result
+
+
+
+The following is a demonstration of ``-page`` :(default query for the first page when not specified)
+
+
+::
+
+    $ python cli.py domain baidu.com 0 -page 3
+    name                                                   timestamp      ip
+    zvptcfua.baidu6c7be.mm.3dtops.com                      2021-06-27     204.11.56.48
+    zmukxtd.baidu65c78.iw.3dtops.com                       2021-06-27     204.11.56.48
+    zhengwanghuangguanxianjinkaihu.baidu.fschangshi.com    2021-06-27     23.224.194.175
+    zibo-baidu.com                                         2021-06-27     194.56.78.148
+    zuwxb4.jingyan.baidu.66players.com                     2021-06-27     208.91.197.46
+    zhannei.baidu.com.hypestat.com                         2021-06-27     67.212.187.108
+    zrr.sjz-baidu.com                                      2021-06-27     204.11.56.48
+    zp5hd1.baidu.com.ojsdi.cn                              2021-06-27     104.149.242.155
+
+    ...
+
+    zhidao.baidu.com.39883.wxeve.cn                        2021-06-27     39.98.202.39
+    zhizhao.baidu.com                                      2021-06-27     182.61.45.108
+    zfamnje.baidu.3dtops.com                               2021-06-27     204.11.56.48
+    zjnfza.baidu.3dtops.com                                2021-06-27     204.11.56.48
+
+    total: 90/79882
+
+
+
 0x03 video
 ~~~~~~~~~~
 
