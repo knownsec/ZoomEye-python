@@ -10,7 +10,7 @@ import re
 import os
 from zoomeye import config, file, show
 from zoomeye.sdk import ZoomEye
-from zoomeye.data import CliZoomEye, HistoryDevice, IPInformation
+from zoomeye.data import CliZoomEye, HistoryDevice, IPInformation, DomainSearch
 
 # save zoomeye config folder
 zoomeye_dir = os.path.expanduser(config.ZOOMEYE_CONFIG_PATH)
@@ -217,4 +217,13 @@ def information_ip(args):
 
     infor.show_information()
 
+
+def associated_domain_query(args):
+
+    q = args.q
+    resource = args.type
+    page = args.page
+    # show information for user
+    DomainSearch(q, resource, page).show_information()
+    return None
 

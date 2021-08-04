@@ -109,13 +109,16 @@ class ZoomEye:
         """
         # if method is "GET" use requests.get
         if method == "GET":
+            print('likx', 'sdk.get', params)
             resp = requests.get(url, data=params, headers=headers)
         # request method is "POST"
         else:
+            print('likx', 'sdk.Post', params)
             resp = requests.post(url, params, headers)
         # if response succeed and status code is 200 return json data
         if resp and resp.status_code == 200:
             data = resp.json()
+            print('likx', "***", data)
             return data
         # Request data exceeds the total amount of ZoomEye data,
         # return all data instead of throwing an exception
@@ -302,6 +305,27 @@ class ZoomEye:
         if resp and 'data' in resp:
             result = resp
         return result
+
+    def domain_search(self, q, source, page) -> list:
+        """
+        Search records with ZoomEye dorks.
+        Args:
+            q: query content
+            source: Search type 0, 1
+            page: want to view page
+
+        Returns:
+                list
+        """
+        search_api = self.search_api.format('domain')
+        headers = {'Authorization': 'JWT %s' % self.access_token, 'API-KEY': self.api_key}
+        request_result = self._request(search_api, params={"q": q, "type": source, "page": page}, headers=headers)
+        if request_result:
+            self.raw_data = request_result  # json字符串
+            self.data_list = request_result.get("list", [])
+            self.total = request_result.get("total", 0)
+
+        return [self.data_list, self.total]
 
 
 def show_site_ip(data):

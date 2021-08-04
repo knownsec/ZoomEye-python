@@ -738,3 +738,24 @@ class IPInformation:
                     color='red')
                 exit(0)
         show.print_info_filter(not_equal, result_data, has_equal)
+
+
+class DomainSearch:
+    """
+    query relation domain or sub domain
+    """
+
+    def __init__(self, q, source, page):
+        self.q = q
+        self.source = source
+        self.page = page
+        api_key, access_token = file.get_auth_key()
+        self.zm = ZoomEye(api_key=api_key, access_token=access_token)
+
+    def show_information(self):
+        """show domain search data"""
+
+        info_data, total = self.zm.domain_search(self.q, self.source, self.page)
+        show.show_domain_info(info_data, total)
+        # return None
+
