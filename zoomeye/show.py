@@ -426,4 +426,24 @@ def print_info_filter(filters, raw_data, condition=None):
         printf(content)
 
 
+def show_domain_info(info_list, total):
+    """
+    show query domain info
+    Args:
+        info_list:
+
+    Returns:
+        None
+    """
+    if len(info_list) == 0:
+        return
+    for d in info_list:
+        line_info = ""
+        for k, v in d.items():
+            line_info += "{:<5}{:<45}".format(k.capitalize() + ":", v)
+        print(line_info)
+
+    print("{:<15}{:<15}{:<15}{:<15}".format("page_number" + ":", len(info_list), "total:", total))
+
+
 

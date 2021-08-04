@@ -15,8 +15,6 @@ import os
 import time
 import datetime
 import hashlib
-
-
 from zoomeye import config, file
 from zoomeye.sdk import ZoomEye, fields_tables_host, fields_tables_web
 from zoomeye.sdk import ZoomEyeDict
@@ -25,75 +23,78 @@ from zoomeye import show
 zoomeye_dir = os.path.expanduser(config.ZOOMEYE_CONFIG_PATH)
 
 stat_host_table = {
-    'app':      'portinfo.app',
-    'device':   'portinfo.device',
-    'service':  'portinfo.service',
-    'os':       'portinfo.os',
-    'port':     'portinfo.port',
-    'country':  'geoinfo.country.names.en',
-    'city':     'geoinfo.city.names.en'
+    'app': 'portinfo.app',
+    'device': 'portinfo.device',
+    'service': 'portinfo.service',
+    'os': 'portinfo.os',
+    'port': 'portinfo.port',
+    'country': 'geoinfo.country.names.en',
+    'city': 'geoinfo.city.names.en',
+    'ssl': 'ssl'
 }
 
 stat_web_table = {
-    "webapp":       "webapp",
-    "component":    "component",
-    "framework":    "framework",
-    "server":       "server.name",
-    "waf":          "waf",
-    "os":           "system",
-    "country":      "geoinfo.country.names.en",
-    "city":         "geoinfo.city.names.en",
+    "webapp": "webapp",
+    "component": "component",
+    "framework": "framework",
+    "server": "server.name",
+    "waf": "waf",
+    "os": "system",
+    "country": "geoinfo.country.names.en",
+    "city": "geoinfo.city.names.en",
 }
 
 facets_table_host = {
-    'app':      'product',
-    'device':   'device',
-    'service':  'service',
-    'os':       'os',
-    'port':     'port',
-    'country':  'country',
-    'city':     'city'
+    'app': 'product',
+    'device': 'device',
+    'service': 'service',
+    'os': 'os',
+    'port': 'port',
+    'country': 'country',
+    'city': 'city',
+    'ssl': 'ssl'
 }
 
 facets_table_web = {
-    "webapp":       "webapp",
-    "component":    "component",
-    "framework":    "framework",
-    "server":       "server",
-    "waf":          "waf",
-    "os":           "os",
-    "country":      "country",
+    "webapp": "webapp",
+    "component": "component",
+    "framework": "framework",
+    "server": "server",
+    "waf": "waf",
+    "os": "os",
+    "country": "country",
 }
 
 fields_tables_history_host = {
-    "timestamp":    "timestamp",
-    "port":         "portinfo.port",
-    "service":      "portinfo.service",
-    "app":          "portinfo.product",
-    "banner":       "raw_data",
+    "timestamp": "timestamp",
+    "port": "portinfo.port",
+    "service": "portinfo.service",
+    "app": "portinfo.product",
+    "banner": "raw_data",
+    "ssl": "ssl"
 }
 
 fields_ip = {
-    "port":         "portinfo.port",
-    "service":      "portinfo.service",
-    "app":          "portinfo.app",
-    "banner":       "portinfo.banner",
+    "port": "portinfo.port",
+    "service": "portinfo.service",
+    "app": "portinfo.app",
+    "banner": "portinfo.banner",
 }
 
 tables_history_info = {
-    "Hostnames":       'portinfo.hostname',
-    'Isp':             'geoinfo.isp',
-    "Country":         'geoinfo.country.names.en',
-    "City":            'geoinfo.city.names.en',
-    "Organization":    'geoinfo.organization',
-    "LastUpdated":     'timestamp'
+    "Hostnames": 'portinfo.hostname',
+    'Isp': 'geoinfo.isp',
+    "Country": 'geoinfo.country.names.en',
+    "City": 'geoinfo.city.names.en',
+    "Organization": 'geoinfo.organization',
+    "LastUpdated": 'timestamp'
 }
 
 default_table_web = {
-    "site":     "site",
-    "title":    "title",
-    "country":  "geoinfo.country.names.en",
-    "banner":   "raw_data",
+    "site": "site",
+    "title": "title",
+    "country": "geoinfo.country.names.en",
+    "banner": "raw_data",
 }
 
 
@@ -583,6 +584,7 @@ class HistoryDevice:
     """
     obtain the user's identity information and determine whether to use the IP history search function
     """
+
     def __init__(self, ip, force, num):
         self.ip = ip
         self.force = force
@@ -700,6 +702,7 @@ class IPInformation:
     """
     query IP information
     """
+
     def __init__(self, dork):
         self.dork = "ip:{}".format(dork)
 
@@ -737,7 +740,22 @@ class IPInformation:
         show.print_info_filter(not_equal, result_data, has_equal)
 
 
+class DomainSearch:
+    """
+    query relation domain or sub domain
+    """
 
+    def __init__(self, q, source, page):
+        self.q = q
+        self.source = source
+        self.page = page
+        api_key, access_token = file.get_auth_key()
+        self.zm = ZoomEye(api_key=api_key, access_token=access_token)
 
+    def show_information(self):
+        """show domain search data"""
 
+        info_data, total = self.zm.domain_search(self.q, self.source, self.page)
+        show.show_domain_info(info_data, total)
+        # return None
 

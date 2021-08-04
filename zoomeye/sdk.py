@@ -13,35 +13,36 @@ import getpass
 import requests
 
 fields_tables_host = {
-    "ip":       "ip",
-    "app":      "portinfo.app",
-    "version":  "portinfo.version",
-    "device":   "portinfo.device",
-    "port":     "portinfo.port",
-    "city":     "geoinfo.city.names.en",
-    "country":  "geoinfo.country.names.en",
-    "service":  "portinfo.service",
-    "asn":      "asn",
-    "banner":   "portinfo.banner",
-    "time":     "timestamp"
+    "ip": "ip",
+    "app": "portinfo.app",
+    "version": "portinfo.version",
+    "device": "portinfo.device",
+    "port": "portinfo.port",
+    "city": "geoinfo.city.names.en",
+    "country": "geoinfo.country.names.en",
+    "service": "portinfo.service",
+    "asn": "asn",
+    "banner": "portinfo.banner",
+    "time": "timestamp",
+    "ssl": "ssl"
 }
 
 fields_tables_web = {
-    "ip":           "ip",
-    "app":          "webapp",
-    "headers":      "headers",
-    "keywords":     "keywords",
-    "title":        "title",
-    "site":         "site",
-    "city":         "geoinfo.city.names.en",
-    "country":      "geoinfo.country.names.en",
-    "webapp":       "webapp",
-    "component":    "component",
-    "framework":    "framework",
-    "server":       "server",
-    "waf":          "waf",
-    "os":           "os",
-    "timestamp":    "timestamp"
+    "ip": "ip",
+    "app": "webapp",
+    "headers": "headers",
+    "keywords": "keywords",
+    "title": "title",
+    "site": "site",
+    "city": "geoinfo.city.names.en",
+    "country": "geoinfo.country.names.en",
+    "webapp": "webapp",
+    "component": "component",
+    "framework": "framework",
+    "server": "server",
+    "waf": "waf",
+    "os": "os",
+    "timestamp": "timestamp"
 }
 
 
@@ -301,6 +302,27 @@ class ZoomEye:
         if resp and 'data' in resp:
             result = resp
         return result
+
+    def domain_search(self, q, source, page) -> list:
+        """
+        Search records with ZoomEye dorks.
+        Args:
+            q: query content
+            source: Search type 0, 1
+            page: want to view page
+
+        Returns:
+                list
+        """
+        search_api = self.search_api.format('domain')
+        headers = {'Authorization': 'JWT %s' % self.access_token, 'API-KEY': self.api_key}
+        request_result = self._request(search_api, params={"q": q, "type": source, "page": page}, headers=headers)
+        if request_result:
+            self.raw_data = request_result  # json字符串
+            self.data_list = request_result.get("list", [])
+            self.total = request_result.get("total", 0)
+
+        return [self.data_list, self.total]
 
 
 def show_site_ip(data):
