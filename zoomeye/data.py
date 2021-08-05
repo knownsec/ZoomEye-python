@@ -79,6 +79,7 @@ fields_ip = {
     "service": "portinfo.service",
     "app": "portinfo.app",
     "banner": "portinfo.banner",
+    "ssl": "ssl"
 }
 
 tables_history_info = {
@@ -218,6 +219,8 @@ def filter_ip_information(fileds, tables, host_data, omit=True):
                     host_result = show.omit_str(show.convert_str(host_result))
                 else:
                     host_result = show.convert_str(host_result)
+            if filed_item.lower() == 'ssl':
+                host_result = host_dict.find(tables.get(filed_item.lower().strip()))
             # replace None --> [unknown]
             if host_result is None:
                 host_result = "[unknown]"
