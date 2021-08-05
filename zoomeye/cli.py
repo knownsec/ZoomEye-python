@@ -161,7 +161,7 @@ def main():
     parser_ip_info.add_argument("ip", help="search device IP", metavar='ip', type=str)
     parser_ip_info.add_argument(
         "-filter",
-        help="output more clearer search results by set filter field,field:[port,service,app,banner]",
+        help="output more clearer search results by set filter field,field:[port,service,app,banner,ssl]",
         default=None,
         metavar="key=value")
     parser_ip_info.set_defaults(func=core.information_ip)
