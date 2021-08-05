@@ -405,6 +405,69 @@ optional arguments:
 
 `ZoomEye-python` 在 `cli` 模式下提供了缓存机制，位于 `~/.config/zoomeye/cache` 下，尽可能的节约用户配额；用户查询过的数据集将在本地缓存 5 天，当用户查询相同的数据集时，不会消耗配额。
 
+#### 13.域名查询
+`ZoomEye-python` 提供了域名查询功能(包括关联域名查询和子域名查询功能), 使用命令 `domain [域名] [查询类型]` 便能进行域名查询，使用方式如下：
+
+```
+$ python cli.py domain baidu.com 0
+name                                                   timestamp      ip
+zszelle.baidu30a72.bf.3dtops.com                       2021-06-27     204.11.56.48
+zpvpcxa.baidu.3dtops.com                               2021-06-27     204.11.56.48
+zsrob.baidu.3dtops.com                                 2021-06-27     204.11.56.48
+zw8uch.7928.iwo7y0.baidu82.com                         2021-06-27     59.188.232.88
+zydsrdxd.baidu.3dtops.com                              2021-06-27     204.11.56.48
+zycoccz.baidu.3dtops.com                               2021-06-27     204.11.56.48
+...
+
+total: 30/79882
+```
+
+在默认情况下为用户展示较为重要的三个字段：
+```
+1. name             域名全称
+2. timestamp        建立时间戳
+3. ip               ip地址
+```
+
+使用 `zoomeye domain -h` 可以查看 `domain` 提供的参数。
+```
+$ python cli.py domain -h
+usage: zoomeye domain [-h] [-page PAGE] q {0,1}
+
+positional arguments:
+  q           search key word(eg:baidu.com)
+  {0,1}       0: search associated domain;1: search sub domain
+
+optional arguments:
+  -h, --help  show this help message and exit
+  -page PAGE  view the page of the query result
+
+```
+
+下面对 `-page` 进行演示：(不指定时默认查询第一页)
+
+```
+$ python cli.py domain baidu.com 0 -page 3
+name                                                   timestamp      ip
+zvptcfua.baidu6c7be.mm.3dtops.com                      2021-06-27     204.11.56.48
+zmukxtd.baidu65c78.iw.3dtops.com                       2021-06-27     204.11.56.48
+zhengwanghuangguanxianjinkaihu.baidu.fschangshi.com    2021-06-27     23.224.194.175
+zibo-baidu.com                                         2021-06-27     194.56.78.148
+zuwxb4.jingyan.baidu.66players.com                     2021-06-27     208.91.197.46
+zhannei.baidu.com.hypestat.com                         2021-06-27     67.212.187.108
+zrr.sjz-baidu.com                                      2021-06-27     204.11.56.48
+zp5hd1.baidu.com.ojsdi.cn                              2021-06-27     104.149.242.155
+
+...
+
+zhidao.baidu.com.39883.wxeve.cn                        2021-06-27     39.98.202.39
+zhizhao.baidu.com                                      2021-06-27     182.61.45.108
+zfamnje.baidu.3dtops.com                               2021-06-27     204.11.56.48
+zjnfza.baidu.3dtops.com                                2021-06-27     204.11.56.48
+
+total: 90/79882
+```
+
 
 ### 0x03 演示视频
 [在 Windows、Mac、Linux、FreeBSD 演示视频](https://video.weibo.com/show?fid=1034:4597603044884556)

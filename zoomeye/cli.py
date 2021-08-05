@@ -161,7 +161,7 @@ def main():
     parser_ip_info.add_argument("ip", help="search device IP", metavar='ip', type=str)
     parser_ip_info.add_argument(
         "-filter",
-        help="output more clearer search results by set filter field,field:[port,service,app,banner]",
+        help="output more clearer search results by set filter field,field:[port,service,app,banner,ssl]",
         default=None,
         metavar="key=value")
     parser_ip_info.set_defaults(func=core.information_ip)
@@ -211,6 +211,13 @@ def main():
         action="store_true"
     )
     parser_clear.set_defaults(func=core.clear_file)
+
+    parser_domain = subparsers.add_parser("domain", help="search associated domain or sub domain")
+    parser_domain.add_argument("q", type=str, help="search key word(eg:baidu.com)", default=None)
+    parser_domain.add_argument("type", type=int, help="0: search associated domain;1: search sub domain",
+                               choices=(0, 1), default=0)
+    parser_domain.add_argument("-page", type=int, help="view the page of the query result", default=1)
+    parser_domain.set_defaults(func=core.associated_domain_query)
 
     args = parser.parse_args()
 

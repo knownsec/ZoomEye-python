@@ -426,4 +426,25 @@ def print_info_filter(filters, raw_data, condition=None):
         printf(content)
 
 
+def show_domain_info(info_list, total, page):
+    """
+    show query domain info
+    Args:
+        info_list:
+
+    Returns:
+        None
+    """
+
+    if len(info_list) == 0:
+        return
+    printf("{:<55}{:<15}{:<25}".format("name", "timestamp", "ip"), color="green")
+    for d in info_list:
+        name, timestamp, ip = d.values()
+        printf("{:<55}{:<15}{:<25}".format(name, timestamp, ip))
+    print()
+    printf("total: {}/{}".format(str(30 * int(page)), total))
+
+
+
 
