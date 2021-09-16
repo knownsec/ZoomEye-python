@@ -63,7 +63,8 @@ class ZoomEyeDict:
             keys = key.split(".")
             input_data = self.dict
             for k in keys:
-                k = "aiweninfo" if k == "geoinfo" else k
+                if k == 'geoinfo' and input_data.get(k) == None:
+                    k = "aiweninfo" if input_data.get("aiweninfo") else "ipipinfo"
                 if input_data.get(k) is not None:
                     value = input_data.get(k)
                 else:
