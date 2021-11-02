@@ -93,8 +93,20 @@ command, as follows:
 ::
 
    $ zoomeye info
-   Role: developer
-   Quota: 10000
+    user_info: {
+        "email": "",
+        "name": "",
+        "nick_name": "",
+        "api_key": "",
+        "role": "",  # service level
+        "phone", "",
+        "expired_at": ""
+    }
+    quota: {
+        "remain_free_quota": "",  # This month remaining free amount
+        "remain_pay_quota": "",  # Amount of remaining payment this month
+        "remain_total_quota": ""  # Total amount remaining by the service date
+    }
 
 3.search
 ^^^^^^^^

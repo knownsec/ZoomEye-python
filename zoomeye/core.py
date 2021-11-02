@@ -140,8 +140,8 @@ def info(args):
     user_data = zm.resources_info()
     if user_data:
         # show in the terminal
-        show.printf("Role: {}".format(user_data["plan"]))
-        show.printf("Quota: {}".format(user_data["resources"].get("search")))
+        show.printf("user_info: {}".format(user_data["user_info"]))
+        show.printf("quota_info: {}".format(user_data["quota_info"]))
 
 
 def ip_history(args):
