@@ -62,8 +62,20 @@ Quota: 10000
 
 ```
 $ zoomeye info
-Role: developer
-Quota: 10000
+user_info: {
+    "email": "",  # 用户邮箱
+    "name": "",  # 用户名
+    "nick_name": "",  # 昵称
+    "api_key": "",  # api_key
+    "role": "",  # 服务级别
+    "phone", "",  # 用户注册手机号
+    "expired_at": ""  # 服务期限
+}
+quota: {
+    "remain_free_quota": "",  # 本月剩余免费额度
+    "remain_pay_quota": "",  # 本月剩余支付额度
+    "remain_total_quota": ""  # 截止到服务日期剩余总额度
+}
 ```
 
 #### 3.搜索
