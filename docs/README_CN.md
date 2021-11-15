@@ -300,7 +300,7 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   -filter filed=regexp  filter data and print raw data detail. field:
-                        [time,port,service,app,raw]
+                        [timestamp,port,service,app,banner,ssl,*]
   -force                ignore the local cache and force the data to be
                         obtained from the API
 ```
