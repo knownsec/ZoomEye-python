@@ -221,6 +221,9 @@ def filter_ip_information(fileds, tables, host_data, omit=True):
                     host_result = show.convert_str(host_result)
             if filed_item.lower() == 'ssl':
                 host_result = host_dict.find(tables.get(filed_item.lower().strip()))
+                ssl_new = host_dict.find("ssl_new")
+                if host_result is None and ssl_new:
+                    host_result = ssl_new.replace("\n\n\n", "")
             # replace None --> [unknown]
             if host_result is None:
                 host_result = "[unknown]"
