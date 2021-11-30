@@ -11,5 +11,5 @@
 
 __name__ = 'zoomeye'
 __package__ = 'zoomeye'
-__version__ = 'v2.0.4.6.18'
+__version__ = 'v2.0.4.6.19'
 __site__ = "https://www.zoomeye.org/doc"
