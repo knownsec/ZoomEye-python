@@ -10,6 +10,7 @@ import operator
 from colorama import init
 from zoomeye import config, data, plotlib
 from zoomeye.sdk import ZoomEyeDict
+import json
 
 # solve the color display error under windows terminal
 init(autoreset=True)
@@ -441,7 +442,7 @@ def show_domain_info(info_list, total, page):
     printf("{:<55}{:<15}{:<25}".format("name", "timestamp", "ip"), color="green")
     for d in info_list:
         name, timestamp, ip = d.values()
-        printf("{:<55}{:<15}{:<25}".format(name, timestamp, ip))
+        printf("{:<55}{:<15}{:<25}".format(name, timestamp, json.dumps(ip)))
     print()
     printf("total: {}/{}".format(str(30 * int(page)), total))
 
