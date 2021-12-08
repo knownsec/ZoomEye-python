@@ -765,3 +765,13 @@ class DomainSearch:
         show.show_domain_info(info_data, total, self.page)
         # return None
 
+    def generate_dot(self):
+        result, msg = self.zm.generate_dot(self.q, self.source, self.page)
+        if result:
+            show.printf(msg, color='green')
+        else:
+            show.printf(msg, color='red')
+
+
+
+
