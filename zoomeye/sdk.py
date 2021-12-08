@@ -10,7 +10,11 @@
 """
 
 import getpass
+import os
+
 import requests
+
+import graphviz
 
 fields_tables_host = {
     "ip": "ip",
@@ -325,6 +329,44 @@ class ZoomEye:
             self.total = request_result.get("total", 0)
 
         return [self.data_list, self.total]
+
+    def generate_dot(self, q, source=0, page=1):
+        """
+
+        """
+        error_info = ''
+        search_api = self.search_api.format('domain')
+        headers = {'Authorization': 'JWT %s' % self.access_token, 'API-KEY': self.api_key}
+        try:
+            request_result = self._request(search_api, params={"q": q, "type": source, "page": page}, headers=headers)
+        except Exception as e:
+            error_info = e
+            request_result = None
+        if not request_result:
+            return False, error_info
+        # the request data is successful, and the domain name network map is generated.
+        domain = q.replace('.', '_')
+        grap_obj = graphviz.Digraph(
+            name=domain,
+            filename='{}.gv'.format(domain),
+            engine='sfdp',
+            format='png',
+        )
+        result = {}
+        for item in request_result.get('list'):
+            if len(item.get('ip')) != 0:
+                for ip in item.get('ip'):
+                    result[ip] = item.get('name')
+
+        for ip, name in result.items():
+            grap_obj.edge(name, ip)
+
+        try:
+            grap_obj.render()
+        except Exception as e:
+            return False, e
+        return True, "successful! saving in {}".format(os.getcwd())
+
 
 
 def show_site_ip(data):

@@ -224,7 +224,12 @@ def associated_domain_query(args):
     q = args.q
     resource = args.type
     page = args.page
-    # show information for user
-    DomainSearch(q, resource, page).show_information()
+    dot = args.dot
+    if dot:
+        # generate network map
+        DomainSearch(q, resource, page).generate_dot()
+    else:
+        # show information for user
+        DomainSearch(q, resource, page).show_information()
     return None
 

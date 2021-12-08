@@ -106,7 +106,7 @@ total: 1/58277850
 	-filter  查询数据结果集中某个字段的详情，或根据内容进行筛选
 	-save    可按照筛选条件将结果集进行导出
 	-force	 忽略本地缓存文件，直接从 ZoomEye 获取数据
-    -type    指定搜索源，host 或 web
+	-type    指定搜索源，host 或 web
 
 #### 4.数据数量
 通过 `-num` 参数可以指定我们搜索和显示的数量，指定的数目即消耗的配额数量。而通过 `-count` 参数可以查询该 `dork` 在 ZoomEye 数据库的总量，如下：
@@ -122,14 +122,14 @@ $ zoomeye search "telnet" -count
 我们可以通过 `-facet` 和 `-stat` 进行数据的聚合统计，使用 `-facet` 可以查询该 dork 全量数据的聚合情况(由 `ZoomEye` 聚合统计后通过 `API` 获取)，而 `-stat` 可以对查询到的结果集进行聚合统计。两个命令支持的聚合字段包括：
     
     # host search 
-	app      按应用类型进行统计
-	device   按设备类型进行统计
-	service  按照服务类型进行统计
-	os       按照操作系统类型进行统计
-	port     按照端口进行统计
-	country  按照国家进行统计
-	city     按照城市进行统计
-
+    app      按应用类型进行统计
+    device   按设备类型进行统计
+    service  按照服务类型进行统计
+    os       按照操作系统类型进行统计
+    port     按照端口进行统计
+    country  按照国家进行统计
+    city     按照城市进行统计
+    
     # web search
     webapp      按照 Web 应用进行统计
     component   按照 Web 容器进行统计
@@ -173,17 +173,17 @@ Pocket CMD telnetd                 1
 使用 `-filter` 参数可以查询数据结果集中某个字段的详情，或根据内容进行筛选，该命令支持的字段包括：
 
     # host/search
-	app          显示应用类型详情
-	version      显示版本信息详情
-	device       显示设备类型详情
-	port         显示端口信息详情
-	city         显示城市详情
-	country      显示国家详情
-	asn          显示as number详情
-	banner       显示特征响应报文详情
-	timestamp    显示数据更新时间
-	*            在包含该符号时，显示所有字段详情
-
+    app          显示应用类型详情
+    version      显示版本信息详情
+    device       显示设备类型详情
+    port         显示端口信息详情
+    city         显示城市详情
+    country      显示国家详情
+    asn          显示as number详情
+    banner       显示特征响应报文详情
+    timestamp    显示数据更新时间
+    *            在包含该符号时，显示所有字段详情
+    
     # web/search
     app         显示应用类型详情
     headers     HTTP 头
@@ -444,7 +444,7 @@ total: 30/79882
 使用 `zoomeye domain -h` 可以查看 `domain` 提供的参数。
 ```
 $ python cli.py domain -h
-usage: zoomeye domain [-h] [-page PAGE] q {0,1}
+usage: zoomeye domain [-h] [-page PAGE] [-dot] q {0,1}
 
 positional arguments:
   q           search key word(eg:baidu.com)
@@ -453,7 +453,7 @@ positional arguments:
 optional arguments:
   -h, --help  show this help message and exit
   -page PAGE  view the page of the query result
-
+  -dot        generate a network map of the domain name
 ```
 
 下面对 `-page` 进行演示：(不指定时默认查询第一页)
@@ -480,8 +480,14 @@ zjnfza.baidu.3dtops.com                                2021-06-27     204.11.56.
 total: 90/79882
 ```
 
+`-dot` 参数可以生成域名和 IP 的网络图，在使用该功能的之前需要安装 `grapvhiz`，安装教程请参考 [grapvhiz](https://graphviz.org/download/) 支持在Windows/Linux/Mac上使用。`-dot` 参数会生成 `png` 格式的图片，同时保存原始 dot 语言脚本。
+
+`-dot`使用效果如下：
+
+![image-20211208112710711](../images/image-20211208112710711.png)
 
 ### 0x03 演示视频
+
 [在 Windows、Mac、Linux、FreeBSD 演示视频](https://video.weibo.com/show?fid=1034:4597603044884556)
 
 [![asciicast](https://asciinema.org/a/qyDaJw9qQc7UjffD04HzMApWa.svg)](https://asciinema.org/a/qyDaJw9qQc7UjffD04HzMApWa)
@@ -530,6 +536,8 @@ zm = ZoomEye(api_key="01234567-acbd-00000-1111-22222222222")
 	  遍历 web-search 结果集，并输出域名和ip地址
 	10.show_ip_port(data)
 	  遍历 host-search 结果集，并输出ip地址和端口
+	11.generate_dot(self, q, source=0, page=1)
+		生成以域名中心写出graphviz文件和图片
 
 #### 3.使用示例
 
@@ -584,7 +592,7 @@ soft********11180040.b***c.net ['126.***.***.40']
 
 
 ### 0x05 contributions
-[r0oike@knownsec 404](https://github.com/r0oike)  
+[wh0ami1@knownsec 404](https://github.com/wh0ami1)  
 [0x7F@knownsec 404](https://github.com/0x7Fancy)  
 [dawu@knownsec 404](https://github.com/d4wu)  
 [fenix@knownsec 404](https://github.com/13ph03nix)

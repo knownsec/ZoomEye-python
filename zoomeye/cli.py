@@ -217,6 +217,7 @@ def main():
     parser_domain.add_argument("type", type=int, help="0: search associated domain;1: search sub domain",
                                choices=(0, 1), default=0)
     parser_domain.add_argument("-page", type=int, help="view the page of the query result", default=1)
+    parser_domain.add_argument('-dot', help="generate a network map of the domain name", action='store_true')
     parser_domain.set_defaults(func=core.associated_domain_query)
 
     args = parser.parse_args()

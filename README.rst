@@ -562,7 +562,7 @@ Use ``zoomeye domain -h`` to view parameters provided by the ``domain``.
 ::
 
     $ python cli.py domain -h
-    usage: zoomeye domain [-h] [-page PAGE] q {0,1}
+    usage: zoomeye domain [-h] [-page PAGE] [-dot] q {0,1}
 
     positional arguments:
       q           search key word(eg:baidu.com)
@@ -571,6 +571,7 @@ Use ``zoomeye domain -h`` to view parameters provided by the ``domain``.
     optional arguments:
       -h, --help  show this help message and exit
       -page PAGE  view the page of the query result
+      -dot        generate a network map of the domain name
 
 
 
@@ -599,7 +600,12 @@ The following is a demonstration of ``-page`` :(default query for the first page
 
     total: 90/79882
 
+The ``-dot`` parameter can generate a network map of domain name and IP,Before using this function, you need to install ``grapvhiz``.
+Please refer to `grapvhiz <https://graphviz.org/download/>`_ for the installation tutorial. It is supported on Windows/Linux/Mac.
+The ``-dot`` parameter will generate a picture in ``png`` format and save the original dot language script at the same time.
 
+.. figure:: images/image-20211208112710711.png
+    :width: 500px
 
 0x03 video
 ~~~~~~~~~~
@@ -663,6 +669,8 @@ The following are the interfaces and instructions provided by the SDK:
      traverse the web-search result set, and output the domain name and ip address
    10.show_ip_port(data)
      traverse the host-search result set and output the ip address and port
+   11.generate_dot(self, q, source=0, page=1)
+     Generate graphviz files and pictures written in the domain center
 
 3.SDK example
 ^^^^^^^^^^^^^
