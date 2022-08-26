@@ -115,10 +115,11 @@ class ZoomEye:
         """
         # if method is "GET" use requests.get
         if method == "GET":
-            resp = requests.get(url, data=params, headers=headers)
+            resp = requests.get(url, params=params, headers=headers)
         # request method is "POST"
         else:
-            resp = requests.post(url, params, headers)
+            resp = requests.post(url, data=params, headers=headers)
+            print(resp.text)
         # if response succeed and status code is 200 return json data
         if resp and resp.status_code == 200:
             data = resp.json()
@@ -132,6 +133,21 @@ class ZoomEye:
         # mainly users initialized by username and password, access token expires after 12 hours
         else:
             raise ValueError(resp.json().get('message'))
+
+    def _check_header(self):
+        if self.api_key:
+            headers = {
+                'API-KEY': self.api_key,
+            }
+        elif self.access_token:
+            headers = {
+                'Authorization': 'JWT %s' % self.access_token
+            }
+        else:
+            headers = {}
+        # add user agent
+        headers["User-Agent"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36"
+        return headers
 
     def login(self):
         """
@@ -167,9 +183,7 @@ class ZoomEye:
         search_api = self.search_api.format(resource)
         if isinstance(facets, (tuple, list)):
             facets = ','.join(facets)
-        headers = {'Authorization': 'JWT %s' % self.access_token,
-                   'API-KEY': self.api_key,
-                   }
+        headers = self._check_header()
         params = {'query': dork, 'page': page, 'facets': facets}
         resp = self._request(search_api, params=params, headers=headers)
         if resp and "matches" in resp:
@@ -207,10 +221,7 @@ class ZoomEye:
         self.search_type = resource
         search_api = self.search_api.format(resource)
 
-        headers = {
-            'Authorization': 'JWT %s' % self.access_token,
-            'API-KEY': self.api_key,
-        }
+        headers = self._check_header()
 
         dork_data = []
         all_data = []
@@ -246,9 +257,7 @@ class ZoomEye:
         see: https://www.zoomeye.org/doc#resources-info
         :return: dict
         """
-        headers = {'Authorization': 'JWT %s' % self.access_token,
-                   'API-KEY': self.api_key,
-                   }
+        headers = self._check_header()
         result = self._request(self.user_info_api, headers=headers)
         return result
 
@@ -301,9 +310,7 @@ class ZoomEye:
         result = {}
 
         zoomeye_api = self.history_api.format(ip)
-        headers = {'Authorization': 'JWT %s' % self.access_token,
-                   'API-KEY': self.api_key,
-                   }
+        headers = self._check_header()
         resp = self._request(zoomeye_api, headers=headers)
         if resp and 'data' in resp:
             result = resp
@@ -321,7 +328,7 @@ class ZoomEye:
                 list
         """
         search_api = self.search_api.format('domain')
-        headers = {'Authorization': 'JWT %s' % self.access_token, 'API-KEY': self.api_key}
+        headers = self._check_header()
         request_result = self._request(search_api, params={"q": q, "type": source, "page": page}, headers=headers)
         if request_result:
             self.raw_data = request_result  # json字符串
@@ -336,7 +343,7 @@ class ZoomEye:
         """
         error_info = ''
         search_api = self.search_api.format('domain')
-        headers = {'Authorization': 'JWT %s' % self.access_token, 'API-KEY': self.api_key}
+        headers = self._check_header()
         try:
             request_result = self._request(search_api, params={"q": q, "type": source, "page": page}, headers=headers)
         except Exception as e:
