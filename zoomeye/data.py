@@ -346,8 +346,8 @@ class CliZoomEye:
         self.facet_data = None
         self.total = 0
 
-        self.api_key, self.access_token = file.get_auth_key()
-        self.zoomeye = ZoomEye(api_key=self.api_key, access_token=self.access_token)
+        self.api_key = file.get_auth_key()
+        self.zoomeye = ZoomEye(api_key=self.api_key)
 
     def handle_page(self):
         try:
@@ -652,8 +652,8 @@ class HistoryDevice:
         get user level and IP historical data
         """
         normal_user = ['user', 'developer']
-        api_key, access_token = file.get_auth_key()
-        zm = ZoomEye(api_key=api_key, access_token=access_token)
+        api_key = file.get_auth_key()
+        zm = ZoomEye(api_key=api_key)
         role = zm.resources_info()
         # permission restrictions
         if role["plan"] in normal_user:
@@ -716,8 +716,8 @@ class IPInformation:
         """
         get api data
         """
-        api_key, access_token = file.get_auth_key()
-        zm = ZoomEye(api_key=api_key, access_token=access_token)
+        api_key = file.get_auth_key()
+        zm = ZoomEye(api_key=api_key)
         data = zm.dork_search(self.dork)
         return data
 
@@ -755,8 +755,8 @@ class DomainSearch:
         self.q = q
         self.source = source
         self.page = page
-        api_key, access_token = file.get_auth_key()
-        self.zm = ZoomEye(api_key=api_key, access_token=access_token)
+        api_key = file.get_auth_key()
+        self.zm = ZoomEye(api_key=api_key)
 
     def show_information(self):
         """show domain search data"""

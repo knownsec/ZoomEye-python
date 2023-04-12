@@ -153,8 +153,6 @@ def main():
     # initial account configuration related commands
     parser_init = subparsers.add_parser("init", help="Initialize the token for ZoomEye-python")
     parser_init.add_argument("-apikey", help="ZoomEye API Key", default=None, metavar='[api key]')
-    parser_init.add_argument("-username", help="ZoomEye account username", default=None, metavar='[username]')
-    parser_init.add_argument("-password", help="ZoomEye account password", default=None, metavar='[password]')
     parser_init.set_defaults(func=core.init)
 
     parser_ip_info = subparsers.add_parser("ip", help="Query IP information")

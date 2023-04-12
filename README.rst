@@ -57,12 +57,7 @@ After successfully installing ``ZoomEye-python``, you can use the
 
 Before using the ``ZoomEye-python cli``, the user ``token`` needs to be
 initialized. The credential is used to verify the user’s identity to
-query data from ``ZoomEye``; we provide two authentication methods:
-
-::
-
-   1.username/password
-   2.APIKEY (recommend)
+query data from ``ZoomEye``; only support API-KEY authentication methods.
 
 You can view the help through ``zoomeye init -h``, and use ``APIKEY`` to
 demonstrate below:
@@ -79,10 +74,6 @@ information (https://www.zoomeye.org/profile); ``APIKEY`` will not
 expire, users can reset in personal information according to their
 needs.
 
-in addition, we also provide the initialization method of
-``username/password``. After authentication in this way, the
-``JWT-token`` will be returned, which has certain timeliness and
-requires the user to login again after failure.
 
 2.query quota
 ^^^^^^^^^^^^^
@@ -623,18 +614,10 @@ The ``-dot`` parameter will generate a picture in ``png`` format and save the or
 1.initialize token
 ^^^^^^^^^^^^^^^^^^
 
-Similarly, the SDK also supports two authentication methods,
-``username/password`` and ``APIKEY``, as follows:
+Similarly, the SDK also supports API-KEY authentication methods,
+ ``APIKEY``, as follows:
 
-**1.user/pass**
-
-.. code:: python
-
-   from zoomeye.sdk import ZoomEye
-
-   zm = ZoomEye(username="username", password="password")
-
-**2.APIKEY**
+**.APIKEY**
 
 .. code:: python
 
@@ -649,27 +632,25 @@ The following are the interfaces and instructions provided by the SDK:
 
 ::
 
-   1.login()
-     use username/password or APIKEY for authentication
-   2.dork_search(dork, page=0, resource="host", facets=None)
+   1.dork_search(dork, page=0, resource="host", facets=None)
      search the data of the specified page according to dork
-   3.multi_page_search(dork, page=1, resource="host", facets=None)
+   2.multi_page_search(dork, page=1, resource="host", facets=None)
      search multiple pages of data according to dork
-   4.resources_info()
+   3.resources_info()
      get current user information
-   5.show_count()
+   4.show_count()
      get the number of all matching results under the current dork
-   6.dork_filter(keys)
+   5.dork_filter(keys)
      extract the data of the specified field from the search results
-   7.get_facet()
+   6.get_facet()
      get statistical results of all data from search results
-   8.history_ip(ip)
+   7.history_ip(ip)
      query historical data information of an ip
-   9.show_site_ip(data)
+   8.show_site_ip(data)
      traverse the web-search result set, and output the domain name and ip address
-   10.show_ip_port(data)
+   9.show_ip_port(data)
      traverse the host-search result set and output the ip address and port
-   11.generate_dot(self, q, source=0, page=1)
+   10.generate_dot(self, q, source=0, page=1)
      Generate graphviz files and pictures written in the domain center
 
 3.SDK example
@@ -684,12 +665,8 @@ The following are the interfaces and instructions provided by the SDK:
    '__file__', '__loader__', '__name__', '__package__', '__spec__',
    'fields_tables_host', 'fields_tables_web', 'getpass', 'requests',
    'show_ip_port', 'show_site_ip', 'zoomeye_api_test']
-   >>> # Use username and password to login
-   >>> zm = zoomeye.ZoomEye()
-   >>> zm.username = 'username@zoomeye.org'
-   >>> zm.password = 'password'
-   >>> print(zm.login())
-   ....JIUzI1NiIsInR5cCI6IkpXVCJ9.....
+   >>> # Use API-KEY search
+   >>> zm = zoomeye.ZoomEye(api_key="01234567-acbd-00000-1111-22222222222")
    >>> data = zm.dork_search('apache country:cn')
    >>> zoomeye.show_site_ip(data)
    213.***.***.46.rev.vo***one.pt ['46.***.***.213']
