@@ -43,35 +43,6 @@ def key_init(key):
     os.chmod(key_file, 0o600)
 
 
-def jwt_init(username, password):
-    """
-    initialize through the user name and password, write jwt to the local configuration file,
-    the expiration time is about 12 hours, so it is recommended to initialize through the api key.
-    :param username: str, login zoomeye account
-    :param password: str, login zoomeye account password
-    :return:
-    """
-    file.check_exist(zoomeye_dir)
-    try:
-        zoom = ZoomEye(username=username, password=password)
-        access_token = zoom.login()
-    except Exception:
-        return
-    jwt_file = zoomeye_dir + "/jwt"
-    if access_token:
-        # display the remaining resources of the current account
-        user_data = zoom.resources_info()
-        show.printf("Role: {}".format(user_data["plan"]))
-        show.printf("Quota: {}".format(user_data["resources"].get("search")))
-        with open(jwt_file, 'w') as f:
-            f.write(access_token)
-        show.printf("successfully initialized", color="green")
-        # change the permission of the configuration file to read-only
-        os.chmod(jwt_file, 0o600)
-    else:
-        show.printf("failed initialized!", color="red")
-
-
 def init(args):
     """
     the initialization processing function will select the initialization method according to the user's input.
@@ -79,15 +50,9 @@ def init(args):
     :return:
     """
     api_key = args.apikey
-    username = args.username
-    password = args.password
     # use api key init
-    if api_key and username is None and password is None:
+    if api_key:
         key_init(api_key)
-        return
-    # use username and password init
-    if api_key is None and username and password:
-        jwt_init(username, password)
         return
     # invalid parameter
     show.printf("input parameter error", color="red")
@@ -134,8 +99,8 @@ def info(args):
     :param args:
     :return:
     """
-    api_key, access_token = file.get_auth_key()
-    zm = ZoomEye(api_key=api_key, access_token=access_token)
+    api_key = file.get_auth_key()
+    zm = ZoomEye(api_key=api_key)
     # get user information
     user_data = zm.resources_info()
     if user_data:

@@ -39,10 +39,7 @@ optional arguments:
 ```
 
 #### 1.初始化token
-在使用 `ZoomEye-python cli` 前需要先初始化用户 `token`，该凭证用于验证用户身份以便从 `ZoomEye` 查询数据；我们提供了两种认证方式：
-
-	1.username/password
-	2.APIKEY (推荐)
+在使用 `ZoomEye-python cli` 前需要先初始化用户 `token`，该凭证用于验证用户身份以便从 `ZoomEye` 查询数据；仅支持 API-KEY 认证。
 
 可以通过 `zoomeye init -h` 查看帮助，下面通过 `APIKEY` 来进行演示：
 
@@ -55,7 +52,6 @@ Quota: 10000
 
 用户可以通过登陆 `ZoomEye` 在个人信息中(<https://www.zoomeye.org/profile>) 获取 `APIKEY`；`APIKEY` 不会过期，用户可根据需求在个人信息中进行重置。
 
-除此之外，我们还提供了 `username/password` 的初始化方式，通过这种方式认证后会返回 `JWT-token`，具有一定的时效性，失效后需要用户重新登陆。
 
 #### 2.查询配额
 用户可以通过 `info` 命令查询个人信息以及数据配额，如下：
@@ -495,17 +491,9 @@ total: 90/79882
 
 ### 0x04 使用SDK
 #### 1.初始化token
-同样，在 SDK 中也支持 `username/password` 和 `APIKEY` 两种认证方式，如下：
+同样，在 SDK 中仅支持通过 `APIKEY` 认证，如下：
 
-**1.user/pass**
-
-```python
-from zoomeye.sdk import ZoomEye
-
-zm = ZoomEye(username="username", password="password")
-```
-
-**2.APIKEY**
+**APIKEY**
 
 ```python
 from zoomeye.sdk import ZoomEye
@@ -516,27 +504,25 @@ zm = ZoomEye(api_key="01234567-acbd-00000-1111-22222222222")
 #### 2.SDK API
 以下是 SDK 提供的接口以及说明：
 
-	1.login()
-	  使用 username/password 或者 APIKEY 进行认证
-	2.dork_search(dork, page=0, resource="host", facets=None)
+	1.dork_search(dork, page=0, resource="host", facets=None)
 	  根据 dork 搜索指定页的数据
-	3.multi_page_search(dork, page=1, resource="host", facets=None)
+	2.multi_page_search(dork, page=1, resource="host", facets=None)
 	  根据 dork 搜索多页数据
-	4.resources_info()
+	3.resources_info()
 	  获取当前用户的信息
-	5.show_count()
+	4.show_count()
 	  获取当前 dork 下全部匹配结果的数量
-	6.dork_filter(keys)
+	5.dork_filter(keys)
 	  从搜索结果中提取指定字段的数据
-	7.get_facet()
+	6.get_facet()
 	  从搜索结果中获取全量数据的聚合结果
-	8.history_ip(ip)
+	7.history_ip(ip)
 	  查询某个 ip 的历史数据信息
-	9.show_site_ip(data)
+	8.show_site_ip(data)
 	  遍历 web-search 结果集，并输出域名和ip地址
-	10.show_ip_port(data)
+	9.show_ip_port(data)
 	  遍历 host-search 结果集，并输出ip地址和端口
-	11.generate_dot(self, q, source=0, page=1)
+	10.generate_dot(self, q, source=0, page=1)
 		生成以域名中心写出graphviz文件和图片
 
 #### 3.使用示例
@@ -549,12 +535,8 @@ $ python3
 '__file__', '__loader__', '__name__', '__package__', '__spec__',
 'fields_tables_host', 'fields_tables_web', 'getpass', 'requests',
 'show_ip_port', 'show_site_ip', 'zoomeye_api_test']
->>> # Use username and password to login
+>>> # Use API-KEY search dork
 >>> zm = zoomeye.ZoomEye()
->>> zm.username = 'username@zoomeye.org'
->>> zm.password = 'password'
->>> print(zm.login())
-....JIUzI1NiIsInR5cCI6IkpXVCJ9.....
 >>> data = zm.dork_search('apache country:cn')
 >>> zoomeye.show_site_ip(data)
 213.***.***.46.rev.vo***one.pt ['46.***.***.213']

@@ -86,11 +86,8 @@ class ZoomEyeDict:
 
 class ZoomEye:
 
-    def __init__(self, username=None, password=None, api_key="", access_token=""):
-        self.username = username
-        self.password = password
+    def __init__(self, api_key=""):
         self.api_key = api_key
-        self.access_token = access_token
 
         self.raw_data = None
         # process data, list
@@ -130,38 +127,23 @@ class ZoomEye:
             return None
         # if response succeed and status code is not 200 return error format json
         # others error return unknown error
-        # mainly users initialized by username and password, access token expires after 12 hours
         else:
             raise ValueError(resp.json().get('message'))
 
     def _check_header(self):
+        """
+        2023-04 remove username & password authenticate
+        only support API-KEY authenticate
+        """
         if self.api_key:
             headers = {
                 'API-KEY': self.api_key,
-            }
-        elif self.access_token:
-            headers = {
-                'Authorization': 'JWT %s' % self.access_token
             }
         else:
             headers = {}
         # add user agent
         headers["User-Agent"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36"
         return headers
-
-    def login(self):
-        """
-        please see: https://www.zoomeye.org/doc#login
-        :return: json web token
-        """
-        params = '{{"username": "{}", "password": "{}"}}'.format(self.username,
-                                                                 self.password)
-        result = self._request(self.login_api, params, method="POST")
-        if result and "access_token" in result:
-            self.access_token = result.get("access_token")
-            return self.access_token
-        else:
-            return result
 
     def dork_search(self, dork, page=0, resource="host", facets=None):
         """
@@ -400,11 +382,7 @@ def show_ip_port(data):
 
 def zoomeye_api_test():
     zoomeye = ZoomEye()
-    zoomeye.api_key = input('ZoomEye API-KEY(If you don\'t use API-KEY , Press Enter): ')
-    zoomeye.username = input('ZoomEye Username: ')
-    zoomeye.password = getpass.getpass(prompt='ZoomEye Password: ')
-    if zoomeye.username != "" and zoomeye.password != "":
-        zoomeye.login()
+    zoomeye.api_key = input('ZoomEye API-KEY:')
     print(zoomeye.resources_info())
 
     data = zoomeye.dork_search('solr')

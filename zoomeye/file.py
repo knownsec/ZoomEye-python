@@ -63,28 +63,19 @@ def get_auth_key():
     :return:
     """
     api_key = None
-    access_token = None
     try:
         # read the api key from the configuration file,
         # if not, it will throw an exception that the file is not found.
         api_key = get_api_key(zoomeye_dir + "/apikey")
-        return api_key, access_token
+        return api_key
         # catch file not found exception
     except FileNotFoundError:
-        # try to get the json web token in the configuration file
-        try:
-            access_token = get_jwt_token(zoomeye_dir + "/jwt")
-            return api_key, access_token
-        except FileNotFoundError:
-            print("please run 'zoomeye init -apikey <api key>' "
-                  "or 'zoomeye init -username <username> -password <password>before using this command")
-            exit(0)
+        print("please run 'zoomeye init -apikey <api key>' before using this command")
+        exit(0)
         # catch other exceptions
     except Exception:
-        # there is no past api key and json web token in the configuration file
-        # tell users that they need to be initialized before use
-        print("please run 'zoomeye init -apikey <api key>' "
-              "or 'zoomeye init -username <username> -password <password>before using this command")
+        # unknown error
+        print("Unknown Error! Please submit issue.")
         exit(0)
 
 
