@@ -617,7 +617,7 @@ The ``-dot`` parameter will generate a picture in ``png`` format and save the or
 Similarly, the SDK also supports API-KEY authentication methods,
  ``APIKEY``, as follows:
 
-**.APIKEY**
+**APIKEY**
 
 .. code:: python
 
