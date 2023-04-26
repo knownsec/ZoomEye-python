@@ -506,8 +506,8 @@ zm = ZoomEye(api_key="01234567-acbd-00000-1111-22222222222")
 
 	1.dork_search(dork, page=0, resource="host", facets=None)
 	  根据 dork 搜索指定页的数据
-	2.multi_page_search(dork, page=1, resource="host", facets=None)
-	  根据 dork 搜索多页数据
+	2.multi_page_search(dork, page=1, start_page=1, resource="host", facets=None)
+	  根据 dork 搜索多页数据，支持从指定的页数开始下载
 	3.resources_info()
 	  获取当前用户的信息
 	4.show_count()
@@ -557,7 +557,7 @@ soft********11180040.b***c.net ['126.***.***.40']
 {'product': [{'name': '', 'count': 28323128}, {'name': 'BusyBox telnetd', 'count': 10180912}, {'name': 'Linux telnetd', ......
 ```
 
->`multi_page_search()` 同样也可以进行搜索，当需要获取大量数据时使用该函数，其中 `page` 字段表示获取多少页的数据；而 `dork_search()` 仅获取指定页的数据。
+>`multi_page_search()` 同样也可以进行搜索，当需要获取大量数据时使用该函数，其中 `page` 字段表示获取多少页的数据, `start_page`字段表示从第几页开始获取；而 `dork_search()` 仅获取指定页的数据。
 
 #### 5.数据筛选
 在 SDK 中提供了 `dork_filter()` 函数，我们可以更加方便对数据进行筛选，提取指定的数据字段，如下：

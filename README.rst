@@ -634,7 +634,7 @@ The following are the interfaces and instructions provided by the SDK:
 
    1.dork_search(dork, page=0, resource="host", facets=None)
      search the data of the specified page according to dork
-   2.multi_page_search(dork, page=1, resource="host", facets=None)
+   2.multi_page_search(dork, page=1, start_page=1, resource="host", facets=None)
      search multiple pages of data according to dork
    3.resources_info()
      get current user information
