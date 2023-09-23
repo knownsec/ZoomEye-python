@@ -259,7 +259,7 @@ def process_filter(fields, data, tables):
     return result_data, has_equal, not_equal
 
 
-class Cache:
+class Cache:#用于缓存从API获取的数据或从本地文件中读取数据
     """
     used to cache the data obtained from the api to the local,
     or directly clip the file from the local.
@@ -333,7 +333,7 @@ class Cache:
         pass
 
 
-class CliZoomEye:
+class CliZoomEye:#处理与ZoomEye搜索相关的功能，如默认显示、过滤、统计等
 
     def __init__(self, dork, num, resource, facet=None, force=False):
         self.dork = dork
@@ -586,7 +586,7 @@ class CliZoomEye:
         show.printf(self.total)
 
 
-class HistoryDevice:
+class HistoryDevice:#处理获取主机历史数据的功能
     """
     obtain the user's identity information and determine whether to use the IP history search function
     """
@@ -704,7 +704,7 @@ class HistoryDevice:
         show.print_filter_history(not_equal, result_data[:self.num], has_equal)
 
 
-class IPInformation:
+class IPInformation:#用于查询特定IP地址的信息
     """
     query IP information
     """
@@ -746,7 +746,7 @@ class IPInformation:
         show.print_info_filter(not_equal, result_data, has_equal)
 
 
-class DomainSearch:
+class DomainSearch:#用于查询相关域名或子域名
     """
     query relation domain or sub domain
     """
