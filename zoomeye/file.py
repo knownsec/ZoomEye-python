@@ -16,6 +16,8 @@ from zoomeye import config
 zoomeye_dir = os.path.expanduser(config.ZOOMEYE_CONFIG_PATH)
 
 
+
+
 def get_api_key(path) -> str:
     """
     obtain api key from local configuration when querying data
@@ -47,6 +49,7 @@ def get_jwt_token(path) -> str:
     # raise FileNotFoundError
     if not os.path.exists(key_file):
         raise FileNotFoundError("not found access token config")
+
 
     # determine whether the permission of the configuration file is read-only,
     # if not, set it to read-only
