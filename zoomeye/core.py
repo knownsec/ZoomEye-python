@@ -16,7 +16,7 @@ from zoomeye.data import CliZoomEye, HistoryDevice, IPInformation, DomainSearch
 zoomeye_dir = os.path.expanduser(config.ZOOMEYE_CONFIG_PATH)
 
 
-def key_init(key):
+def init_key(key):
     """
     initialize through the api key, write the api key to the local configuration file,
     theoretically it will never expire unless you remake the api key
@@ -52,7 +52,7 @@ def init(args):
     api_key = args.apikey
     # use api key init
     if api_key:
-        key_init(api_key)
+        init_key(api_key)
         return
     # invalid parameter
     show.printf("input parameter error", color="red")
