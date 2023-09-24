@@ -14,7 +14,7 @@ import os
 
 import requests
 
-import graphviz  # Attention!
+import graphviz
 
 fields_tables_host = {
     "ip": "ip",
