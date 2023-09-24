@@ -151,7 +151,7 @@ def main():
     parser_search.set_defaults(func=core.search)
 
     # initial account configuration related commands
-    parser_init = subparsers.add_parser("init", help="Initialize the token for ZoomEye-python")
+    parser_init = subparsers.add_parser("init", help="Initialize the token for ZoomEye-python.")
     parser_init.add_argument("-apikey", help="ZoomEye API Key", default=None, metavar='[api key]')
     parser_init.set_defaults(func=core.init)
 
