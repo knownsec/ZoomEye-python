@@ -162,10 +162,10 @@ def regexp(keys, field_table, data_list):
     return result
 
 
-def filter_search_data(keys, field_table, data):
+def filter_search_data(datakeys, field_table, data):
     """
     get the data of the corresponding field
-    :param keys: list, user input field
+    :param datakeys: list, user input field
     :param field_table: dict, fileds
     :param data: list, zoomeye api data
     :return: list, ex: [[1,2,3...],[1,2,3...],[1,2,3...]...]
@@ -174,7 +174,7 @@ def filter_search_data(keys, field_table, data):
     for d in data:
         item = []
         zmdict = ZoomEyeDict(d)
-        for key in keys:
+        for key in datakeys:
             if field_table.get(key.strip()) is None:
                 support_fields = ','.join(list(field_table.keys()))
                 show.printf("filter command has unsupport fields [{}], support fields has [{}]"

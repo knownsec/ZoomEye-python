@@ -219,8 +219,9 @@ def main():
     parser_domain.set_defaults(func=core.associated_domain_query)
 
     args = parser.parse_args()
+    ver=args.version()
 
-    if args.version:
+    if ver:
         get_version()
         exit(0)
 
