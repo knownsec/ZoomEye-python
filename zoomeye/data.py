@@ -736,11 +736,11 @@ class IPInformation:
         result_data, has_equal, not_equal = process_filter(filters, info_data, fields_ip)
         if len(result_data) == 0:
             return
-        for item in not_equal:
-            if fields_ip.get(item.strip()) is None:
+        for items in not_equal:
+            if fields_ip.get(items.strip()) is None:
                 support_fields = ','.join(list(fields_ip.keys()))
                 show.printf(
-                    "filter command has unsupport fields [{}], support fields has [{}]".format(item, support_fields),
+                    "filter command has unsupport fields [{}], support fields has [{}]".format(items, support_fields),
                     color='red')
                 exit(0)
         show.print_info_filter(not_equal, result_data, has_equal)
