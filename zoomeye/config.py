@@ -12,19 +12,19 @@
 from zoomeye import __version__, __site__
 
 
-# save api key file and json web token file path
+# save api key file and json web token file path 保存API密钥文件和json web令牌文件路径
 ZOOMEYE_CONFIG_PATH = "~/.config/zoomeye/setting"
 
-# save search dork data path
+# save search dork data path 保存搜索节点数据路径
 ZOOMEYE_CACHE_PATH = "~/.config/zoomeye/cache"
 
-# cache expired time, five day
+# cache expired time, five day 缓存过期时间，5天
 EXPIRED_TIME = 60 * 60 * 24 * 5
 
-# print data max length
+# print data max length 打印数据
 STRING_MAX_LENGTH = 23
 
-# cache file name
+# cache file name缓存文件名
 FILE_NAME = "/{}_{}.json"
 
 
