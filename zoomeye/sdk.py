@@ -160,7 +160,7 @@ class ZoomEye:
                A comma-separated list of properties to get summary information
         """
 
-        result = []
+        zoomresult = []
         self.search_type = resource
         search_api = self.search_api.format(resource)
         if isinstance(facets, (tuple, list)):
@@ -170,13 +170,13 @@ class ZoomEye:
         resp = self._request(search_api, params=params, headers=headers)
         if resp and "matches" in resp:
             matches = resp.get('matches')
-            result = matches
+            zoomresult = matches
             self.raw_data = resp
             self.data_list = matches
             self.facet_data = resp.get("facets")
             self.total = resp.get("total")
 
-        return result
+        return zoomresult
 
     def multi_page_search(self, dork, page=1, resource="host",
                           facets=None) -> list:
