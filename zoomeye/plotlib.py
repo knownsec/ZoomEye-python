@@ -12,6 +12,7 @@
 """
 import sys
 import math
+import re
 
 from zoomeye import config
 
