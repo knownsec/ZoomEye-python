@@ -51,23 +51,23 @@ def main():
     parser_info.set_defaults(func=core.info)
 
     # query zoomeye data
-    parser_search = subparsers.add_parser(
+    P_search = subparsers.add_parser(
         "search",
         help="Search the ZoomEye database"
     )
 
-    parser_search.add_argument(
+    P_search.add_argument(
         "dork",
         help="The ZoomEye search keyword or ZoomEye exported file"
     )
-    parser_search.add_argument(
+    P_search.add_argument(
         "-num",
         default=20,
         help="The number of search results that should be returned, support 'all'",
         type=str,
         metavar='value'
     )
-    parser_search.add_argument(
+    P_search.add_argument(
         "-facet",
         default=None,
         nargs='?',
@@ -80,7 +80,7 @@ def main():
         '''),
         metavar='field'
     )
-    parser_search.add_argument(
+    P_search.add_argument(
         "-filter",
         default=None,
         metavar='field=regexp',
@@ -93,7 +93,7 @@ def main():
               web field: [app,headers,keywords,title,site,city,country,webapp,component,framework,server,waf,os,timestamp,*]
         ''')
     )
-    parser_search.add_argument(
+    P_search.add_argument(
         '-stat',
         default=None,
         metavar='field',
@@ -106,7 +106,7 @@ def main():
               web field: [webapp,component,framework,server,waf,os,country]
         ''')
     )
-    parser_search.add_argument(
+    P_search.add_argument(
         "-save",
         default=None,
         metavar='field=regexp',
@@ -118,18 +118,18 @@ def main():
         type=str,
         const='all'
     )
-    parser_search.add_argument(
+    P_search.add_argument(
         "-count",
         help="The total number of results in ZoomEye database for a search",
         action="store_true"
     )
-    parser_search.add_argument(
+    P_search.add_argument(
         "-figure",
         help="Pie chart or bar chart showing data，can only be used under facet and stat",
         choices=('pie', 'hist'),
         default=None
     )
-    parser_search.add_argument(
+    P_search.add_argument(
         "-type",
         help=(
             """
@@ -139,7 +139,7 @@ def main():
         choices={'web', 'host'},
         default="host"
     )
-    parser_search.add_argument(
+    P_search.add_argument(
         "-force",
         help=(
             """
@@ -148,12 +148,12 @@ def main():
         ),
         action="store_true"
     )
-    parser_search.set_defaults(func=core.search)
+    P_search.set_defaults(func=core.search)
 
     # initial account configuration related commands
-    parser_init = subparsers.add_parser("init", help="Initialize the token for ZoomEye-python")
-    parser_init.add_argument("-apikey", help="ZoomEye API Key", default=None, metavar='[api key]')
-    parser_init.set_defaults(func=core.init)
+    P_init = subparsers.add_parser("init", help="Initialize the token for ZoomEye-python")
+    P_init.add_argument("-apikey", help="ZoomEye API Key", default=None, metavar='[api key]')
+    P_init.set_defaults(func=core.init)
 
     parser_ip_info = subparsers.add_parser("ip", help="Query IP information")
     parser_ip_info.add_argument("ip", help="search device IP", metavar='ip', type=str)
