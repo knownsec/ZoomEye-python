@@ -55,7 +55,7 @@ def init(args):
         key_init(api_key)
         return
     # invalid parameter
-    show.printf("input parameter error", color="red")
+    show.printf("input parameter error!", color="red")
     show.printf("please run <zoomeye init -h> for help.", color="red")
 
 
