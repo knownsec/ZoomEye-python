@@ -110,7 +110,7 @@ def show_web_default_data(data_list, count):
          "site", "title", "country", "banner"), color="green")
     num = 0
     for item in data_list:
-        num += 1
+        num = num+1
         item_dict = ZoomEyeDict(item)
         content = ''
         for item_key in data.default_table_web.keys():

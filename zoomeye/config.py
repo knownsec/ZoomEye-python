@@ -11,6 +11,7 @@
 """
 from zoomeye import __version__, __site__
 
+seconds_of_fiveday = 60 * 60 * 24 * 5
 
 # save api key file and json web token file path
 ZOOMEYE_CONFIG_PATH = "~/.config/zoomeye/setting"
@@ -19,7 +20,7 @@ ZOOMEYE_CONFIG_PATH = "~/.config/zoomeye/setting"
 ZOOMEYE_CACHE_PATH = "~/.config/zoomeye/cache"
 
 # cache expired time, five day
-EXPIRED_TIME = 60 * 60 * 24 * 5
+EXPIRED_TIME = seconds_of_fiveday
 
 # print data max length
 STRING_MAX_LENGTH = 23
