@@ -16,7 +16,8 @@ from zoomeye.data import CliZoomEye, HistoryDevice, IPInformation, DomainSearch
 zoomeye_dir = os.path.expanduser(config.ZOOMEYE_CONFIG_PATH)
 
 
-def key_init(key):#初始化API密钥并将其保存在本地配置文件中
+def init_key(key): #初始化API密钥并将其保存在本地配置文件中
+
     """
     initialize through the api key, write the api key to the local configuration file,
     theoretically it will never expire unless you remake the api key
@@ -52,7 +53,7 @@ def init(args):#根据用户输入的参数来选择初始化方法，可以通�
     api_key = args.apikey
     # use api key init
     if api_key:
-        key_init(api_key)
+        init_key(api_key)
         return
     # invalid parameter
     show.printf("input parameter error", color="red")
