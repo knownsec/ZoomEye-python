@@ -13,7 +13,6 @@
 import sys
 import math
 
-
 from zoomeye import config
 
 
