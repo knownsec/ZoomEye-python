@@ -56,7 +56,7 @@ def init(args):#根据用户输入的参数来选择初始化方法，可以通�
         init_key(api_key)
         return
     # invalid parameter
-    show.printf("input parameter error", color="red")
+    show.printf("input parameter error!", color="red")
     show.printf("please run <zoomeye init -h> for help.", color="red")
 
 
