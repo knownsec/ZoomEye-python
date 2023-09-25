@@ -162,10 +162,10 @@ def regexp(keys, field_table, data_list):
     return result
 
 
-def filter_search_data(keys, field_table, data):
+def filter_search_data(datakeys, field_table, data):
     """
     get the data of the corresponding field
-    :param keys: list, user input field
+    :param datakeys: list, user input field
     :param field_table: dict, fileds
     :param data: list, zoomeye api data
     :return: list, ex: [[1,2,3...],[1,2,3...],[1,2,3...]...]
@@ -174,7 +174,7 @@ def filter_search_data(keys, field_table, data):
     for d in data:
         item = []
         zmdict = ZoomEyeDict(d)
-        for key in keys:
+        for key in datakeys:
             if field_table.get(key.strip()) is None:
                 support_fields = ','.join(list(field_table.keys()))
                 show.printf("filter command has unsupport fields [{}], support fields has [{}]"
@@ -259,7 +259,7 @@ def process_filter(fields, data, tables):
     return result_data, has_equal, not_equal
 
 
-class Cache:
+class Cache:#用于缓存从API获取的数据或从本地文件中读取数据
     """
     used to cache the data obtained from the api to the local,
     or directly clip the file from the local.
@@ -333,7 +333,7 @@ class Cache:
         pass
 
 
-class CliZoomEye:
+class CliZoomEye:#处理与ZoomEye搜索相关的功能，如默认显示、过滤、统计等
 
     def __init__(self, dork, num, resource, facet=None, force=False):
         self.dork = dork
@@ -586,7 +586,7 @@ class CliZoomEye:
         show.printf(self.total)
 
 
-class HistoryDevice:
+class HistoryDevice:#处理获取主机历史数据的功能
     """
     obtain the user's identity information and determine whether to use the IP history search function
     """
@@ -704,7 +704,7 @@ class HistoryDevice:
         show.print_filter_history(not_equal, result_data[:self.num], has_equal)
 
 
-class IPInformation:
+class IPInformation:#用于查询特定IP地址的信息
     """
     query IP information
     """
@@ -736,17 +736,17 @@ class IPInformation:
         result_data, has_equal, not_equal = process_filter(filters, info_data, fields_ip)
         if len(result_data) == 0:
             return
-        for item in not_equal:
-            if fields_ip.get(item.strip()) is None:
+        for items in not_equal:
+            if fields_ip.get(items.strip()) is None:
                 support_fields = ','.join(list(fields_ip.keys()))
                 show.printf(
-                    "filter command has unsupport fields [{}], support fields has [{}]".format(item, support_fields),
+                    "filter command has unsupport fields [{}], support fields has [{}]".format(items, support_fields),
                     color='red')
                 exit(0)
         show.print_info_filter(not_equal, result_data, has_equal)
 
 
-class DomainSearch:
+class DomainSearch:#用于查询相关域名或子域名
     """
     query relation domain or sub domain
     """
