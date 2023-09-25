@@ -14,7 +14,7 @@ import os
 
 import requests
 
-import graphviz
+import graphviz  # Attention!
 
 fields_tables_host = {
     "ip": "ip",
@@ -142,7 +142,8 @@ class ZoomEye:
         else:
             headers = {}
         # add user agent
-        headers["User-Agent"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36"
+        headers[
+            "User-Agent"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36"
         return headers
 
     def dork_search(self, dork, page=0, resource="host", facets=None):
@@ -178,8 +179,8 @@ class ZoomEye:
 
         return result
 
-    def multi_page_search(self, dork, page=1, resource="host",
-                          facets=None) -> list:
+    def multi_page_search(self, dork, page=1, start_page=1, resource="host",
+                          facets=None) -> (list, int, str):
         """
         mainly used to search dork data from zoomeye data.
         please see: https://www.zoomeye.org/doc#host-search and
@@ -189,6 +190,8 @@ class ZoomEye:
                     dork to search
         :param page: int,
                     specify the number of pages to return data, each page contains 20 data
+        :param start_page: int,
+                    specify the number of start page to search
         :param resource: str,
                         host search or web search
         :param facets: list or tuple
@@ -207,12 +210,20 @@ class ZoomEye:
 
         dork_data = []
         all_data = []
-        for i in range(page):
+        is_search_done = "done"
+        for i in range(start_page - 1, page):
+            print("downloading contents from page{}".format(i+1))
             if isinstance(facets, (tuple, list)):
                 facets = ','.join(facets)
 
             params = {'query': dork, 'page': i + 1, 'facets': facets}
-            result = self._request(search_api, params=params, headers=headers)
+            try:
+                result = self._request(search_api, params=params, headers=headers)
+            except Exception as e:
+                # return the processed data
+                self.data_list = dork_data
+                self.raw_data = all_data
+                return dork_data, i, "search failed, the log as {}".format(e)
             if result and "matches" in result:
                 self.total = result.get("total")
                 all_data.append(result)
@@ -231,7 +242,7 @@ class ZoomEye:
         # i added it to a list for easy viewing of each piece of data
         self.raw_data = all_data
         # return processed data
-        return dork_data
+        return dork_data, page, is_search_done
 
     def resources_info(self) -> dict:
         """
@@ -355,7 +366,6 @@ class ZoomEye:
         except Exception as e:
             return False, e
         return True, "successful! saving in {}".format(os.getcwd())
-
 
 
 def show_site_ip(data):

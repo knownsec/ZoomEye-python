@@ -134,20 +134,20 @@ def generate_histogram(values, labels=None, force_ascii=False):
     else:
         chars = [" ", "#", "#", "#", "#", "#", "#", "#", "#"]
 
-    fmt = []
+    ft = []
     if labels is not None:
         cfmt = "{{:{}s}}".format(max([len(str(label)) for label in labels]))
-        fmt.append(cfmt)
+        ft.append(cfmt)
     # show values
     all_int = all(val == int(val) for val in values)
     if all_int:
         cfmt = "{{:{}d}}".format(max([len(str(val)) for val in values]))
     else:
         cfmt = "{}"
-    fmt.append("[" + cfmt + "]")
+    ft.append("[" + cfmt + "]")
 
-    fmt.append("{}")
-    fmt = "  ".join(fmt)
+    ft.append("{}")
+    ft = "  ".join(ft)
 
     out = []
     for k, (val, row) in enumerate(zip(values, matrix)):
@@ -159,7 +159,7 @@ def generate_histogram(values, labels=None, force_ascii=False):
         # cut off trailing zeros
         r = trim_zeros(row)
         data.append("".join(chars[item] for item in r))
-        out.append(fmt.format(*data))
+        out.append(ft.format(*data))
     for item in out:
         print(' ' + item)
 

@@ -16,23 +16,25 @@ from zoomeye import config
 zoomeye_dir = os.path.expanduser(config.ZOOMEYE_CONFIG_PATH)
 
 
+
+
 def get_api_key(path) -> str:
     """
     obtain api key from local configuration when querying data
     :param path:
     :return:
     """
-    key_file = zoomeye_dir + "/apikey"
+    key_fl = zoomeye_dir + "/apikey"
     # api key config does not exits
     # raise FileNotFoundError
-    if not os.path.exists(key_file):
+    if not os.path.exists(key_fl):
         raise FileNotFoundError("not found api key config")
     # determine whether the permission of the configuration file is read-only,
     # if not, set it to read-only
-    if not oct(os.stat(key_file).st_mode).endswith("600"):
-        os.chmod(key_file, 0o600)
+    if not oct(os.stat(key_fl).st_mode).endswith("600"):
+        os.chmod(key_fl, 0o600)
     # return read file content
-    with open(key_file, 'r') as f:
+    with open(key_fl, 'r') as f:
         return f.read().strip()
 
 
@@ -42,18 +44,19 @@ def get_jwt_token(path) -> str:
     :param path:
     :return:
     """
-    key_file = zoomeye_dir + "/jwt"
+    key_fl = zoomeye_dir + "/jwt"
     # json web token does not exits
     # raise FileNotFoundError
-    if not os.path.exists(key_file):
+    if not os.path.exists(key_fl):
         raise FileNotFoundError("not found access token config")
+
 
     # determine whether the permission of the configuration file is read-only,
     # if not, set it to read-only
-    if not oct(os.stat(key_file).st_mode).endswith("600"):
-        os.chmod(key_file, 0o600)
+    if not oct(os.stat(key_fl).st_mode).endswith("600"):
+        os.chmod(key_fl, 0o600)
     # return read config content
-    with open(key_file, 'r') as f:
+    with open(key_fl, 'r') as f:
         return f.read().strip()
 
 

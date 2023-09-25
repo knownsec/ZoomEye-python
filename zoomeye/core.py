@@ -16,7 +16,8 @@ from zoomeye.data import CliZoomEye, HistoryDevice, IPInformation, DomainSearch
 zoomeye_dir = os.path.expanduser(config.ZOOMEYE_CONFIG_PATH)
 
 
-def key_init(key):
+def init_key(key): #初始化API密钥并将其保存在本地配置文件中
+
     """
     initialize through the api key, write the api key to the local configuration file,
     theoretically it will never expire unless you remake the api key
@@ -43,7 +44,7 @@ def key_init(key):
     os.chmod(key_file, 0o600)
 
 
-def init(args):
+def init(args):#根据用户输入的参数来选择初始化方法，可以通过API密钥来进行初始化
     """
     the initialization processing function will select the initialization method according to the user's input.
     :param args:
@@ -52,14 +53,14 @@ def init(args):
     api_key = args.apikey
     # use api key init
     if api_key:
-        key_init(api_key)
+        init_key(api_key)
         return
     # invalid parameter
     show.printf("input parameter error!", color="red")
     show.printf("please run <zoomeye init -h> for help.", color="red")
 
 
-def search(args):
+def search(args):#进行搜索操作，根据用户输入的搜索条件进行搜索
     dork = args.dork
     num = int(args.num)
     facet = args.facet
@@ -93,7 +94,7 @@ def search(args):
     show.printf("please run <zoomeye search -h> for help.")
 
 
-def info(args):
+def info(args):#打印当前用户的身份和本月剩余的数据配额
     """
     used to print the current identity of the user and the remaining data quota for the month
     :param args:
@@ -111,7 +112,7 @@ def info(args):
         show.printf("quota_info: {}".format(user_data["quota_info"]))
 
 
-def ip_history(args):
+def ip_history(args):#查询设备的历史信息
     """
     query device history
     please see: https://www.zoomeye.org/doc#history-ip-search
@@ -141,7 +142,7 @@ def ip_history(args):
     zm.show_fields()
 
 
-def clear_file(args):
+def clear_file(args):#清除用户设置和ZoomEye缓存数据
     """
     clear user setting and zoomeye cache data
     """
@@ -165,7 +166,7 @@ def clear_file(args):
     show.printf("clear complete!", color='green')
 
 
-def information_ip(args):
+def information_ip(args):#获取特定IP的信息
     ip = args.ip
     filters = args.filter
     # determine whether the input is an IP address by regular
@@ -185,7 +186,7 @@ def information_ip(args):
     infor.show_information()
 
 
-def associated_domain_query(args):
+def associated_domain_query(args):#关联域名查询
     q = args.q
     resource = args.type
     page = args.page

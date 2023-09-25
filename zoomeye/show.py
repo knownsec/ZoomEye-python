@@ -427,7 +427,7 @@ def print_info_filter(filters, raw_data, condition=None):
         printf(content)
 
 
-def show_domain_info(info_list, total, page):
+def show_domain_info(information_list, total, page):
     """
     show query domain info
     Args:
@@ -437,10 +437,10 @@ def show_domain_info(info_list, total, page):
         None
     """
 
-    if len(info_list) == 0:
+    if len(information_list) == 0:
         return
     printf("{:<55}{:<15}{:<25}".format("name", "timestamp", "ip"), color="green")
-    for d in info_list:
+    for d in information_list:
         name, timestamp, ip = d.values()
         printf("{:<55}{:<15}{:<25}".format(name, timestamp, json.dumps(ip)))
     print()
