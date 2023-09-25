@@ -67,8 +67,8 @@ def printf(s, color="white"):
     }
 
     # default color
-    default = '\033[0m'  # item default color
-    print('{}{}{}'.format(colors.get(color, "WHITE"), s, default))
+    Default = '\033[0m'  # item default color
+    print('{}{}{}'.format(colors.get(color, "WHITE"), s, Default))
 
 
 def show_host_default_data(data_list, count):
