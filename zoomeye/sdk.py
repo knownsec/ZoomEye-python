@@ -61,25 +61,25 @@ class ZoomEyeDict:
         :param key: str, dictionary key like: "a.b.c"
         :return:
         """
-        value = None
+        values = None
         # is dict?
         if isinstance(self.dict, dict):
             keys = key.split(".")
-            input_data = self.dict
+            inputData = self.dict
             for k in keys:
-                if k == 'geoinfo' and input_data.get(k) == None:
-                    k = "aiweninfo" if input_data.get("aiweninfo") else "ipipinfo"
-                if input_data.get(k) is not None:
-                    value = input_data.get(k)
+                if k == 'geoinfo' and inputData.get(k) == None:
+                    k = "aiweninfo" if inputData.get("aiweninfo") else "ipipinfo"
+                if inputData.get(k) is not None:
+                    values = inputData.get(k)
                 else:
-                    value = None
-                if isinstance(value, list):
-                    if len(value) != 0:
-                        value = value[0]
+                    values = None
+                if isinstance(values, list):
+                    if len(values) != 0:
+                        values = values[0]
                     else:
-                        value = '[unknown]'
-                input_data = value
-            return value
+                        values = '[unknown]'
+                inputData = values
+            return values
         else:
             raise TypeError("the parameter you pass in must be a dictionary, not a {}".format(type(self.dict)))
 
