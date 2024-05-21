@@ -3,5 +3,5 @@ charset-normalizer==2.0.8
 colorama==0.4.4
 graphviz==0.19
 idna==3.3
-requests==2.26.0
+requests==2.32.0
 urllib3==1.26.7
