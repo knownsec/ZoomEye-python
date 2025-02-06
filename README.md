@@ -4,7 +4,7 @@ English | [中文文档](./docs/README_CN.md)
 
 `ZoomEye` is a cyberspace search engine that allows users to search for network devices through a browser at <https://www.zoomeye.org>.
 
-`ZoomEye-python` is a Python library developed based on the `ZoomEye API`, providing both command-line interface and SDK integration capabilities for other tools. This library enables technical professionals to **search**, **filter**, and **export** ZoomEye data more conveniently.
+`ZoomEye-python` is a Python library developed based on the `ZoomEye API`, providing both command-line interface and SDK integration capabilities for other tools. This library enables technical professionals to **search** and **export** ZoomEye data more conveniently.
 
 ### 0x01 Installation Steps
 Install directly from `pypi`:
