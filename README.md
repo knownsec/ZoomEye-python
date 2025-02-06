@@ -209,7 +209,7 @@ When using CLI for search queries containing quotes, such as `"<body style=\"mar
 
 **2. zoomeye-ai**
 
-If you are an overseas user, please use <https://github.com/zoomeye-ai/ZoomEye-python>
+If you are not a user from mainland China, please use <https://github.com/zoomeye-ai/ZoomEye-python>
 
 ### 0x07 404StarLink Project
 
