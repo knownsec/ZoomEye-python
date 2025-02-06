@@ -6,7 +6,7 @@
 * Filename: config.py
 * Description: command tool config
 * Time: 2020.11.30
-* Author: liuf5
+* Author: wh0am1i
 */
 """
 from zoomeye import __version__, __site__

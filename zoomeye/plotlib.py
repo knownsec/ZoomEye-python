@@ -7,7 +7,7 @@
 * Description: display the statistical graph on the terminal,
     refer to:https://github.com/nschloe/termplotlib
 * Time: 2021.02.03
-* Author: liuf5
+* Author: wh0am1i
 */
 """
 import sys
