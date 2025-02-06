@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Released]
+## [3.0.0] - 2025-02-06
+### 🚨 **Breaking Changes**
+- **New API Implementation**: Introduced a completely new API structure.
+- **Unified Response Format**: Standardized response format for consistency across endpoints.
+- **Enhanced Performance**: Improved speed and efficiency for a faster, more seamless experience.
+
 ## [2.0.4.6] - 2021-04-09
  - support web search
  - add new CLI command ip [-h][-filter filed=regexp] ip
