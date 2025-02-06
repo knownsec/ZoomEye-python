@@ -32,8 +32,8 @@ def printf(s, color="white"):
     }
 
     # default color
-    default = '\033[0m'  # item default color
-    print('{}{}{}'.format(colors.get(color, "WHITE"), s, default))
+    Default = '\033[0m'  # item default color
+    print('{}{}{}'.format(colors.get(color, "WHITE"), s, Default))
 
 
 def print_filter(keys, data_list, data_total, condition=None):

@@ -24,7 +24,7 @@ setup(
     long_description=README,
     long_description_content_type='text/markdown',
     author='404 Team@Knownsec',
-    url='https://github.com/knownsec/zoomeye-python',
+    url='https://github.com/knownsec/zoomeye-python',  #
     packages=['zoomeye'],
     entry_points={'console_scripts': ['zoomeye=zoomeye.cli:main']},
     install_requires=DEPENDENCIES,

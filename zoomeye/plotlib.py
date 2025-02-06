@@ -12,12 +12,12 @@
 """
 import sys
 import math
-
+import re
 
 from zoomeye import config
 
 
-def char_by_atan(stat, at, color):
+def char_by_atan(stat, at, color):#用于根据给定的百分比值(at)和颜色(color)，返回相应的字符，用于绘制饼状图的每个部分
     """
     :param stat: list, all data and label
     :param at: float, percentage
@@ -31,7 +31,7 @@ def char_by_atan(stat, at, color):
     return char_by_atan(stat[1:], at - stat[0][1], color[1:])
 
 
-def show_pie_chart(stat):
+def show_pie_chart(stat):#用于显示饼状图
     """
     print pie chart in terminal
     :param stat: list, all data and label
@@ -65,7 +65,7 @@ def show_pie_chart(stat):
         count += 1
 
 
-def unicode_output():
+def unicode_output():#用于检查当前的标准输出是否支持Unicode
     """
     unicode standard output
     """
@@ -75,7 +75,7 @@ def unicode_output():
     )
 
 
-def trim_zeros(lst):
+def trim_zeros(lst):#用于去除列表(lst)末尾的零元素
     """
 
     """
@@ -87,7 +87,7 @@ def trim_zeros(lst):
     return lst[:-k] if k > 0 else lst
 
 
-def get_matrix(counts, max_size, bar_width):
+def get_matrix(counts, max_size, bar_width):#用于生成直方图的矩阵表示，用于绘制直方图
     """
     get the length of the histogram corresponding to each data
     :param counts: list, all data
@@ -117,7 +117,7 @@ def get_matrix(counts, max_size, bar_width):
     return out
 
 
-def generate_histogram(values, labels=None, force_ascii=False):
+def generate_histogram(values, labels=None, force_ascii=False):#用于生成直方图
     """
     print histogram in terminal
     take the largest data as the standard, that is, the largest data is the longest
@@ -134,20 +134,20 @@ def generate_histogram(values, labels=None, force_ascii=False):
     else:
         chars = [" ", "#", "#", "#", "#", "#", "#", "#", "#"]
 
-    ft = []
+    fmt = []
     if labels is not None:
         cfmt = "{{:{}s}}".format(max([len(str(label)) for label in labels]))
-        ft.append(cfmt)
+        fmt.append(cfmt)
     # show values
     all_int = all(val == int(val) for val in values)
     if all_int:
         cfmt = "{{:{}d}}".format(max([len(str(val)) for val in values]))
     else:
         cfmt = "{}"
-    ft.append("[" + cfmt + "]")
+    fmt.append("[" + cfmt + "]")
 
-    ft.append("{}")
-    ft = "  ".join(ft)
+    fmt.append("{}")
+    fmt = "  ".join(fmt)
 
     out = []
     for k, (val, row) in enumerate(zip(values, matrix)):
@@ -159,7 +159,7 @@ def generate_histogram(values, labels=None, force_ascii=False):
         # cut off trailing zeros
         r = trim_zeros(row)
         data.append("".join(chars[item] for item in r))
-        out.append(ft.format(*data))
+        out.append(fmt.format(*data))
     for item in out:
         print(' ' + item)
 
