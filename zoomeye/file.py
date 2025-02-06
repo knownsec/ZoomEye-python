@@ -6,7 +6,7 @@
 * Filename: file.py
 * Description: here is used to process operation files
 * Time: 2020.11.30
-* Author: liuf5
+* Author: wh0am1i
 */
 """
 import os

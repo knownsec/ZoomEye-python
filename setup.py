@@ -6,7 +6,7 @@
 * Filename: setup.py
 * Description:
 * Time: 2020.11.27
-* Author: liuf5
+* Author: wh0am1i
 */
 """
 from setuptools import setup
@@ -15,14 +15,14 @@ from zoomeye import __version__
 
 
 DEPENDENCIES = open('requirements.txt', 'r', encoding='utf-8').read().split('\n')
-README = open('README.rst', 'r', encoding='utf-8').read()
+README = open('README.md', 'r', encoding='utf-8').read()
 
 setup(
     name='zoomeye',
     version=__version__,
     description='Python library and command-line tool for ZoomEye (https://www.zoomeye.org/doc)',
     long_description=README,
-    long_description_content_type='text/x-rst',
+    long_description_content_type='text/markdown',
     author='404 Team@Knownsec',
     url='https://github.com/knownsec/zoomeye-python',
     packages=['zoomeye'],
@@ -41,6 +41,9 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
 )
