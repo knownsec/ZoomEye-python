@@ -4,4 +4,4 @@ colorama==0.4.4
 graphviz==0.19
 idna==3.3
 requests==2.26.0
-urllib3==1.26.7
+urllib3==2.5.0
