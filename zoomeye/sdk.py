@@ -54,8 +54,8 @@ class ZoomEye:
         self.api_key = api_key
 
         # 3.0.0
-        self.search_api = "https://api.zoomeye.org/v2/search"
-        self.userinfo_api = "https://api.zoomeye.org/v2/userinfo"
+        self.search_api = "https://api.zoomeye.ai/v2/search"
+        self.userinfo_api = "https://api.zoomeye.ai/v2/userinfo"
 
     def _request(self, url, params=None, headers=None, method='GET'):
         """
